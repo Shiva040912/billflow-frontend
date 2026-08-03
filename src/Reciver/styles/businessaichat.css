@@ -1,0 +1,522 @@
+/* =========================================
+   BUSINESS AI FLOATING BUTTON
+========================================= */
+
+.business-ai-floating-btn {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 900;
+
+  min-width: 58px;
+  height: 58px;
+  padding: 0 17px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  border: none;
+  border-radius: 18px;
+
+  background: #4f46e5;
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 800;
+
+  cursor: pointer;
+
+  box-shadow: 0 14px 32px rgba(79, 70, 229, 0.34);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.business-ai-floating-btn:hover {
+  background: #4338ca;
+
+  transform: translateY(-2px);
+
+  box-shadow: 0 18px 38px rgba(79, 70, 229, 0.4);
+}
+
+.business-ai-floating-btn svg {
+  font-size: 21px;
+}
+
+/* =========================================
+   OVERLAY
+========================================= */
+
+.business-ai-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  padding: 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(15, 23, 42, 0.58);
+
+  backdrop-filter: blur(5px);
+}
+
+/* =========================================
+   POPUP
+========================================= */
+
+.business-ai-popup {
+  width: min(520px, 100%);
+  height: min(720px, calc(100vh - 48px));
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 22px;
+
+  background: #ffffff;
+
+  box-shadow: 0 28px 80px rgba(15, 23, 42, 0.3);
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.business-ai-header {
+  padding: 17px 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+
+  border-bottom: 1px solid #e5e7eb;
+
+  background: #ffffff;
+}
+
+.business-ai-heading {
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.business-ai-logo {
+  width: 42px;
+  height: 42px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border-radius: 13px;
+
+  background: #4f46e5;
+  color: #ffffff;
+
+  font-size: 13px;
+  font-weight: 850;
+
+  box-shadow: 0 8px 18px rgba(79, 70, 229, 0.24);
+}
+
+.business-ai-heading > div:last-child {
+  min-width: 0;
+}
+
+.business-ai-heading h2 {
+  margin: 0;
+
+  overflow: hidden;
+
+  color: #111827;
+
+  font-size: 15px;
+  font-weight: 800;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.business-ai-heading p {
+  margin: 4px 0 0;
+
+  overflow: hidden;
+
+  color: #9ca3af;
+
+  font-size: 11px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.business-ai-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  flex-shrink: 0;
+}
+
+.business-ai-clear-btn,
+.business-ai-close-btn {
+  width: 37px;
+  height: 37px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+
+  background: #ffffff;
+  color: #6b7280;
+
+  font-size: 17px;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.business-ai-clear-btn:hover:not(:disabled) {
+  border-color: #fde68a;
+
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.business-ai-close-btn:hover {
+  border-color: #fecaca;
+
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.business-ai-clear-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* =========================================
+   MESSAGES
+========================================= */
+
+.business-ai-messages {
+  min-height: 0;
+  padding: 18px;
+
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 14px;
+
+  overflow-y: auto;
+
+  background: #f8fafc;
+}
+
+.business-ai-message-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 9px;
+}
+
+.business-ai-message-row.user {
+  justify-content: flex-end;
+}
+
+.business-ai-message-row.assistant {
+  justify-content: flex-start;
+}
+
+.business-ai-message-avatar {
+  width: 30px;
+  height: 30px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border-radius: 9px;
+
+  background: #4f46e5;
+  color: #ffffff;
+
+  font-size: 9px;
+  font-weight: 850;
+}
+
+.business-ai-message {
+  max-width: 78%;
+  padding: 11px 13px;
+
+  border-radius: 15px;
+
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.business-ai-message-row.assistant
+  .business-ai-message {
+  border: 1px solid #e5e7eb;
+  border-bottom-left-radius: 5px;
+
+  background: #ffffff;
+  color: #374151;
+}
+
+.business-ai-message-row.user
+  .business-ai-message {
+  border-bottom-right-radius: 5px;
+
+  background: #4f46e5;
+  color: #ffffff;
+
+  box-shadow: 0 7px 18px rgba(79, 70, 229, 0.18);
+}
+
+.business-ai-message.error {
+  border-color: #fecaca !important;
+
+  background: #fef2f2 !important;
+  color: #b91c1c !important;
+}
+
+/* =========================================
+   TYPING
+========================================= */
+
+.business-ai-message.typing {
+  min-width: 62px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.business-ai-message.typing span {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: #9ca3af;
+
+  animation: business-ai-typing 1.2s infinite ease-in-out;
+}
+
+.business-ai-message.typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.business-ai-message.typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes business-ai-typing {
+  0%,
+  80%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+
+  40% {
+    opacity: 1;
+    transform: translateY(-4px);
+  }
+}
+
+/* =========================================
+   INPUT AREA
+========================================= */
+
+.business-ai-input-area {
+  padding: 13px 14px;
+
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+
+  border-top: 1px solid #e5e7eb;
+
+  background: #ffffff;
+}
+
+.business-ai-input-area textarea {
+  width: 100%;
+  min-height: 43px;
+  max-height: 120px;
+  padding: 11px 13px;
+
+  resize: none;
+
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  outline: none;
+
+  background: #ffffff;
+  color: #111827;
+
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1.5;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.business-ai-input-area textarea:focus {
+  border-color: #818cf8;
+
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+.business-ai-input-area textarea::placeholder {
+  color: #9ca3af;
+}
+
+.business-ai-input-area textarea:disabled {
+  background: #f9fafb;
+
+  cursor: not-allowed;
+}
+
+.business-ai-send-btn {
+  width: 43px;
+  height: 43px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border: none;
+  border-radius: 12px;
+
+  background: #4f46e5;
+  color: #ffffff;
+
+  font-size: 17px;
+
+  cursor: pointer;
+
+  box-shadow: 0 8px 18px rgba(79, 70, 229, 0.22);
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.business-ai-send-btn:hover:not(:disabled) {
+  background: #4338ca;
+
+  transform: translateY(-1px);
+}
+
+.business-ai-send-btn:disabled {
+  background: #c7c9f7;
+
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* =========================================
+   FOOTER NOTE
+========================================= */
+
+.business-ai-footer-note {
+  padding: 0 14px 11px;
+
+  background: #ffffff;
+  color: #9ca3af;
+
+  font-size: 9px;
+  text-align: center;
+}
+
+/* =========================================
+   SCROLLBAR
+========================================= */
+
+.business-ai-messages::-webkit-scrollbar {
+  width: 7px;
+}
+
+.business-ai-messages::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.business-ai-messages::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+
+  background: #cbd5e1;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 640px) {
+  .business-ai-floating-btn {
+    right: 16px;
+    bottom: 16px;
+
+    height: 54px;
+    min-width: 54px;
+    padding: 0 15px;
+
+    border-radius: 16px;
+  }
+
+  .business-ai-overlay {
+    padding: 0;
+
+    align-items: flex-end;
+  }
+
+  .business-ai-popup {
+    width: 100%;
+    height: 92vh;
+
+    border-radius: 22px 22px 0 0;
+  }
+
+  .business-ai-header {
+    padding: 15px;
+  }
+
+  .business-ai-messages {
+    padding: 14px;
+  }
+
+  .business-ai-message {
+    max-width: 84%;
+  }
+
+  .business-ai-input-area {
+    padding: 11px;
+  }
+}

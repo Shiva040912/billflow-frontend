@@ -1,0 +1,516 @@
+/* =========================================
+   DASHBOARD PAGE
+========================================= */
+
+.dashboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.dashboard-eyebrow {
+  margin-bottom: 6px;
+
+  color: #4f46e5;
+
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.dashboard-header h1 {
+  margin-bottom: 8px;
+
+  color: #111827;
+
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+}
+
+.dashboard-header > div > p:last-child {
+  color: #6b7280;
+
+  font-size: 14px;
+}
+
+.dashboard-primary-btn {
+  min-height: 44px;
+  padding: 0 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+
+  border: none;
+  border-radius: 12px;
+
+  background: #4f46e5;
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 650;
+
+  cursor: pointer;
+
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.24);
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.dashboard-primary-btn:hover {
+  background: #4338ca;
+  transform: translateY(-1px);
+
+  box-shadow: 0 10px 24px rgba(79, 70, 229, 0.3);
+}
+
+/* =========================================
+   ERROR MESSAGE
+========================================= */
+
+.dashboard-error-message {
+  min-height: 48px;
+  padding: 12px 15px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+
+  background: #fef2f2;
+  color: #b91c1c;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.dashboard-error-message svg {
+  flex-shrink: 0;
+
+  font-size: 18px;
+}
+
+/* =========================================
+   SUMMARY CARDS
+========================================= */
+
+.dashboard-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.dashboard-summary-card {
+  min-width: 0;
+  padding: 20px;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+
+  background: #ffffff;
+
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.dashboard-summary-card:hover {
+  transform: translateY(-3px);
+  border-color: #d8dcff;
+
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+}
+
+.summary-card-top {
+  margin-bottom: 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.summary-card-icon {
+  width: 44px;
+  height: 44px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 13px;
+
+  background: #eef2ff;
+  color: #4f46e5;
+
+  font-size: 20px;
+}
+
+.summary-card-growth {
+  padding: 5px 8px;
+
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  border-radius: 999px;
+
+  background: #ecfdf5;
+  color: #059669;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.summary-card-title {
+  margin-bottom: 8px;
+
+  color: #6b7280;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.dashboard-summary-card h2 {
+  margin-bottom: 7px;
+
+  color: #111827;
+
+  font-size: 27px;
+  font-weight: 800;
+  letter-spacing: -0.7px;
+}
+
+.summary-card-description {
+  color: #9ca3af;
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* =========================================
+   BOTTOM PANELS
+========================================= */
+
+.dashboard-bottom-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.85fr);
+  gap: 18px;
+}
+
+.dashboard-panel {
+  min-width: 0;
+  min-height: 330px;
+  padding: 22px;
+
+  display: flex;
+  flex-direction: column;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+
+  background: #ffffff;
+
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+.dashboard-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.dashboard-panel-header h3 {
+  margin-bottom: 5px;
+
+  color: #111827;
+
+  font-size: 17px;
+  font-weight: 750;
+}
+
+.dashboard-panel-header p {
+  color: #9ca3af;
+
+  font-size: 12px;
+}
+
+.dashboard-secondary-btn {
+  min-height: 36px;
+  padding: 0 13px;
+
+  flex-shrink: 0;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+
+  background: #ffffff;
+  color: #4b5563;
+
+  font-size: 12px;
+  font-weight: 650;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.dashboard-secondary-btn:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+  color: #111827;
+}
+
+.dashboard-warning-icon {
+  width: 40px;
+  height: 40px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border-radius: 12px;
+
+  background: #fff7ed;
+  color: #ea580c;
+
+  font-size: 19px;
+}
+
+/* =========================================
+   EMPTY STATE
+========================================= */
+
+.dashboard-empty-state {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 35px 20px;
+
+  text-align: center;
+}
+
+.dashboard-empty-state > svg {
+  margin-bottom: 14px;
+
+  color: #c7cdd8;
+
+  font-size: 38px;
+}
+
+.dashboard-empty-state h4 {
+  margin-bottom: 6px;
+
+  color: #374151;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.dashboard-empty-state p {
+  color: #9ca3af;
+
+  font-size: 12px;
+}
+
+/* =========================================
+   RECENT SALES
+========================================= */
+
+.dashboard-recent-sales {
+  margin-top: 22px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-sale-item {
+  min-height: 68px;
+  padding: 12px 4px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  border-bottom: 1px solid #eef0f4;
+}
+
+.dashboard-sale-item:last-child {
+  border-bottom: none;
+}
+
+.dashboard-sale-item > div {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.dashboard-sale-item strong {
+  color: #111827;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.dashboard-sale-item > div span {
+  color: #9ca3af;
+
+  font-size: 11px;
+}
+
+.dashboard-sale-item > strong {
+  flex-shrink: 0;
+
+  color: #059669;
+
+  font-size: 13px;
+}
+
+/* =========================================
+   LOW STOCK LIST
+========================================= */
+
+.dashboard-low-stock-list {
+  margin-top: 22px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-stock-item {
+  min-height: 68px;
+  padding: 12px 4px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  border-bottom: 1px solid #eef0f4;
+}
+
+.dashboard-stock-item:last-child {
+  border-bottom: none;
+}
+
+.dashboard-stock-item > div {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.dashboard-stock-item strong {
+  color: #111827;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.dashboard-stock-item > div span {
+  color: #9ca3af;
+
+  font-size: 11px;
+}
+
+.dashboard-stock-item > strong {
+  flex-shrink: 0;
+
+  padding: 5px 9px;
+
+  border-radius: 999px;
+
+  background: #fff7ed;
+  color: #ea580c;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1200px) {
+  .dashboard-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .dashboard-bottom-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-page {
+    gap: 18px;
+  }
+
+  .dashboard-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .dashboard-primary-btn {
+    width: 100%;
+  }
+
+  .dashboard-summary-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .dashboard-summary-card {
+    padding: 18px;
+  }
+
+  .dashboard-panel {
+    min-height: 280px;
+    padding: 18px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 26px;
+  }
+
+  .dashboard-sale-item,
+  .dashboard-stock-item {
+    align-items: flex-start;
+  }
+}

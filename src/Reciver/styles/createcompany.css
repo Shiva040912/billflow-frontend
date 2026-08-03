@@ -1,0 +1,389 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+
+.create-company-page {
+  min-height: 100vh;
+  padding: 60px 20px;
+  background: 
+    radial-gradient(circle at 10% 10%, rgba(37, 99, 235, 0.08), transparent 40%),
+    radial-gradient(circle at 90% 90%, rgba(14, 165, 233, 0.08), transparent 40%),
+    linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.create-company-container {
+  width: min(1040px, 100%);
+  margin: 0 auto;
+}
+
+.create-company-header {
+  margin-bottom: 36px;
+  text-align: center;
+}
+
+.create-company-badge {
+  display: inline-flex;
+  margin-bottom: 16px;
+  padding: 8px 18px;
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 800;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.05);
+}
+
+.create-company-header h1 {
+  margin: 0;
+  color: #0f172a;
+  font-size: clamp(32px, 4.5vw, 46px);
+  font-weight: 900;
+  letter-spacing: -1.2px;
+  line-height: 1.15;
+}
+
+.create-company-header p {
+  max-width: 600px;
+  margin: 14px auto 0;
+  color: #64748b;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.create-company-form {
+  overflow: hidden;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 
+    0 30px 70px rgba(15, 23, 42, 0.08),
+    0 10px 25px rgba(37, 99, 235, 0.04);
+  backdrop-filter: blur(20px);
+}
+
+.form-section {
+  padding: 40px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.form-section-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.section-number {
+  display: inline-flex;
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  color: #2563eb;
+  font-size: 15px;
+  font-weight: 900;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.6);
+}
+
+.form-section-heading h2 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+}
+
+.form-section-heading p {
+  margin: 4px 0 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.form-group {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group-full {
+  grid-column: 1 / -1;
+}
+
+.form-group label {
+  color: #334155;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+}
+
+.form-group label span {
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  outline: none;
+  background: #f8fafc;
+  color: #0f172a;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.form-group input,
+.form-group select {
+  height: 52px;
+  padding: 0 18px;
+}
+
+.form-group textarea {
+  min-height: 120px;
+  padding: 16px 18px;
+  resize: vertical;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.form-group input:hover,
+.form-group select:hover,
+.form-group textarea:hover {
+  border-color: #94a3b8;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #2563eb;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.field-error {
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 28px 40px;
+  background: #f8fafc;
+}
+
+.form-footer p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.login-link-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #2563eb;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.login-link-button:hover {
+  text-decoration: underline;
+}
+
+.continue-plan-button {
+  min-width: 200px;
+  height: 52px;
+  padding: 0 28px;
+  border: 0;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.continue-plan-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.4);
+}
+
+.continue-plan-button:active {
+  transform: translateY(0);
+}
+
+.password-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-input-wrapper input {
+  padding-right: 76px;
+}
+
+.password-toggle-button {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 9px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: background 0.2s ease;
+}
+
+.password-toggle-button:hover {
+  background: #dbeafe;
+}
+
+/* =========================================
+   REGISTRATION STEPPER
+========================================= */
+
+.registration-stepper {
+  display: flex;
+  width: min(720px, 100%);
+  margin: 0 auto 38px;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.registration-step {
+  display: flex;
+  width: 130px;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.registration-step span {
+  display: inline-flex;
+  width: 42px;
+  height: 42px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #cbd5e1;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 900;
+  transition: all 0.3s ease;
+}
+
+.registration-step p {
+  margin: 10px 0 0;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.registration-step.active span {
+  border-color: #2563eb;
+  background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+}
+
+.registration-step.active p {
+  color: #2563eb;
+}
+
+.registration-step-line {
+  width: 100px;
+  height: 3px;
+  flex-shrink: 1;
+  margin-top: 20px;
+  border-radius: 999px;
+  background: #e2e8f0;
+}
+
+@media (max-width: 768px) {
+  .create-company-page {
+    padding: 30px 16px;
+  }
+  .create-company-form {
+    border-radius: 20px;
+  }
+  .form-section {
+    padding: 24px 20px;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .form-group-full {
+    grid-column: auto;
+  }
+  .form-footer {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 20px;
+  }
+  .form-footer p {
+    text-align: center;
+  }
+  .continue-plan-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .registration-stepper {
+    margin-bottom: 28px;
+  }
+  .registration-step {
+    width: 88px;
+  }
+  .registration-step span {
+    width: 36px;
+    height: 36px;
+    font-size: 12px;
+  }
+  .registration-step p {
+    max-width: 78px;
+    margin-top: 6px;
+    font-size: 9px;
+    white-space: normal;
+  }
+  .registration-step-line {
+    width: 30px;
+    margin-top: 16px;
+  }
+}

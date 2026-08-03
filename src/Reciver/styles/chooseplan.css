@@ -1,0 +1,366 @@
+.choose-plan-page {
+  min-height: 100vh;
+  padding: 50px 20px;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(79, 70, 229, 0.14),
+      transparent 32%
+    ),
+    linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+}
+
+.choose-plan-container {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+}
+
+.choose-plan-header {
+  margin-bottom: 34px;
+  text-align: center;
+}
+
+.choose-plan-badge {
+  display: inline-flex;
+  margin-bottom: 14px;
+  padding: 8px 14px;
+  border: 1px solid rgba(37, 99, 235, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.choose-plan-header h1 {
+  margin: 0;
+  color: #0f172a;
+  font-size: clamp(32px, 5vw, 48px);
+  line-height: 1.1;
+}
+
+.choose-plan-header p {
+  margin: 14px 0 0;
+  color: #64748b;
+  font-size: 16px;
+}
+
+.plans-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.plan-card {
+  position: relative;
+  display: flex;
+  min-height: 500px;
+  flex-direction: column;
+  padding: 28px;
+  border: 1px solid #dbe3ef;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.plan-card:hover {
+  transform: translateY(-5px);
+  border-color: #93c5fd;
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.13);
+}
+
+.plan-card-selected {
+  border: 2px solid #2563eb;
+  box-shadow: 0 24px 65px rgba(37, 99, 235, 0.17);
+}
+
+.popular-badge {
+  position: absolute;
+  top: -13px;
+  left: 50%;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+  transform: translateX(-50%);
+}
+
+.plan-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.plan-card h2 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 25px;
+}
+
+.plan-card-top p {
+  margin: 8px 0 0;
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.plan-radio input {
+  width: 20px;
+  height: 20px;
+  accent-color: #2563eb;
+}
+
+.plan-price {
+  display: flex;
+  align-items: flex-end;
+  margin: 28px 0;
+  color: #0f172a;
+}
+
+.plan-price .currency {
+  margin-bottom: 8px;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.plan-price strong {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.billing-cycle {
+  margin: 0 0 7px 5px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.plan-features {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0 0 28px;
+  padding: 0;
+  list-style: none;
+}
+
+.plan-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: #334155;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.feature-check {
+  display: inline-flex;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.select-plan-button {
+  width: 100%;
+  height: 48px;
+  border: 1px solid #cbd5e1;
+  border-radius: 13px;
+  background: #ffffff;
+  color: #334155;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.select-plan-button.selected {
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.choose-plan-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 28px;
+  padding: 22px 24px;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.back-button,
+.continue-payment-button {
+  min-width: 150px;
+  height: 48px;
+  padding: 0 22px;
+  border-radius: 13px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.back-button {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+}
+
+.continue-payment-button {
+  border: 0;
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
+  color: #ffffff;
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.24);
+}
+
+@media (max-width: 900px) {
+  .plans-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .plan-card {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .choose-plan-page {
+    padding: 30px 14px;
+  }
+
+  .plan-card {
+    padding: 24px 20px;
+  }
+
+  .choose-plan-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .back-button,
+  .continue-payment-button {
+    width: 100%;
+  }
+}
+
+/* =========================================
+   REGISTRATION STEPPER
+========================================= */
+
+.registration-stepper {
+  display: flex;
+  width: min(720px, 100%);
+  margin: 0 auto 34px;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.registration-step {
+  display: flex;
+  width: 130px;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.registration-step span {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #cbd5e1;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.registration-step p {
+  margin: 9px 0 0;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.registration-step.active span {
+  border-color: #2563eb;
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
+  color: #ffffff;
+  box-shadow: 0 9px 22px rgba(37, 99, 235, 0.28);
+}
+
+.registration-step.active p {
+  color: #2563eb;
+}
+
+.registration-step.completed span {
+  border-color: #16a34a;
+  background: #16a34a;
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(22, 163, 74, 0.22);
+}
+
+.registration-step.completed p {
+  color: #15803d;
+}
+
+.registration-step-line {
+  width: 100px;
+  height: 2px;
+  flex-shrink: 1;
+  margin-top: 19px;
+  border-radius: 999px;
+  background: #cbd5e1;
+}
+
+.registration-step-line.completed {
+  background: #16a34a;
+}
+
+@media (max-width: 600px) {
+  .registration-stepper {
+    margin-bottom: 28px;
+  }
+
+  .registration-step {
+    width: 88px;
+  }
+
+  .registration-step span {
+    width: 34px;
+    height: 34px;
+    font-size: 12px;
+  }
+
+  .registration-step p {
+    max-width: 78px;
+    margin-top: 7px;
+    font-size: 9px;
+    white-space: normal;
+  }
+
+  .registration-step-line {
+    width: 36px;
+    margin-top: 16px;
+  }
+}
