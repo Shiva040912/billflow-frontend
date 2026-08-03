@@ -14,7 +14,7 @@ import {
 import {
   getProviderUser,
   hasProviderPermission,
-} from "../utils/providerPermission";
+} from "../utils/ProviderPermission";
 
 const menuItems = [
   {
