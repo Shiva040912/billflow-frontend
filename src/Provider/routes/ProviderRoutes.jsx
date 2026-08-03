@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
-import ProviderProtectedRoute from "../components/ProviderProtectedRoute";
+import ProviderProtectedRoute from "../components/providerProtectedRoute";
 import ProviderLayout from "../layout/ProviderLayout";
 
 import Login from "../pages/Login";
