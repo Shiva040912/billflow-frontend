@@ -19,7 +19,7 @@ import Sales from "./Reciver/pages/Sales";
 import Report from "./Reciver/pages/Report";
 import Settings from "./Reciver/pages/Settings";
 
-import ProviderRoutes from "./provider/routes/ProviderRoutes";
+import ProviderRoutes from "./Provider/routes/ProviderRoutes";
 
 const App = () => {
   return (
