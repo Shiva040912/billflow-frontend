@@ -4,7 +4,7 @@ import { FiPlus, FiSearch, FiTrash2 } from "react-icons/fi";
 import toast from "react-hot-toast";
 
 
-import { createSale, getSales } from "../services/salesService";
+import { createSale, getSales } from "../services/salesservice";
 
 import "../styles/sales.css";
 
