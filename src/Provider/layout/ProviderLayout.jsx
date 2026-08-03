@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 
 import ProviderSidebar from "../components/ProviderSidebar";
-import ProviderTopbar from "../components/ProviderTopbar";
+import ProviderTopbar from "../components/providerTopbar";
 
 import "../styles/layout.css";
 

@@ -1,4 +1,4 @@
-import providerAxios from "../utils/providerAxios";
+import providerAxios from "../utils/provideraxios";
 
 export const providerLogin = async (credentials) => {
   const response = await providerAxios.post("/auth/login", credentials);

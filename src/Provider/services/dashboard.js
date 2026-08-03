@@ -1,4 +1,4 @@
-import providerAxios from "../utils/providerAxios";
+import providerAxios from "../utils/provideraxios";
 
 export const getProviderDashboardSummary = async () => {
   const response = await providerAxios.get("/dashboard/summary");
