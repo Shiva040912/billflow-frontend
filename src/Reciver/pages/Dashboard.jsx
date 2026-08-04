@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../services/axios";
 import {
   FiAlertTriangle,
   FiDollarSign,
@@ -35,15 +35,7 @@ const Dashboard = () => {
 
         const token = localStorage.getItem("billFlowAccessToken");
 
-        const response = await axios.get(
-          "http://localhost:3000/dashboard/summary",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-
+        const response = await api.get("/dashboard/summary");
         setDashboardData(response.data);
       } catch (error) {
         console.error("Dashboard summary fetch error:", error);
@@ -61,8 +53,7 @@ const Dashboard = () => {
         }
 
         setErrorMessage(
-          error.response?.data?.message ||
-            "Unable to load dashboard summary.",
+          error.response?.data?.message || "Unable to load dashboard summary.",
         );
       } finally {
         setIsLoading(false);
@@ -149,9 +140,7 @@ const Dashboard = () => {
             <h2>{isLoading ? "..." : card.value}</h2>
 
             <span className="summary-card-description">
-              {isLoading
-                ? "Loading dashboard data..."
-                : card.description}
+              {isLoading ? "Loading dashboard data..." : card.description}
             </span>
           </article>
         ))}
@@ -183,14 +172,9 @@ const Dashboard = () => {
           ) : dashboardData.recentSales?.length > 0 ? (
             <div className="dashboard-recent-sales">
               {dashboardData.recentSales.map((sale) => (
-                <div
-                  className="dashboard-sale-item"
-                  key={sale.id || sale._id}
-                >
+                <div className="dashboard-sale-item" key={sale.id || sale._id}>
                   <div>
-                    <strong>
-                      {sale.customerName || "Walk-in Customer"}
-                    </strong>
+                    <strong>{sale.customerName || "Walk-in Customer"}</strong>
                     <span>{sale.invoiceNumber || "Bill"}</span>
                   </div>
 
