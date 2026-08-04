@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../services/axios";
 import {
   FiAlertTriangle,
   FiDollarSign,
@@ -9,6 +8,9 @@ import {
   FiTrendingUp,
   FiUsers,
 } from "react-icons/fi";
+
+import api from "../services/axios";
+
 import "../styles/dashboard.css";
 
 const Dashboard = () => {
@@ -33,17 +35,25 @@ const Dashboard = () => {
         setIsLoading(true);
         setErrorMessage("");
 
-        const token = localStorage.getItem("billFlowAccessToken");
+        const response = await api.get(
+          "/dashboard/summary",
+        );
 
-        const response = await api.get("/dashboard/summary");
         setDashboardData(response.data);
       } catch (error) {
-        console.error("Dashboard summary fetch error:", error);
+        console.error(
+          "Dashboard summary fetch error:",
+          error,
+        );
 
         if (error.response?.status === 401) {
-          localStorage.removeItem("billFlowAccessToken");
+          localStorage.removeItem(
+            "billFlowAccessToken",
+          );
           localStorage.removeItem("billFlowUser");
-          localStorage.removeItem("billFlowCompany");
+          localStorage.removeItem(
+            "billFlowCompany",
+          );
 
           navigate("/login", {
             replace: true,
@@ -53,7 +63,8 @@ const Dashboard = () => {
         }
 
         setErrorMessage(
-          error.response?.data?.message || "Unable to load dashboard summary.",
+          error.response?.data?.message ||
+            "Unable to load dashboard summary.",
         );
       } finally {
         setIsLoading(false);
@@ -73,7 +84,9 @@ const Dashboard = () => {
   const summaryCards = [
     {
       title: "Today's Sales",
-      value: formatCurrency(dashboardData.todaySales),
+      value: formatCurrency(
+        dashboardData.todaySales,
+      ),
       description: "Total sales recorded today",
       icon: <FiDollarSign />,
     },
@@ -100,10 +113,17 @@ const Dashboard = () => {
   return (
     <div className="dashboard-page">
       <section className="dashboard-header">
-        <div>
-          <p className="dashboard-eyebrow">Overview</p>
+        <div className="dashboard-header-content">
+          <p className="dashboard-eyebrow">
+            Overview
+          </p>
+
           <h1>Dashboard</h1>
-          <p>Welcome back. Here is your business summary.</p>
+
+          <p className="dashboard-header-description">
+            Welcome back. Here is your business
+            summary.
+          </p>
         </div>
 
         <button
@@ -112,22 +132,31 @@ const Dashboard = () => {
           onClick={() => navigate("/billing")}
         >
           <FiShoppingBag />
-          Create New Bill
+          <span>Create New Bill</span>
         </button>
       </section>
 
       {errorMessage && (
-        <div className="dashboard-error-message">
+        <div
+          className="dashboard-error-message"
+          role="alert"
+        >
           <FiAlertTriangle />
+
           <span>{errorMessage}</span>
         </div>
       )}
 
       <section className="dashboard-summary-grid">
         {summaryCards.map((card) => (
-          <article className="dashboard-summary-card" key={card.title}>
+          <article
+            className="dashboard-summary-card"
+            key={card.title}
+          >
             <div className="summary-card-top">
-              <div className="summary-card-icon">{card.icon}</div>
+              <div className="summary-card-icon">
+                {card.icon}
+              </div>
 
               <span className="summary-card-growth">
                 <FiTrendingUp />
@@ -135,12 +164,18 @@ const Dashboard = () => {
               </span>
             </div>
 
-            <p className="summary-card-title">{card.title}</p>
+            <p className="summary-card-title">
+              {card.title}
+            </p>
 
-            <h2>{isLoading ? "..." : card.value}</h2>
+            <h2>
+              {isLoading ? "..." : card.value}
+            </h2>
 
             <span className="summary-card-description">
-              {isLoading ? "Loading dashboard data..." : card.description}
+              {isLoading
+                ? "Loading dashboard data..."
+                : card.description}
             </span>
           </article>
         ))}
@@ -149,9 +184,12 @@ const Dashboard = () => {
       <section className="dashboard-bottom-grid">
         <article className="dashboard-panel">
           <div className="dashboard-panel-header">
-            <div>
+            <div className="dashboard-panel-heading">
               <h3>Recent Sales</h3>
-              <p>Latest bills and customer purchases</p>
+
+              <p>
+                Latest bills and customer purchases
+              </p>
             </div>
 
             <button
@@ -166,35 +204,61 @@ const Dashboard = () => {
           {isLoading ? (
             <div className="dashboard-empty-state">
               <FiShoppingBag />
-              <h4>Loading recent sales</h4>
-              <p>Please wait while sales are being loaded.</p>
-            </div>
-          ) : dashboardData.recentSales?.length > 0 ? (
-            <div className="dashboard-recent-sales">
-              {dashboardData.recentSales.map((sale) => (
-                <div className="dashboard-sale-item" key={sale.id || sale._id}>
-                  <div>
-                    <strong>{sale.customerName || "Walk-in Customer"}</strong>
-                    <span>{sale.invoiceNumber || "Bill"}</span>
-                  </div>
 
-                  <strong>{formatCurrency(sale.totalAmount)}</strong>
-                </div>
-              ))}
+              <h4>Loading recent sales</h4>
+
+              <p>
+                Please wait while sales are being
+                loaded.
+              </p>
+            </div>
+          ) : dashboardData.recentSales?.length >
+            0 ? (
+            <div className="dashboard-recent-sales">
+              {dashboardData.recentSales.map(
+                (sale) => (
+                  <div
+                    className="dashboard-sale-item"
+                    key={sale.id || sale._id}
+                  >
+                    <div className="dashboard-item-details">
+                      <strong>
+                        {sale.customerName ||
+                          "Walk-in Customer"}
+                      </strong>
+
+                      <span>
+                        {sale.invoiceNumber || "Bill"}
+                      </span>
+                    </div>
+
+                    <strong className="dashboard-sale-amount">
+                      {formatCurrency(
+                        sale.totalAmount,
+                      )}
+                    </strong>
+                  </div>
+                ),
+              )}
             </div>
           ) : (
             <div className="dashboard-empty-state">
               <FiShoppingBag />
+
               <h4>No sales available</h4>
-              <p>Your latest sales will appear here.</p>
+
+              <p>
+                Your latest sales will appear here.
+              </p>
             </div>
           )}
         </article>
 
         <article className="dashboard-panel">
           <div className="dashboard-panel-header">
-            <div>
+            <div className="dashboard-panel-heading">
               <h3>Low Stock Alert</h3>
+
               <p>Products that need restocking</p>
             </div>
 
@@ -206,30 +270,49 @@ const Dashboard = () => {
           {isLoading ? (
             <div className="dashboard-empty-state">
               <FiPackage />
-              <h4>Loading stock details</h4>
-              <p>Please wait while stock data is being loaded.</p>
-            </div>
-          ) : dashboardData.lowStockProducts?.length > 0 ? (
-            <div className="dashboard-low-stock-list">
-              {dashboardData.lowStockProducts.map((product) => (
-                <div
-                  className="dashboard-stock-item"
-                  key={product.id || product._id}
-                >
-                  <div>
-                    <strong>{product.name}</strong>
-                    <span>Low stock warning</span>
-                  </div>
 
-                  <strong>{product.stock ?? 0} left</strong>
-                </div>
-              ))}
+              <h4>Loading stock details</h4>
+
+              <p>
+                Please wait while stock data is being
+                loaded.
+              </p>
+            </div>
+          ) : dashboardData.lowStockProducts
+              ?.length > 0 ? (
+            <div className="dashboard-low-stock-list">
+              {dashboardData.lowStockProducts.map(
+                (product) => (
+                  <div
+                    className="dashboard-stock-item"
+                    key={
+                      product.id || product._id
+                    }
+                  >
+                    <div className="dashboard-item-details">
+                      <strong>
+                        {product.name}
+                      </strong>
+
+                      <span>Low stock warning</span>
+                    </div>
+
+                    <strong className="dashboard-stock-count">
+                      {product.stock ?? 0} left
+                    </strong>
+                  </div>
+                ),
+              )}
             </div>
           ) : (
             <div className="dashboard-empty-state">
               <FiPackage />
+
               <h4>No low-stock products</h4>
-              <p>Stock alerts will appear here.</p>
+
+              <p>
+                Stock alerts will appear here.
+              </p>
             </div>
           )}
         </article>

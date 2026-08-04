@@ -906,8 +906,9 @@ const Billing = () => {
                   </button>
                 </div>
               ) : (
-                <div className="billing-table-scroll">
-                  <table className="billing-pos-table">
+                <>
+                  <div className="billing-table-scroll billing-desktop-items">
+                    <table className="billing-pos-table">
                     <thead>
                       <tr>
                         <th className="billing-col-index">#</th>
@@ -994,8 +995,100 @@ const Billing = () => {
                         );
                       })}
                     </tbody>
-                  </table>
-                </div>
+                    </table>
+                  </div>
+
+                  <div className="billing-mobile-items">
+                    {billItems.map((item, index) => {
+                      const itemSubtotal = item.price * item.quantity;
+                      const itemGst = (itemSubtotal * item.gstRate) / 100;
+                      const itemTotal = itemSubtotal + itemGst;
+
+                      return (
+                        <article
+                          className="billing-mobile-item-card"
+                          key={item.productId}
+                        >
+                          <div className="billing-mobile-item-head">
+                            <div>
+                              <span className="billing-mobile-item-index">
+                                Item {index + 1}
+                              </span>
+                              <strong>{item.name}</strong>
+                              <small>{item.sku || "No SKU"}</small>
+                            </div>
+
+                            <button
+                              type="button"
+                              className="billing-mobile-remove-btn"
+                              onClick={() => removeBillItem(item.productId)}
+                              aria-label={`Remove ${item.name}`}
+                            >
+                              <FiTrash2 />
+                            </button>
+                          </div>
+
+                          <div className="billing-mobile-item-details">
+                            <div>
+                              <span>Rate</span>
+                              <strong>{formatPrice(item.price)}</strong>
+                            </div>
+                            <div>
+                              <span>GST</span>
+                              <strong>{item.gstRate}%</strong>
+                            </div>
+                            <div>
+                              <span>Amount</span>
+                              <strong>{formatPrice(itemTotal)}</strong>
+                            </div>
+                          </div>
+
+                          <div className="billing-mobile-quantity-row">
+                            <span>Quantity</span>
+                            <div className="billing-qty-stepper">
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  updateQuantity(
+                                    item.productId,
+                                    item.quantity - 1,
+                                  )
+                                }
+                                disabled={item.quantity <= 1}
+                              >
+                                <FiMinus />
+                              </button>
+                              <input
+                                type="number"
+                                min="1"
+                                max={item.stock}
+                                value={item.quantity}
+                                onChange={(event) =>
+                                  updateQuantity(
+                                    item.productId,
+                                    event.target.value,
+                                  )
+                                }
+                              />
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  updateQuantity(
+                                    item.productId,
+                                    item.quantity + 1,
+                                  )
+                                }
+                                disabled={item.quantity >= item.stock}
+                              >
+                                <FiPlus />
+                              </button>
+                            </div>
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+                </>
               )}
             </div>
           </section>

@@ -2,7 +2,6 @@ import {
   FiBarChart2,
   FiBox,
   FiCreditCard,
-  FiFileText,
   FiGrid,
   FiLogOut,
   FiPackage,
@@ -22,9 +21,15 @@ const Sidebar = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("billFlowAccessToken");
+    localStorage.removeItem(
+      "billFlowAccessToken",
+    );
     localStorage.removeItem("billFlowUser");
     localStorage.removeItem("billFlowCompany");
+
+    if (onClose) {
+      onClose();
+    }
 
     navigate("/", {
       replace: true,
@@ -35,6 +40,11 @@ const Sidebar = ({ isOpen, onClose }) => {
     if (onClose) {
       onClose();
     }
+  };
+
+  const handleBrandClick = () => {
+    navigate("/dashboard");
+    handleNavigation();
   };
 
   const getLinkClassName = ({ isActive }) =>
@@ -49,19 +59,17 @@ const Sidebar = ({ isOpen, onClose }) => {
           ? "sidebar sidebar-open"
           : "sidebar"
       }
+      aria-label="Main navigation"
     >
       <div className="sidebar-top">
         <button
           type="button"
           className="sidebar-brand"
-          onClick={() => {
-            navigate("/dashboard");
-            handleNavigation();
-          }}
+          onClick={handleBrandClick}
         >
           <div className="sidebar-logo">B</div>
 
-          <div>
+          <div className="sidebar-brand-details">
             <h2>BillFlow</h2>
             <p>Billing Software</p>
           </div>
@@ -140,8 +148,6 @@ const Sidebar = ({ isOpen, onClose }) => {
           <FiShoppingCart />
           <span>Inventory</span>
         </NavLink>
-
-        
 
         <NavLink
           to="/reports"

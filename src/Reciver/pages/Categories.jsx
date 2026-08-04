@@ -17,8 +17,7 @@ const Categories = () => {
   const [categories, setCategories] = useState([]);
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] =
-    useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -42,13 +41,9 @@ const Categories = () => {
       "billFlowAccessToken",
     );
 
-    localStorage.removeItem(
-      "billFlowUser",
-    );
+    localStorage.removeItem("billFlowUser");
 
-    localStorage.removeItem(
-      "billFlowCompany",
-    );
+    localStorage.removeItem("billFlowCompany");
 
     window.location.href = "/login";
   };
@@ -134,6 +129,16 @@ const Categories = () => {
     statusFilter,
   ]);
 
+  const activeCategoriesCount =
+    categories.filter(
+      (category) => category.isActive,
+    ).length;
+
+  const inactiveCategoriesCount =
+    categories.filter(
+      (category) => !category.isActive,
+    ).length;
+
   const handleOpenAddModal = () => {
     setSelectedCategory(null);
     setIsCategoryModalOpen(true);
@@ -176,12 +181,11 @@ const Categories = () => {
         "Category deleted successfully",
       );
 
-      setCategories(
-        (previousCategories) =>
-          previousCategories.filter(
-            (item) =>
-              item._id !== category._id,
-          ),
+      setCategories((previousCategories) =>
+        previousCategories.filter(
+          (item) =>
+            item._id !== category._id,
+        ),
       );
     } catch (error) {
       console.error(
@@ -229,18 +233,32 @@ const Categories = () => {
     ).format(date);
   };
 
+  const renderEmptyState = () => (
+    <div className="categories-empty-state">
+      <FiFolder />
+
+      <h3>No categories available</h3>
+
+      <p>
+        {categories.length === 0
+          ? "Create your first category to start adding products."
+          : "No categories match your search or filter."}
+      </p>
+    </div>
+  );
+
   return (
     <>
       <div className="categories-page">
         <section className="categories-header">
-          <div>
+          <div className="categories-header-content">
             <p className="categories-eyebrow">
               Category Management
             </p>
 
             <h1>Categories</h1>
 
-            <p>
+            <p className="categories-header-description">
               Manage the categories used for your
               company products.
             </p>
@@ -252,44 +270,29 @@ const Categories = () => {
             onClick={handleOpenAddModal}
           >
             <FiPlus />
-            Add Category
+            <span>Add Category</span>
           </button>
         </section>
 
         <section className="categories-summary">
-          <div className="categories-summary-card">
-            <span>Total Categories</span>
+          <article className="categories-summary-card">
+            <span>Total</span>
+            <strong>{categories.length}</strong>
+          </article>
 
+          <article className="categories-summary-card active">
+            <span>Active</span>
             <strong>
-              {categories.length}
+              {activeCategoriesCount}
             </strong>
-          </div>
+          </article>
 
-          <div className="categories-summary-card">
-            <span>Active Categories</span>
-
+          <article className="categories-summary-card inactive">
+            <span>Inactive</span>
             <strong>
-              {
-                categories.filter(
-                  (category) =>
-                    category.isActive,
-                ).length
-              }
+              {inactiveCategoriesCount}
             </strong>
-          </div>
-
-          <div className="categories-summary-card">
-            <span>Inactive Categories</span>
-
-            <strong>
-              {
-                categories.filter(
-                  (category) =>
-                    !category.isActive,
-                ).length
-              }
-            </strong>
-          </div>
+          </article>
         </section>
 
         <section className="categories-toolbar">
@@ -298,7 +301,7 @@ const Categories = () => {
 
             <input
               type="text"
-              placeholder="Search by category name..."
+              placeholder="Search categories..."
               value={searchTerm}
               onChange={(event) =>
                 setSearchTerm(
@@ -315,6 +318,7 @@ const Categories = () => {
                 event.target.value,
               )
             }
+            aria-label="Filter category status"
           >
             <option value="all">
               All Status
@@ -330,127 +334,208 @@ const Categories = () => {
           </select>
         </section>
 
-        <section className="categories-table-card">
+        <section className="categories-content-card">
           {isLoading ? (
             <div className="categories-empty-state">
-              <h3>
-                Loading categories...
-              </h3>
+              <div className="categories-loader" />
 
-              <p>
-                Please wait for a moment.
-              </p>
+              <h3>Loading categories...</h3>
+
+              <p>Please wait for a moment.</p>
             </div>
           ) : filteredCategories.length ===
             0 ? (
-            <div className="categories-empty-state">
-              <FiFolder />
-
-              <h3>
-                No categories available
-              </h3>
-
-              <p>
-                {categories.length === 0
-                  ? "Create your first category to start adding products."
-                  : "No categories match your search or filter."}
-              </p>
-            </div>
+            renderEmptyState()
           ) : (
-            <div className="categories-table-wrapper">
-              <table className="categories-table">
-                <thead>
-                  <tr>
-                    <th>Category</th>
-                    <th>Description</th>
-                    <th>Status</th>
-                    <th>Created On</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
+            <>
+              <div className="categories-desktop-table">
+                <div className="categories-table-wrapper">
+                  <table className="categories-table">
+                    <thead>
+                      <tr>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Created On</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
 
-                <tbody>
-                  {filteredCategories.map(
-                    (category) => (
-                      <tr key={category._id}>
-                        <td>
-                          <div className="categories-category-info">
-                            <div className="categories-category-icon">
-                              <FiFolder />
-                            </div>
+                    <tbody>
+                      {filteredCategories.map(
+                        (category) => (
+                          <tr
+                            key={category._id}
+                          >
+                            <td>
+                              <div className="categories-category-info">
+                                <div className="categories-category-icon">
+                                  <FiFolder />
+                                </div>
 
+                                <strong>
+                                  {category.name}
+                                </strong>
+                              </div>
+                            </td>
+
+                            <td>
+                              <span className="categories-description">
+                                {category.description ||
+                                  "No description"}
+                              </span>
+                            </td>
+
+                            <td>
+                              <span
+                                className={
+                                  category.isActive
+                                    ? "categories-status-badge active"
+                                    : "categories-status-badge inactive"
+                                }
+                              >
+                                {category.isActive
+                                  ? "Active"
+                                  : "Inactive"}
+                              </span>
+                            </td>
+
+                            <td>
+                              {formatDate(
+                                category.createdAt,
+                              )}
+                            </td>
+
+                            <td>
+                              <div className="categories-actions">
+                                <button
+                                  type="button"
+                                  className="categories-action-btn"
+                                  title="Edit category"
+                                  aria-label={`Edit ${category.name}`}
+                                  onClick={() =>
+                                    handleOpenEditModal(
+                                      category,
+                                    )
+                                  }
+                                >
+                                  <FiEdit2 />
+                                </button>
+
+                                <button
+                                  type="button"
+                                  className="categories-action-btn delete"
+                                  title="Delete category"
+                                  aria-label={`Delete ${category.name}`}
+                                  disabled={
+                                    deletingCategoryId ===
+                                    category._id
+                                  }
+                                  onClick={() =>
+                                    handleDeleteCategory(
+                                      category,
+                                    )
+                                  }
+                                >
+                                  <FiTrash2 />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ),
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div className="categories-mobile-list">
+                {filteredCategories.map(
+                  (category) => (
+                    <article
+                      className="categories-mobile-card"
+                      key={category._id}
+                    >
+                      <div className="categories-mobile-card-header">
+                        <div className="categories-mobile-category">
+                          <div className="categories-category-icon">
+                            <FiFolder />
+                          </div>
+
+                          <div className="categories-mobile-title">
                             <strong>
                               {category.name}
                             </strong>
+
+                            <span>
+                              Created{" "}
+                              {formatDate(
+                                category.createdAt,
+                              )}
+                            </span>
                           </div>
-                        </td>
+                        </div>
 
-                        <td>
-                          <span className="categories-description">
-                            {category.description ||
-                              "No description"}
+                        <span
+                          className={
+                            category.isActive
+                              ? "categories-status-badge active"
+                              : "categories-status-badge inactive"
+                          }
+                        >
+                          {category.isActive
+                            ? "Active"
+                            : "Inactive"}
+                        </span>
+                      </div>
+
+                      <p className="categories-mobile-description">
+                        {category.description ||
+                          "No description added for this category."}
+                      </p>
+
+                      <div className="categories-mobile-actions">
+                        <button
+                          type="button"
+                          className="categories-mobile-edit-btn"
+                          onClick={() =>
+                            handleOpenEditModal(
+                              category,
+                            )
+                          }
+                        >
+                          <FiEdit2 />
+                          <span>Edit</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          className="categories-mobile-delete-btn"
+                          disabled={
+                            deletingCategoryId ===
+                            category._id
+                          }
+                          onClick={() =>
+                            handleDeleteCategory(
+                              category,
+                            )
+                          }
+                        >
+                          <FiTrash2 />
+
+                          <span>
+                            {deletingCategoryId ===
+                            category._id
+                              ? "Deleting..."
+                              : "Delete"}
                           </span>
-                        </td>
-
-                        <td>
-                          <span
-                            className={
-                              category.isActive
-                                ? "categories-status-badge active"
-                                : "categories-status-badge inactive"
-                            }
-                          >
-                            {category.isActive
-                              ? "Active"
-                              : "Inactive"}
-                          </span>
-                        </td>
-
-                        <td>
-                          {formatDate(
-                            category.createdAt,
-                          )}
-                        </td>
-
-                        <td>
-                          <div className="categories-actions">
-                            <button
-                              type="button"
-                              className="categories-action-btn"
-                              title="Edit category"
-                              onClick={() =>
-                                handleOpenEditModal(
-                                  category,
-                                )
-                              }
-                            >
-                              <FiEdit2 />
-                            </button>
-
-                            <button
-                              type="button"
-                              className="categories-action-btn delete"
-                              title="Delete category"
-                              disabled={
-                                deletingCategoryId ===
-                                category._id
-                              }
-                              onClick={() =>
-                                handleDeleteCategory(
-                                  category,
-                                )
-                              }
-                            >
-                              <FiTrash2 />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ),
-                  )}
-                </tbody>
-              </table>
-            </div>
+                        </button>
+                      </div>
+                    </article>
+                  ),
+                )}
+              </div>
+            </>
           )}
         </section>
       </div>

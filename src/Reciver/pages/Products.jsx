@@ -1585,12 +1585,8 @@ const Products = () => {
             {isLoading ? (
               <div className="products-loading">
                 <span className="products-loading-spinner" />
-
                 <h3>Loading products...</h3>
-
-                <p>
-                  Please wait while catalogue data is loading.
-                </p>
+                <p>Please wait while catalogue data is loading.</p>
               </div>
             ) : filteredProducts.length === 0 ? (
               <div className="products-empty-state">
@@ -1630,138 +1626,209 @@ const Products = () => {
                 )}
               </div>
             ) : (
-              <div className="products-table-wrapper">
-                <table className="products-table">
-                  <thead>
-                    <tr>
-                      <th>Product Details</th>
-                      <th>Category</th>
-                      <th>Purchase Price</th>
-                      <th>Selling Price</th>
-                      <th>Stock</th>
-                      <th>Status</th>
-                      <th className="products-actions-heading">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
+              <>
+                <div className="products-desktop-table">
+                  <div className="products-table-wrapper">
+                    <table className="products-table">
+                      <thead>
+                        <tr>
+                          <th>Product Details</th>
+                          <th>Category</th>
+                          <th>Purchase Price</th>
+                          <th>Selling Price</th>
+                          <th>Stock</th>
+                          <th>Status</th>
+                          <th className="products-actions-heading">
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
 
-                  <tbody>
-                    {filteredProducts.map((product) => (
-                      <tr key={product._id}>
-                        <td>
-                          <div className="products-product-info">
-                            <span className="products-product-image-placeholder">
-                              <FiPackage />
-                            </span>
+                      <tbody>
+                        {filteredProducts.map((product) => (
+                          <tr key={product._id}>
+                            <td>
+                              <div className="products-product-info">
+                                <span className="products-product-image-placeholder">
+                                  <FiPackage />
+                                </span>
 
-                            <div className="products-product-details">
-                              <strong className="products-product-name">
-                                {product.name}
-                              </strong>
+                                <div className="products-product-details">
+                                  <strong className="products-product-name">
+                                    {product.name}
+                                  </strong>
 
-                              <span className="products-product-description">
-                                Unit: {product.unit || "Not specified"}
-                                {product.sku
-                                  ? ` · SKU: ${product.sku}`
-                                  : ""}
+                                  <span className="products-product-description">
+                                    Unit: {product.unit || "Not specified"}
+                                    {product.sku
+                                      ? ` · SKU: ${product.sku}`
+                                      : ""}
+                                  </span>
+                                </div>
+                              </div>
+                            </td>
+
+                            <td>
+                              <span className="products-category-name">
+                                {product.category?.name || "Uncategorized"}
                               </span>
-                            </div>
+                            </td>
+
+                            <td>
+                              <span className="products-purchase-price">
+                                {formatPrice(product.purchasePrice)}
+                              </span>
+                            </td>
+
+                            <td>
+                              <strong className="products-price">
+                                {formatPrice(product.price)}
+                              </strong>
+                            </td>
+
+                            <td>
+                              <span className={getStockClassName(product.stock)}>
+                                {getStockLabel(product.stock)}
+                              </span>
+                            </td>
+
+                            <td>
+                              <span
+                                className={
+                                  product.isActive
+                                    ? "products-status-badge active"
+                                    : "products-status-badge inactive"
+                                }
+                              >
+                                <span className="products-status-dot" />
+                                {product.isActive ? "Active" : "Inactive"}
+                              </span>
+                            </td>
+
+                            <td>
+                              <div className="products-actions">
+                                <button
+                                  type="button"
+                                  className="products-action-btn"
+                                  title="Edit product"
+                                  onClick={() => handleOpenEditProduct(product)}
+                                >
+                                  <FiEdit2 />
+                                </button>
+
+                                <button
+                                  type="button"
+                                  className="products-action-btn delete"
+                                  title="Delete product"
+                                  disabled={deletingProductId === product._id}
+                                  onClick={() => handleDeleteProduct(product)}
+                                >
+                                  <FiTrash2 />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div className="products-mobile-list">
+                  {filteredProducts.map((product) => (
+                    <article className="products-mobile-card" key={product._id}>
+                      <div className="products-mobile-card-top">
+                        <div className="products-mobile-main-info">
+                          <span className="products-mobile-product-icon">
+                            <FiPackage />
+                          </span>
+
+                          <div>
+                            <strong>{product.name}</strong>
+                            <span>
+                              {product.category?.name || "Uncategorized"}
+                            </span>
                           </div>
-                        </td>
+                        </div>
 
-                        <td>
-                          <span className="products-category-name">
-                            {product.category?.name ||
-                              "Uncategorized"}
-                          </span>
-                        </td>
+                        <span
+                          className={
+                            product.isActive
+                              ? "products-status-badge active"
+                              : "products-status-badge inactive"
+                          }
+                        >
+                          <span className="products-status-dot" />
+                          {product.isActive ? "Active" : "Inactive"}
+                        </span>
+                      </div>
 
-                        <td>
-                          <span className="products-purchase-price">
-                            {formatPrice(
-                              product.purchasePrice,
-                            )}
-                          </span>
-                        </td>
+                      <div className="products-mobile-quick-row">
+                        <div>
+                          <span>Selling Price</span>
+                          <strong>{formatPrice(product.price)}</strong>
+                        </div>
 
-                        <td>
-                          <strong className="products-price">
-                            {formatPrice(product.price)}
-                          </strong>
-                        </td>
+                        <div>
+                          <span>Purchase Price</span>
+                          <strong>{formatPrice(product.purchasePrice)}</strong>
+                        </div>
+                      </div>
 
-                        <td>
-                          <span
-                            className={getStockClassName(
-                              product.stock,
-                            )}
-                          >
-                            {getStockLabel(product.stock)}
-                          </span>
-                        </td>
+                      <div className="products-mobile-detail-row">
+                        <span>Unit</span>
+                        <strong>{product.unit || "—"}</strong>
+                      </div>
 
-                        <td>
-                          <span
-                            className={
-                              product.isActive
-                                ? "products-status-badge active"
-                                : "products-status-badge inactive"
-                            }
-                          >
-                            <span className="products-status-dot" />
+                      <div className="products-mobile-detail-row">
+                        <span>SKU</span>
+                        <strong>{product.sku || "—"}</strong>
+                      </div>
 
-                            {product.isActive
-                              ? "Active"
-                              : "Inactive"}
-                          </span>
-                        </td>
+                      <div className="products-mobile-detail-row">
+                        <span>Stock</span>
+                        <span className={getStockClassName(product.stock)}>
+                          {getStockLabel(product.stock)}
+                        </span>
+                      </div>
 
-                        <td>
-                          <div className="products-actions">
-                            <button
-                              type="button"
-                              className="products-action-btn"
-                              title="Edit product"
-                              onClick={() =>
-                                handleOpenEditProduct(product)
-                              }
-                            >
-                              <FiEdit2 />
-                            </button>
+                      <div className="products-mobile-actions">
+                        <button
+                          type="button"
+                          className="products-mobile-edit"
+                          onClick={() => handleOpenEditProduct(product)}
+                        >
+                          <FiEdit2 />
+                          Edit
+                        </button>
 
-                            <button
-                              type="button"
-                              className="products-action-btn delete"
-                              title="Delete product"
-                              disabled={
-                                deletingProductId === product._id
-                              }
-                              onClick={() =>
-                                handleDeleteProduct(product)
-                              }
-                            >
-                              <FiTrash2 />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                        <button
+                          type="button"
+                          className="products-mobile-delete"
+                          disabled={deletingProductId === product._id}
+                          onClick={() => handleDeleteProduct(product)}
+                        >
+                          <FiTrash2 />
+                          {deletingProductId === product._id
+                            ? "Deleting..."
+                            : "Delete"}
+                        </button>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </>
             )}
 
             {!isLoading && filteredProducts.length > 0 && (
               <div className="products-table-footer">
                 <span>
-                  Showing {filteredProducts.length} of{" "}
-                  {products.length} products
+                  Showing {filteredProducts.length} of {products.length} products
                 </span>
 
                 <span>
-                  {productStats.lowStock} low stock ·{" "}
-                  {productStats.outOfStock} out of stock
+                  {productStats.lowStock} low stock · {productStats.outOfStock}{" "}
+                  out of stock
                 </span>
               </div>
             )}
