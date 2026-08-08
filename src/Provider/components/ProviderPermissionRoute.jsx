@@ -3,7 +3,7 @@ import { Navigate, Outlet } from "react-router-dom";
 import {
   getProviderUser,
   hasProviderPermission,
-} from "../utils/providerPermissions";
+} from "../utils/ProviderPermission";
 
 const ProviderPermissionRoute = ({ permission }) => {
   const providerUser = getProviderUser();

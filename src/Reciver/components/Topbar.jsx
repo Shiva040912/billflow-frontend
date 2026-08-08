@@ -1,15 +1,24 @@
 import {
+  useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
-import { useNavigate } from "react-router-dom";
+
+import {
+  useNavigate,
+} from "react-router-dom";
+
+import toast from "react-hot-toast";
+
 import {
   FiAlertTriangle,
   FiBell,
   FiBriefcase,
+  FiCheckCircle,
   FiChevronDown,
+  FiHelpCircle,
   FiLogOut,
   FiMenu,
   FiSettings,
@@ -19,25 +28,39 @@ import {
 import api from "../services/axios";
 import BusinessAiChat from "../pages/BusinessAiChat";
 
-const Topbar = ({ onMenuClick }) => {
-  const navigate = useNavigate();
+const Topbar = ({
+  onMenuClick,
+}) => {
+  const navigate =
+    useNavigate();
 
-  const notificationRef = useRef(null);
-  const profileRef = useRef(null);
+  const notificationRef =
+    useRef(null);
 
-  const [companyName, setCompanyName] =
-    useState("Loading...");
+  const profileRef =
+    useRef(null);
+
+  const [
+    companyName,
+    setCompanyName,
+  ] = useState(
+    "Loading..."
+  );
 
   const [
     isNotificationOpen,
     setIsNotificationOpen,
   ] = useState(false);
 
-  const [isProfileOpen, setIsProfileOpen] =
-    useState(false);
+  const [
+    isProfileOpen,
+    setIsProfileOpen,
+  ] = useState(false);
 
-  const [notifications, setNotifications] =
-    useState([]);
+  const [
+    notifications,
+    setNotifications,
+  ] = useState([]);
 
   const [
     isNotificationsLoading,
@@ -45,281 +68,485 @@ const Topbar = ({ onMenuClick }) => {
   ] = useState(false);
 
   const user = useMemo(() => {
-    const storedUser = localStorage.getItem(
-      "billFlowUser",
-    );
+    const storedUser =
+      localStorage.getItem(
+        "billFlowUser"
+      );
 
     if (!storedUser) {
       return null;
     }
 
     try {
-      return JSON.parse(storedUser);
+      return JSON.parse(
+        storedUser
+      );
     } catch {
       return null;
     }
   }, []);
 
-  const userName = user?.name || "Owner";
+  const userName =
+    user?.name || "Owner";
 
-  const userRole = user?.role
-    ? user.role
-        .replace(/_/g, " ")
-        .replace(/\b\w/g, (character) =>
-          character.toUpperCase(),
-        )
-    : "Business Owner";
+  const userRole =
+    user?.role
+      ? user.role
+          .replace(/_/g, " ")
+          .replace(
+            /\b\w/g,
+            (character) =>
+              character.toUpperCase()
+          )
+      : "Business Owner";
 
-  const initials = userName
-    .split(" ")
-    .filter(Boolean)
-    .map((word) => word[0])
-    .join("")
-    .substring(0, 2)
-    .toUpperCase();
+  const initials =
+    userName
+      .split(" ")
+      .filter(Boolean)
+      .map(
+        (word) => word[0]
+      )
+      .join("")
+      .substring(0, 2)
+      .toUpperCase();
+
+  const clearAuthentication =
+    useCallback(() => {
+      localStorage.removeItem(
+        "billFlowAccessToken"
+      );
+
+      localStorage.removeItem(
+        "billFlowUser"
+      );
+
+      localStorage.removeItem(
+        "billFlowCompany"
+      );
+
+      sessionStorage.removeItem(
+        "billFlowNotificationPopupShown"
+      );
+    }, []);
 
   useEffect(() => {
-    const fetchCompanyName = async () => {
-      try {
-        const response = await api.get(
-          "/company/settings",
-        );
+    const fetchCompanyName =
+      async () => {
+        try {
+          const response =
+            await api.get(
+              "/company/settings"
+            );
 
-        const fetchedCompanyName =
-          response.data?.companyName || "Company";
+          const fetchedCompanyName =
+            response.data
+              ?.companyName ||
+            "Company";
 
-        setCompanyName(fetchedCompanyName);
-
-        localStorage.setItem(
-          "billFlowCompany",
-          JSON.stringify(response.data),
-        );
-      } catch (error) {
-        console.error(
-          "Company name fetch error:",
-          error,
-        );
-
-        if (error.response?.status === 401) {
-          localStorage.removeItem(
-            "billFlowAccessToken",
+          setCompanyName(
+            fetchedCompanyName
           );
 
-          localStorage.removeItem(
-            "billFlowUser",
-          );
-
-          localStorage.removeItem(
+          localStorage.setItem(
             "billFlowCompany",
+            JSON.stringify(
+              response.data
+            )
+          );
+        } catch (error) {
+          console.error(
+            "Company name fetch error:",
+            error
           );
 
-          navigate("/login", {
-            replace: true,
-          });
+          if (
+            error.response
+              ?.status === 401
+          ) {
+            clearAuthentication();
 
-          return;
-        }
-
-        const storedCompany =
-          localStorage.getItem(
-            "billFlowCompany",
-          );
-
-        if (storedCompany) {
-          try {
-            const parsedCompany =
-              JSON.parse(storedCompany);
-
-            setCompanyName(
-              parsedCompany?.companyName ||
-                "Company",
+            navigate(
+              "/login",
+              {
+                replace: true,
+              }
             );
 
             return;
-          } catch {
-            setCompanyName("Company");
-            return;
           }
-        }
 
-        setCompanyName("Company");
-      }
-    };
+          const storedCompany =
+            localStorage.getItem(
+              "billFlowCompany"
+            );
+
+          if (storedCompany) {
+            try {
+              const parsedCompany =
+                JSON.parse(
+                  storedCompany
+                );
+
+              setCompanyName(
+                parsedCompany
+                  ?.companyName ||
+                  "Company"
+              );
+
+              return;
+            } catch {
+              setCompanyName(
+                "Company"
+              );
+
+              return;
+            }
+          }
+
+          setCompanyName(
+            "Company"
+          );
+        }
+      };
 
     fetchCompanyName();
-  }, [navigate]);
+  }, [
+    clearAuthentication,
+    navigate,
+  ]);
 
   useEffect(() => {
-    const handleOutsideClick = (event) => {
-      if (
-        notificationRef.current &&
-        !notificationRef.current.contains(
-          event.target,
-        )
-      ) {
-        setIsNotificationOpen(false);
-      }
+    const handleOutsideClick =
+      (event) => {
+        if (
+          notificationRef.current &&
+          !notificationRef.current.contains(
+            event.target
+          )
+        ) {
+          setIsNotificationOpen(
+            false
+          );
+        }
 
-      if (
-        profileRef.current &&
-        !profileRef.current.contains(
-          event.target,
-        )
-      ) {
-        setIsProfileOpen(false);
-      }
-    };
+        if (
+          profileRef.current &&
+          !profileRef.current.contains(
+            event.target
+          )
+        ) {
+          setIsProfileOpen(
+            false
+          );
+        }
+      };
 
     document.addEventListener(
       "mousedown",
-      handleOutsideClick,
+      handleOutsideClick
     );
 
     return () => {
       document.removeEventListener(
         "mousedown",
-        handleOutsideClick,
+        handleOutsideClick
       );
     };
   }, []);
 
-  const fetchNotifications = async () => {
-    try {
-      setIsNotificationsLoading(true);
+  const showNotificationPopup =
+    useCallback(
+      (
+        notificationItems
+      ) => {
+        if (
+          notificationItems.length ===
+          0
+        ) {
+          return;
+        }
 
-      const response = await api.get(
-        "/dashboard/summary",
-      );
+        const hasShownNotificationPopup =
+          sessionStorage.getItem(
+            "billFlowNotificationPopupShown"
+          );
 
-      const dashboardData =
-        response.data || {};
+        if (
+          hasShownNotificationPopup
+        ) {
+          return;
+        }
 
-      const notificationItems = [];
+        const firstNotification =
+          notificationItems[0];
 
-      if (
-        dashboardData.lowStockProducts?.length >
-        0
-      ) {
-        dashboardData.lowStockProducts.forEach(
-          (product) => {
-            notificationItems.push({
-              id:
-                product.id ||
-                product._id,
+        toast(
+          (toastItem) => (
+            <button
+              type="button"
+              className="notification-toast-content"
+              onClick={() => {
+                toast.dismiss(
+                  toastItem.id
+                );
 
-              type: "warning",
+                navigate(
+                  firstNotification.route
+                );
+              }}
+            >
+              <span className="notification-toast-icon">
+                <FiBell />
+              </span>
 
-              title: "Low Stock Alert",
+              <span className="notification-toast-text">
+                <strong>
+                  {
+                    firstNotification.title
+                  }
+                </strong>
 
-              message: `${product.name} has only ${
-                product.stock ?? 0
-              } stock left.`,
+                <small>
+                  {
+                    firstNotification.message
+                  }
+                </small>
+              </span>
+            </button>
+          ),
+          {
+            id:
+              "billflow-business-notification",
 
-              route: "/inventory",
-            });
-          },
-        );
-      }
+            duration: 5000,
 
-      if (
-        Number(
-          dashboardData.todaySales || 0,
-        ) > 0
-      ) {
-        notificationItems.push({
-          id: "today-sales",
+            position:
+              "top-right",
 
-          type: "success",
-
-          title: "Today's Sales",
-
-          message: `₹${Number(
-            dashboardData.todaySales,
-          ).toLocaleString(
-            "en-IN",
-          )} sales recorded today.`,
-
-          route: "/reports",
-        });
-      }
-
-      setNotifications(notificationItems);
-    } catch (error) {
-      console.error(
-        "Notification fetch error:",
-        error,
-      );
-
-      if (error.response?.status === 401) {
-        localStorage.removeItem(
-          "billFlowAccessToken",
-        );
-
-        localStorage.removeItem(
-          "billFlowUser",
+            className:
+              "notification-toast",
+          }
         );
 
-        localStorage.removeItem(
-          "billFlowCompany",
+        sessionStorage.setItem(
+          "billFlowNotificationPopupShown",
+          "true"
         );
-
-        navigate("/login", {
-          replace: true,
-        });
-
-        return;
-      }
-
-      setNotifications([]);
-    } finally {
-      setIsNotificationsLoading(false);
-    }
-  };
-
-  const handleNotificationToggle = () => {
-    const nextState =
-      !isNotificationOpen;
-
-    setIsNotificationOpen(nextState);
-    setIsProfileOpen(false);
-
-    if (nextState) {
-      fetchNotifications();
-    }
-  };
-
-  const handleProfileToggle = () => {
-    setIsProfileOpen(
-      (currentState) => !currentState,
+      },
+      [navigate]
     );
 
-    setIsNotificationOpen(false);
-  };
+  const fetchNotifications =
+    useCallback(
+      async ({
+        showPopup = false,
+      } = {}) => {
+        try {
+          setIsNotificationsLoading(
+            true
+          );
 
-  const handleNotificationClick = (
-    notification,
-  ) => {
-    setIsNotificationOpen(false);
+          const response =
+            await api.get(
+              "/dashboard/summary"
+            );
 
-    navigate(notification.route);
-  };
+          const dashboardData =
+            response.data || {};
+
+          const notificationItems =
+            [];
+
+          if (
+            dashboardData
+              .lowStockProducts
+              ?.length > 0
+          ) {
+            dashboardData
+              .lowStockProducts
+              .forEach(
+                (product) => {
+                  notificationItems.push(
+                    {
+                      id:
+                        product.id ||
+                        product._id,
+
+                      type:
+                        "warning",
+
+                      title:
+                        "Low Stock Alert",
+
+                      message:
+                        `${product.name} has only ${
+                          product.stock ??
+                          0
+                        } stock left.`,
+
+                      route:
+                        "/inventory",
+                    }
+                  );
+                }
+              );
+          }
+
+          if (
+            Number(
+              dashboardData
+                .todaySales || 0
+            ) > 0
+          ) {
+            notificationItems.push(
+              {
+                id:
+                  "today-sales",
+
+                type:
+                  "success",
+
+                title:
+                  "Today's Sales",
+
+                message:
+                  `₹${Number(
+                    dashboardData.todaySales
+                  ).toLocaleString(
+                    "en-IN"
+                  )} sales recorded today.`,
+
+                route:
+                  "/reports",
+              }
+            );
+          }
+
+          setNotifications(
+            notificationItems
+          );
+
+          if (showPopup) {
+            showNotificationPopup(
+              notificationItems
+            );
+          }
+        } catch (error) {
+          console.error(
+            "Notification fetch error:",
+            error
+          );
+
+          if (
+            error.response
+              ?.status === 401
+          ) {
+            clearAuthentication();
+
+            navigate(
+              "/login",
+              {
+                replace: true,
+              }
+            );
+
+            return;
+          }
+
+          setNotifications([]);
+        } finally {
+          setIsNotificationsLoading(
+            false
+          );
+        }
+      },
+      [
+        clearAuthentication,
+        navigate,
+        showNotificationPopup,
+      ]
+    );
+
+  useEffect(() => {
+    fetchNotifications({
+      showPopup: true,
+    });
+  }, [
+    fetchNotifications,
+  ]);
+
+  const handleNotificationToggle =
+    () => {
+      const nextState =
+        !isNotificationOpen;
+
+      setIsNotificationOpen(
+        nextState
+      );
+
+      setIsProfileOpen(
+        false
+      );
+
+      if (nextState) {
+        fetchNotifications({
+          showPopup: false,
+        });
+      }
+    };
+
+  const handleProfileToggle =
+    () => {
+      setIsProfileOpen(
+        (
+          currentState
+        ) =>
+          !currentState
+      );
+
+      setIsNotificationOpen(
+        false
+      );
+    };
+
+  const handleContactClick =
+    () => {
+      setIsNotificationOpen(
+        false
+      );
+
+      setIsProfileOpen(
+        false
+      );
+
+      navigate(
+        "/contact"
+      );
+    };
+
+  const handleNotificationClick =
+    (notification) => {
+      setIsNotificationOpen(
+        false
+      );
+
+      navigate(
+        notification.route
+      );
+    };
 
   const handleLogout = () => {
-    localStorage.removeItem(
-      "billFlowAccessToken",
-    );
+    clearAuthentication();
 
-    localStorage.removeItem(
-      "billFlowUser",
-    );
+    toast.dismiss();
 
-    localStorage.removeItem(
-      "billFlowCompany",
+    navigate(
+      "/",
+      {
+        replace: true,
+      }
     );
-
-    navigate("/", {
-      replace: true,
-    });
   };
 
   return (
@@ -329,7 +556,9 @@ const Topbar = ({ onMenuClick }) => {
           <button
             type="button"
             className="topbar-menu-btn"
-            onClick={onMenuClick}
+            onClick={
+              onMenuClick
+            }
             aria-label="Open sidebar"
           >
             <FiMenu />
@@ -341,29 +570,55 @@ const Topbar = ({ onMenuClick }) => {
             </div>
 
             <div className="topbar-company-details">
-              <span>Current Business</span>
+              <span>
+                Current Business
+              </span>
 
-              <strong>{companyName}</strong>
+              <strong>
+                {
+                  companyName
+                }
+              </strong>
             </div>
           </div>
         </div>
 
         <div className="topbar-actions">
+          <button
+            type="button"
+            className="topbar-icon-btn"
+            onClick={
+              handleContactClick
+            }
+            aria-label="Contact Admin"
+            title="Contact Admin"
+          >
+            <FiHelpCircle />
+          </button>
+
           <div
             className="topbar-dropdown-wrapper"
-            ref={notificationRef}
+            ref={
+              notificationRef
+            }
           >
             <button
               type="button"
-              className="topbar-icon-btn"
+              className={`topbar-icon-btn ${
+                isNotificationOpen
+                  ? "active"
+                  : ""
+              }`}
               onClick={
                 handleNotificationToggle
               }
               aria-label="Notifications"
+              title="Notifications"
             >
               <FiBell />
 
-              {notifications.length > 0 && (
+              {notifications.length >
+                0 && (
                 <span className="notification-dot" />
               )}
             </button>
@@ -377,7 +632,7 @@ const Topbar = ({ onMenuClick }) => {
                     </strong>
 
                     <span>
-                      Stock and business alerts
+                      Business alerts
                     </span>
                   </div>
 
@@ -387,28 +642,44 @@ const Topbar = ({ onMenuClick }) => {
                 <div className="notification-list">
                   {isNotificationsLoading ? (
                     <div className="topbar-dropdown-empty">
+                      <span className="topbar-notification-loader" />
+
+                      <strong>
+                        Checking alerts
+                      </strong>
+
                       <span>
-                        Loading notifications...
+                        Loading latest
+                        notifications...
                       </span>
                     </div>
                   ) : notifications.length >
                     0 ? (
                     notifications.map(
-                      (notification) => (
+                      (
+                        notification
+                      ) => (
                         <button
-                          key={notification.id}
+                          key={
+                            notification.id
+                          }
                           type="button"
                           className="notification-item"
                           onClick={() =>
                             handleNotificationClick(
-                              notification,
+                              notification
                             )
                           }
                         >
                           <span
                             className={`notification-item-icon ${notification.type}`}
                           >
-                            <FiAlertTriangle />
+                            {notification.type ===
+                            "success" ? (
+                              <FiCheckCircle />
+                            ) : (
+                              <FiAlertTriangle />
+                            )}
                           </span>
 
                           <span className="notification-item-content">
@@ -425,18 +696,19 @@ const Topbar = ({ onMenuClick }) => {
                             </small>
                           </span>
                         </button>
-                      ),
+                      )
                     )
                   ) : (
                     <div className="topbar-dropdown-empty">
-                      <FiBell />
+                      <FiCheckCircle />
 
                       <strong>
-                        No notifications
+                        All caught up
                       </strong>
 
                       <span>
-                        Everything looks good.
+                        Your business
+                        looks good.
                       </span>
                     </div>
                   )}
@@ -447,21 +719,40 @@ const Topbar = ({ onMenuClick }) => {
 
           <div
             className="topbar-dropdown-wrapper"
-            ref={profileRef}
+            ref={
+              profileRef
+            }
           >
             <button
               type="button"
-              className="topbar-profile"
-              onClick={handleProfileToggle}
+              className={`topbar-profile ${
+                isProfileOpen
+                  ? "active"
+                  : ""
+              }`}
+              onClick={
+                handleProfileToggle
+              }
             >
               <div className="profile-avatar">
-                {initials || "O"}
+                {
+                  initials ||
+                  "O"
+                }
               </div>
 
               <div className="profile-details">
-                <strong>{userName}</strong>
+                <strong>
+                  {
+                    userName
+                  }
+                </strong>
 
-                <span>{userRole}</span>
+                <span>
+                  {
+                    userRole
+                  }
+                </span>
               </div>
 
               <FiChevronDown
@@ -477,14 +768,24 @@ const Topbar = ({ onMenuClick }) => {
               <div className="topbar-dropdown profile-dropdown">
                 <div className="profile-dropdown-user">
                   <div className="profile-avatar large">
-                    {initials || "O"}
+                    {
+                      initials ||
+                      "O"
+                    }
                   </div>
 
                   <div>
-                    <strong>{userName}</strong>
+                    <strong>
+                      {
+                        userName
+                      }
+                    </strong>
 
                     <span>
-                      {user?.email || ""}
+                      {
+                        user?.email ||
+                        ""
+                      }
                     </span>
                   </div>
                 </div>
@@ -493,9 +794,13 @@ const Topbar = ({ onMenuClick }) => {
                   <button
                     type="button"
                     onClick={() => {
-                      setIsProfileOpen(false);
+                      setIsProfileOpen(
+                        false
+                      );
 
-                      navigate("/settings");
+                      navigate(
+                        "/settings"
+                      );
                     }}
                   >
                     <FiUser />
@@ -505,9 +810,13 @@ const Topbar = ({ onMenuClick }) => {
                   <button
                     type="button"
                     onClick={() => {
-                      setIsProfileOpen(false);
+                      setIsProfileOpen(
+                        false
+                      );
 
-                      navigate("/settings");
+                      navigate(
+                        "/settings"
+                      );
                     }}
                   >
                     <FiSettings />
@@ -518,7 +827,9 @@ const Topbar = ({ onMenuClick }) => {
                 <div className="profile-dropdown-footer">
                   <button
                     type="button"
-                    onClick={handleLogout}
+                    onClick={
+                      handleLogout
+                    }
                   >
                     <FiLogOut />
                     Logout

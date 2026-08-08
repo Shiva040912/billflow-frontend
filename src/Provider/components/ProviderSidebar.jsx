@@ -1,14 +1,14 @@
 import { NavLink } from "react-router-dom";
+
 import {
   FiBarChart2,
   FiBriefcase,
   FiCreditCard,
   FiHome,
   FiLayers,
-  FiSettings,
   FiUsers,
-  FiUserCheck,
   FiX,
+  FiZap,
 } from "react-icons/fi";
 
 import {
@@ -42,12 +42,6 @@ const menuItems = [
     icon: <FiLayers />,
   },
   {
-    name: "Subscriptions",
-    path: "/provider/subscriptions",
-    permission: "subscriptions",
-    icon: <FiUserCheck />,
-  },
-  {
     name: "Payments",
     path: "/provider/payments",
     permission: "payments",
@@ -59,12 +53,6 @@ const menuItems = [
     permission: "reports",
     icon: <FiBarChart2 />,
   },
-  {
-    name: "Settings",
-    path: "/provider/settings",
-    permission: "settings",
-    icon: <FiSettings />,
-  },
 ];
 
 const ProviderSidebar = ({ isSidebarOpen, closeSidebar }) => {
@@ -72,7 +60,7 @@ const ProviderSidebar = ({ isSidebarOpen, closeSidebar }) => {
   const providerRole = providerUser?.role;
 
   const allowedMenuItems = menuItems.filter((item) =>
-    hasProviderPermission(providerRole, item.permission),
+    hasProviderPermission(providerRole, item.permission)
   );
 
   return (
@@ -81,10 +69,16 @@ const ProviderSidebar = ({ isSidebarOpen, closeSidebar }) => {
         isSidebarOpen ? "provider-sidebar-open" : ""
       }`}
     >
-      <div className="provider-sidebar-header">
-        <div>
-          <h2>BillFlow</h2>
-          <span>Provider Admin</span>
+      <div className="provider-sidebar-top">
+        <div className="provider-brand">
+          <div className="provider-brand-mark">
+            <FiZap />
+          </div>
+
+          <div className="provider-brand-text">
+            <h2>BillFlow</h2>
+            <span>Provider Console</span>
+          </div>
         </div>
 
         <button
@@ -97,23 +91,30 @@ const ProviderSidebar = ({ isSidebarOpen, closeSidebar }) => {
         </button>
       </div>
 
-      <nav className="provider-sidebar-nav">
-        {allowedMenuItems.map((item) => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            className={({ isActive }) =>
-              isActive
-                ? "provider-sidebar-link active"
-                : "provider-sidebar-link"
-            }
-            onClick={closeSidebar}
-          >
-            {item.icon}
-            <span>{item.name}</span>
-          </NavLink>
-        ))}
-      </nav>
+      <div className="provider-sidebar-content">
+        <p className="provider-nav-label">Workspace</p>
+
+        <nav className="provider-sidebar-nav">
+          {allowedMenuItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) =>
+                isActive
+                  ? "provider-sidebar-link active"
+                  : "provider-sidebar-link"
+              }
+              onClick={closeSidebar}
+            >
+              <span className="provider-sidebar-icon">{item.icon}</span>
+
+              <span className="provider-sidebar-name">{item.name}</span>
+
+              <span className="provider-active-marker" />
+            </NavLink>
+          ))}
+        </nav>
+      </div>
     </aside>
   );
 };

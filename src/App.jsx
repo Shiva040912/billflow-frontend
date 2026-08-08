@@ -1,4 +1,8 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+} from "react-router-dom";
 
 import DashboardLayout from "./Reciver/layouts/DashboardLayout";
 import ProtectedRoute from "./Reciver/components/ProtectedRoute";
@@ -17,30 +21,56 @@ import Suppliers from "./Reciver/pages/Suppliers";
 import Inventory from "./Reciver/pages/Inventory";
 import Sales from "./Reciver/pages/Sales";
 import Report from "./Reciver/pages/Report";
+import Contact from "./Reciver/pages/Contact";
 import Settings from "./Reciver/pages/Settings";
+import Employees from "./Reciver/pages/Employee";
 
 import ProviderRoutes from "./Provider/routes/ProviderRoutes";
+import ProviderProtectedRoute from "./Provider/components/providerProtectedRoute";
+import ProviderLayout from "./Provider/layout/ProviderLayout";
+import Support from "./Provider/pages/Supports";
 
 const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Receiver Public Routes */}
-        <Route path="/" element={<Home />} />
+        
 
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/"
+          element={<Home />}
+        />
 
-        <Route path="/create-company" element={<CreateCompany />} />
+        <Route
+          path="/login"
+          element={<Login />}
+        />
 
-        <Route path="/choose-plan" element={<ChoosePlan />} />
+        <Route
+          path="/create-company"
+          element={
+            <CreateCompany />
+          }
+        />
 
-        <Route path="/payment" element={<Payment />} />
+        <Route
+          path="/choose-plan"
+          element={
+            <ChoosePlan />
+          }
+        />
 
-        {/* Receiver Protected Routes */}
+        <Route
+          path="/payment"
+          element={<Payment />}
+        />
+
+       
+
         <Route
           path="/dashboard"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute permission="dashboard">
               <DashboardLayout>
                 <Dashboard />
               </DashboardLayout>
@@ -51,7 +81,7 @@ const App = () => {
         <Route
           path="/products"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute permission="products">
               <DashboardLayout>
                 <Products />
               </DashboardLayout>
@@ -62,7 +92,7 @@ const App = () => {
         <Route
           path="/categories"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute permission="categories">
               <DashboardLayout>
                 <Categories />
               </DashboardLayout>
@@ -73,9 +103,21 @@ const App = () => {
         <Route
           path="/customers"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute permission="customers">
               <DashboardLayout>
                 <Customers />
+              </DashboardLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Owner only */}
+        <Route
+          path="/employees"
+          element={
+            <ProtectedRoute permission="employees">
+              <DashboardLayout>
+                <Employees />
               </DashboardLayout>
             </ProtectedRoute>
           }
@@ -84,7 +126,7 @@ const App = () => {
         <Route
           path="/billing"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute permission="billing">
               <Billing />
             </ProtectedRoute>
           }
@@ -93,7 +135,7 @@ const App = () => {
         <Route
           path="/suppliers"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute permission="suppliers">
               <DashboardLayout>
                 <Suppliers />
               </DashboardLayout>
@@ -104,7 +146,7 @@ const App = () => {
         <Route
           path="/inventory"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute permission="inventory">
               <DashboardLayout>
                 <Inventory />
               </DashboardLayout>
@@ -115,7 +157,7 @@ const App = () => {
         <Route
           path="/sales"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute permission="sales">
               <DashboardLayout>
                 <Sales />
               </DashboardLayout>
@@ -126,7 +168,7 @@ const App = () => {
         <Route
           path="/reports"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute permission="reports">
               <DashboardLayout>
                 <Report />
               </DashboardLayout>
@@ -134,10 +176,23 @@ const App = () => {
           }
         />
 
+        
+        <Route
+          path="/contact"
+          element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <Contact />
+              </DashboardLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        
         <Route
           path="/settings"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute permission="settings">
               <DashboardLayout>
                 <Settings />
               </DashboardLayout>
@@ -145,8 +200,33 @@ const App = () => {
           }
         />
 
-        {/* Provider Routes */}
-        <Route path="/provider/*" element={<ProviderRoutes />} />
+       
+
+        <Route
+          element={
+            <ProviderProtectedRoute />
+          }
+        >
+          <Route
+            element={
+              <ProviderLayout />
+            }
+          >
+            <Route
+              path="/provider/support"
+              element={<Support />}
+            />
+          </Route>
+        </Route>
+
+       
+
+        <Route
+          path="/provider/*"
+          element={
+            <ProviderRoutes />
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

@@ -1,0 +1,1904 @@
+/* companies.css */
+
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+.provider-companies-page {
+  width: 100%;
+  min-width: 0;
+
+  font-family: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+
+  color: #18181b;
+}
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+.provider-companies-header {
+  margin-bottom: 24px;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 22px;
+}
+
+.provider-companies-header > div {
+  min-width: 0;
+}
+
+.provider-companies-eyebrow {
+  margin: 0 0 6px;
+
+  color: #8b5cf6;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.provider-companies-header h1 {
+  margin: 0;
+
+  color: #18181b;
+
+  font-size: 28px;
+  font-weight: 600;
+
+  line-height: 1.15;
+
+  letter-spacing: -0.045em;
+}
+
+.provider-companies-header > div > p:last-child {
+  max-width: 560px;
+
+  margin: 7px 0 0;
+
+  color: #71717a;
+
+  font-size: 12px;
+  font-weight: 400;
+
+  line-height: 1.5;
+}
+
+/* =========================================================
+   REFRESH BUTTON
+========================================================= */
+
+.provider-companies-refresh-btn {
+  height: 38px;
+
+  padding: 0 13px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  flex-shrink: 0;
+
+  border: 1px solid #dedddb;
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  color: #3f3f46;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.provider-companies-refresh-btn:hover:not(:disabled) {
+  background: #fafafa;
+
+  border-color: #c9c7c4;
+
+  color: #18181b;
+}
+
+.provider-companies-refresh-btn:disabled {
+  opacity: 0.55;
+
+  cursor: not-allowed;
+}
+
+.spinning {
+  animation: provider-company-spin 0.75s linear infinite;
+}
+
+@keyframes provider-company-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   SUMMARY
+========================================================= */
+
+.provider-companies-summary-grid {
+  margin-bottom: 18px;
+
+  display: grid;
+
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+
+  gap: 10px;
+}
+
+.provider-company-summary-card {
+  position: relative;
+
+  min-width: 0;
+  min-height: 112px;
+
+  padding: 15px;
+
+  display: flex;
+  align-items: flex-start;
+
+  gap: 11px;
+
+  overflow: hidden;
+
+  border: 1px solid #e7e5e4;
+  border-radius: 11px;
+
+  background: #ffffff;
+
+  transition:
+    border-color 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.provider-company-summary-card:hover {
+  transform: translateY(-2px);
+
+  border-color: #d6d3d1;
+
+  box-shadow: 0 7px 20px rgba(24, 24, 27, 0.045);
+}
+
+.provider-company-summary-card > div {
+  min-width: 0;
+}
+
+/* =========================================================
+   SUMMARY ICON
+========================================================= */
+
+.provider-company-summary-icon {
+  width: 33px;
+  height: 33px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border-radius: 8px;
+
+  font-size: 15px;
+}
+
+.provider-company-summary-icon.total {
+  background: #f1f0ff;
+
+  color: #635bff;
+}
+
+.provider-company-summary-icon.active {
+  background: #f0fdf4;
+
+  color: #16a34a;
+}
+
+.provider-company-summary-icon.suspended {
+  background: #fff7ed;
+
+  color: #ea580c;
+}
+
+.provider-company-summary-icon.expired {
+  background: #fef2f2;
+
+  color: #dc2626;
+}
+
+.provider-company-summary-icon.revenue {
+  background: #fffbeb;
+
+  color: #d97706;
+}
+
+/* =========================================================
+   SUMMARY CONTENT
+========================================================= */
+
+.provider-company-summary-card p,
+.provider-company-summary-card strong,
+.provider-company-summary-card small {
+  display: block;
+}
+
+.provider-company-summary-card p {
+  margin: 0 0 7px;
+
+  color: #71717a;
+
+  font-size: 9px;
+  font-weight: 500;
+
+  white-space: nowrap;
+}
+
+.provider-company-summary-card strong {
+  overflow: hidden;
+
+  color: #18181b;
+
+  font-size: 19px;
+  font-weight: 600;
+
+  line-height: 1.1;
+
+  letter-spacing: -0.035em;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.provider-company-summary-card small {
+  margin-top: 5px;
+
+  color: #a1a1aa;
+
+  font-size: 8px;
+  font-weight: 400;
+}
+
+/* =========================================================
+   MAIN WORKSPACE
+========================================================= */
+
+.provider-companies-workspace {
+  overflow: hidden;
+
+  border: 1px solid #e7e5e4;
+  border-radius: 12px;
+
+  background: #ffffff;
+}
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.provider-companies-toolbar {
+  padding: 13px;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(250px, 1fr)
+    155px
+    165px
+    145px
+    auto;
+
+  align-items: center;
+
+  gap: 8px;
+
+  border-bottom: 1px solid #eceae8;
+
+  background: #ffffff;
+}
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.provider-companies-search {
+  position: relative;
+
+  min-width: 0;
+}
+
+.provider-companies-search > svg {
+  position: absolute;
+
+  top: 50%;
+  left: 11px;
+
+  color: #a1a1aa;
+
+  font-size: 14px;
+
+  transform: translateY(-50%);
+
+  pointer-events: none;
+}
+
+.provider-companies-search input {
+  width: 100%;
+  height: 38px;
+
+  padding: 0 37px 0 34px;
+
+  border: 1px solid #dedddb;
+  border-radius: 8px;
+
+  outline: none;
+
+  background: #fafaf9;
+
+  color: #27272a;
+
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 500;
+
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.provider-companies-search input::placeholder {
+  color: #a1a1aa;
+}
+
+.provider-companies-search input:hover {
+  background: #ffffff;
+}
+
+.provider-companies-search input:focus {
+  background: #ffffff;
+
+  border-color: #aaa5ff;
+
+  box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.07);
+}
+
+.provider-companies-search button {
+  position: absolute;
+
+  top: 50%;
+  right: 6px;
+
+  width: 27px;
+  height: 27px;
+
+  padding: 0;
+
+  display: grid;
+  place-items: center;
+
+  border: none;
+  border-radius: 6px;
+
+  background: transparent;
+
+  color: #a1a1aa;
+
+  font-size: 13px;
+
+  cursor: pointer;
+
+  transform: translateY(-50%);
+}
+
+.provider-companies-search button:hover {
+  background: #f4f4f5;
+
+  color: #52525b;
+}
+
+/* =========================================================
+   SELECT FILTERS
+========================================================= */
+
+.provider-companies-toolbar select {
+  width: 100%;
+  height: 38px;
+
+  padding: 0 28px 0 10px;
+
+  border: 1px solid #dedddb;
+  border-radius: 8px;
+
+  outline: none;
+
+  background-color: #ffffff;
+
+  color: #52525b;
+
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.provider-companies-toolbar select:hover {
+  border-color: #cac8c5;
+}
+
+.provider-companies-toolbar select:focus {
+  border-color: #aaa5ff;
+
+  box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.07);
+}
+
+/* =========================================================
+   CLEAR FILTER
+========================================================= */
+
+.provider-companies-clear-btn {
+  height: 38px;
+
+  padding: 0 11px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #dc2626;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.provider-companies-clear-btn:hover {
+  background: #fef2f2;
+
+  border-color: #fca5a5;
+}
+
+/* =========================================================
+   RESULT BAR
+========================================================= */
+
+.provider-companies-result-bar {
+  min-height: 46px;
+
+  padding: 9px 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-bottom: 1px solid #eceae8;
+
+  background: #fafaf9;
+}
+
+.provider-companies-result-bar strong,
+.provider-companies-result-bar span {
+  display: block;
+}
+
+.provider-companies-result-bar strong {
+  color: #3f3f46;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.provider-companies-result-bar span {
+  margin-top: 2px;
+
+  color: #a1a1aa;
+
+  font-size: 8px;
+}
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.provider-companies-content {
+  min-height: 310px;
+}
+
+/* =========================================================
+   DESKTOP TABLE
+========================================================= */
+
+.provider-companies-desktop-table {
+  display: block;
+}
+
+.provider-companies-table-wrapper {
+  width: 100%;
+
+  overflow-x: auto;
+
+  scrollbar-width: thin;
+  scrollbar-color: #d6d3d1 transparent;
+}
+
+.provider-companies-table-wrapper::-webkit-scrollbar {
+  height: 5px;
+}
+
+.provider-companies-table-wrapper::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+
+  background: #d6d3d1;
+}
+
+.provider-companies-table {
+  width: 100%;
+  min-width: 1000px;
+
+  border-collapse: collapse;
+}
+
+.provider-companies-table thead {
+  background: #ffffff;
+}
+
+.provider-companies-table th {
+  height: 40px;
+
+  padding: 0 15px;
+
+  border-bottom: 1px solid #eceae8;
+
+  background: #ffffff;
+
+  color: #8b8b94;
+
+  font-size: 8px;
+  font-weight: 600;
+
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+
+  text-align: left;
+  white-space: nowrap;
+}
+
+.provider-companies-table td {
+  height: 62px;
+
+  padding: 10px 15px;
+
+  border-bottom: 1px solid #f1f0ef;
+
+  color: #52525b;
+
+  font-size: 10px;
+
+  vertical-align: middle;
+
+  transition: background 0.15s ease;
+}
+
+.provider-companies-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.provider-companies-table tbody tr:hover td {
+  background: #fcfcfb;
+}
+
+/* =========================================================
+   COMPANY DETAILS
+========================================================= */
+
+.provider-company-info {
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+}
+
+.provider-company-avatar {
+  width: 34px;
+  height: 34px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border: 1px solid #e6e3ff;
+  border-radius: 8px;
+
+  background: #f1f0ff;
+
+  color: #635bff;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.provider-company-info > div {
+  min-width: 0;
+}
+
+.provider-company-info strong,
+.provider-company-info span,
+.provider-company-info small {
+  display: block;
+
+  overflow: hidden;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.provider-company-info strong {
+  max-width: 190px;
+
+  color: #27272a;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.provider-company-info span {
+  max-width: 190px;
+
+  margin-top: 3px;
+
+  color: #71717a;
+
+  font-size: 9px;
+}
+
+.provider-company-info small {
+  max-width: 190px;
+
+  margin-top: 2px;
+
+  color: #a1a1aa;
+
+  font-size: 8px;
+}
+
+/* =========================================================
+   PLAN
+========================================================= */
+
+.provider-company-plan strong,
+.provider-company-plan span {
+  display: block;
+}
+
+.provider-company-plan strong {
+  color: #3f3f46;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.provider-company-plan span {
+  margin-top: 3px;
+
+  color: #a1a1aa;
+
+  font-size: 8px;
+}
+
+.provider-company-amount {
+  color: #27272a;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+/* =========================================================
+   BADGES
+========================================================= */
+
+.provider-subscription-badge,
+.provider-company-status-badge {
+  min-width: 67px;
+
+  padding: 4px 7px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 6px;
+
+  font-size: 8px;
+  font-weight: 600;
+
+  text-transform: capitalize;
+
+  white-space: nowrap;
+}
+
+.provider-subscription-badge.active,
+.provider-company-status-badge.active {
+  background: #f0fdf4;
+
+  color: #15803d;
+}
+
+.provider-subscription-badge.trial {
+  background: #f1f0ff;
+
+  color: #635bff;
+}
+
+.provider-subscription-badge.expired,
+.provider-subscription-badge.cancelled {
+  background: #fef2f2;
+
+  color: #b91c1c;
+}
+
+.provider-company-status-badge.suspended {
+  background: #fff7ed;
+
+  color: #c2410c;
+}
+
+.provider-company-status-badge.inactive {
+  background: #f4f4f5;
+
+  color: #71717a;
+}
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.provider-company-actions {
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+}
+
+.provider-company-actions button {
+  width: 29px;
+  height: 29px;
+
+  padding: 0;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid #e4e2df;
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #71717a;
+
+  font-size: 12px;
+
+  cursor: pointer;
+
+  transition:
+    color 0.16s ease,
+    background 0.16s ease,
+    border-color 0.16s ease;
+}
+
+.provider-company-actions button:hover:not(:disabled) {
+  background: #f1f0ff;
+
+  border-color: #ddd9ff;
+
+  color: #635bff;
+}
+
+.provider-company-actions button.warning:hover:not(:disabled) {
+  background: #fff7ed;
+
+  border-color: #fed7aa;
+
+  color: #ea580c;
+}
+
+.provider-company-actions button.success:hover:not(:disabled) {
+  background: #f0fdf4;
+
+  border-color: #bbf7d0;
+
+  color: #16a34a;
+}
+
+.provider-company-actions button.delete:hover:not(:disabled) {
+  background: #fef2f2;
+
+  border-color: #fecaca;
+
+  color: #dc2626;
+}
+
+.provider-company-actions button:disabled {
+  opacity: 0.4;
+
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   LOADING / EMPTY
+========================================================= */
+
+.provider-companies-state {
+  min-height: 310px;
+
+  padding: 40px 20px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+}
+
+.provider-companies-state > svg {
+  margin-bottom: 11px;
+
+  color: #a1a1aa;
+
+  font-size: 31px;
+}
+
+.provider-companies-state h3 {
+  margin: 0;
+
+  color: #3f3f46;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.provider-companies-state p {
+  max-width: 380px;
+
+  margin: 6px 0 0;
+
+  color: #a1a1aa;
+
+  font-size: 10px;
+
+  line-height: 1.55;
+}
+
+.provider-companies-state button {
+  height: 36px;
+
+  margin-top: 13px;
+  padding: 0 12px;
+
+  border: 1px solid #dedddb;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #52525b;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.provider-companies-state button:hover {
+  background: #fafafa;
+}
+
+.provider-companies-loader {
+  width: 29px;
+  height: 29px;
+
+  margin-bottom: 13px;
+
+  border: 3px solid #eceae8;
+  border-top-color: #635bff;
+  border-radius: 50%;
+
+  animation: provider-company-spin 0.75s linear infinite;
+}
+
+/* =========================================================
+   MOBILE LIST
+========================================================= */
+
+.provider-companies-mobile-list {
+  display: none;
+}
+
+.provider-company-mobile-card {
+  padding: 14px;
+
+  border: 1px solid #e7e5e4;
+  border-radius: 11px;
+
+  background: #ffffff;
+}
+
+.provider-company-mobile-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 10px;
+}
+
+.provider-company-mobile-grid {
+  margin-top: 12px;
+
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 7px;
+}
+
+.provider-company-mobile-grid > div {
+  min-width: 0;
+
+  padding: 10px;
+
+  border: 1px solid #f0efed;
+  border-radius: 8px;
+
+  background: #fafaf9;
+}
+
+.provider-company-mobile-grid span,
+.provider-company-mobile-grid strong {
+  display: block;
+}
+
+.provider-company-mobile-grid span {
+  color: #a1a1aa;
+
+  font-size: 8px;
+}
+
+.provider-company-mobile-grid strong {
+  margin-top: 4px;
+
+  overflow: hidden;
+
+  color: #3f3f46;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* =========================================================
+   MOBILE CONTACT
+========================================================= */
+
+.provider-company-mobile-contact {
+  margin-top: 9px;
+
+  padding: 10px;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+
+  border: 1px solid #f0efed;
+  border-radius: 8px;
+}
+
+.provider-company-mobile-contact span {
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  overflow: hidden;
+
+  color: #71717a;
+
+  font-size: 9px;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.provider-company-mobile-contact svg {
+  flex-shrink: 0;
+
+  color: #a1a1aa;
+}
+
+/* =========================================================
+   MOBILE ACTIONS
+========================================================= */
+
+.provider-company-mobile-actions {
+  margin-top: 10px;
+
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 7px;
+}
+
+.provider-company-mobile-actions button {
+  min-height: 36px;
+
+  padding: 0 9px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  border: 1px solid #e4e2df;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #52525b;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.provider-company-mobile-actions button.warning {
+  border-color: #fed7aa;
+
+  background: #fff7ed;
+
+  color: #c2410c;
+}
+
+.provider-company-mobile-actions button.success {
+  border-color: #bbf7d0;
+
+  background: #f0fdf4;
+
+  color: #15803d;
+}
+
+.provider-company-mobile-actions button.delete {
+  border-color: #fecaca;
+
+  background: #fef2f2;
+
+  color: #dc2626;
+}
+
+.provider-company-mobile-actions button:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   DRAWER OVERLAY
+========================================================= */
+
+.provider-company-drawer-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 1000;
+
+  display: flex;
+  justify-content: flex-end;
+
+  background: rgba(24, 24, 27, 0.42);
+
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+/* =========================================================
+   DRAWER
+========================================================= */
+
+.provider-company-drawer {
+  width: min(100%, 410px);
+  height: 100dvh;
+
+  overflow-y: auto;
+
+  background: #ffffff;
+
+  box-shadow: -16px 0 45px rgba(24, 24, 27, 0.14);
+}
+
+/* =========================================================
+   DRAWER HEADER
+========================================================= */
+
+.provider-company-drawer-header {
+  position: sticky;
+
+  top: 0;
+
+  z-index: 2;
+
+  padding: 17px 18px;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 14px;
+
+  border-bottom: 1px solid #eceae8;
+
+  background: rgba(255, 255, 255, 0.96);
+
+  backdrop-filter: blur(10px);
+}
+
+.provider-company-drawer-header p {
+  margin: 0 0 4px;
+
+  color: #8b5cf6;
+
+  font-size: 8px;
+  font-weight: 700;
+
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.provider-company-drawer-header h2 {
+  margin: 0;
+
+  color: #18181b;
+
+  font-size: 18px;
+  font-weight: 600;
+
+  letter-spacing: -0.025em;
+}
+
+.provider-company-drawer-header button,
+.provider-company-modal-header button {
+  width: 32px;
+  height: 32px;
+
+  padding: 0;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border: 1px solid #e4e2df;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #71717a;
+
+  font-size: 14px;
+
+  cursor: pointer;
+}
+
+.provider-company-drawer-header button:hover,
+.provider-company-modal-header button:hover {
+  background: #f4f4f5;
+
+  color: #27272a;
+}
+
+/* =========================================================
+   DRAWER BODY
+========================================================= */
+
+.provider-company-drawer-body {
+  padding: 17px;
+}
+
+/* =========================================================
+   DRAWER PROFILE
+========================================================= */
+
+.provider-company-drawer-profile {
+  padding: 14px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 11px;
+
+  border: 1px solid #e7e5e4;
+  border-radius: 10px;
+
+  background: #fafaf9;
+}
+
+.provider-company-drawer-profile > span {
+  width: 43px;
+  height: 43px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border: 1px solid #e6e3ff;
+  border-radius: 9px;
+
+  background: #f1f0ff;
+
+  color: #635bff;
+
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.provider-company-drawer-profile h3 {
+  margin: 0;
+
+  color: #27272a;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.provider-company-drawer-profile p {
+  margin: 4px 0 0;
+
+  color: #8b8b94;
+
+  font-size: 9px;
+}
+
+/* =========================================================
+   DETAIL LIST
+========================================================= */
+
+.provider-company-details-list {
+  margin-top: 13px;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+.provider-company-details-list > div {
+  padding: 10px;
+
+  display: grid;
+
+  grid-template-columns: 27px minmax(0, 1fr);
+
+  align-items: flex-start;
+
+  gap: 8px;
+
+  border-bottom: 1px solid #f0efed;
+}
+
+.provider-company-details-list > div:last-child {
+  border-bottom: none;
+}
+
+.provider-company-details-list > div > svg {
+  margin-top: 2px;
+
+  color: #8b5cf6;
+
+  font-size: 14px;
+}
+
+.provider-company-details-list small,
+.provider-company-details-list strong {
+  display: block;
+}
+
+.provider-company-details-list small {
+  color: #a1a1aa;
+
+  font-size: 8px;
+}
+
+.provider-company-details-list strong {
+  margin-top: 3px;
+
+  color: #3f3f46;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   DRAWER ACTIONS
+========================================================= */
+
+.provider-company-drawer-actions {
+  margin-top: 16px;
+
+  display: grid;
+
+  gap: 7px;
+}
+
+.provider-company-drawer-actions button {
+  min-height: 39px;
+
+  border: 1px solid #ddd9ff;
+  border-radius: 8px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  background: #f1f0ff;
+
+  color: #635bff;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.provider-company-drawer-actions button.warning {
+  border-color: #fed7aa;
+
+  background: #fff7ed;
+
+  color: #c2410c;
+}
+
+.provider-company-drawer-actions button.success {
+  border-color: #bbf7d0;
+
+  background: #f0fdf4;
+
+  color: #15803d;
+}
+
+.provider-company-drawer-loading {
+  min-height: 280px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  color: #71717a;
+
+  font-size: 10px;
+}
+
+/* =========================================================
+   MODAL OVERLAY
+========================================================= */
+
+.provider-company-modal-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 1100;
+
+  padding: 18px;
+
+  display: grid;
+  place-items: center;
+
+  background: rgba(24, 24, 27, 0.45);
+
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.provider-company-subscription-modal {
+  width: min(100%, 440px);
+
+  overflow: hidden;
+
+  border: 1px solid #e7e5e4;
+  border-radius: 12px;
+
+  background: #ffffff;
+
+  box-shadow: 0 25px 60px rgba(24, 24, 27, 0.18);
+}
+
+.provider-company-modal-header {
+  padding: 16px 17px;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 14px;
+
+  border-bottom: 1px solid #eceae8;
+}
+
+.provider-company-modal-header p {
+  margin: 0 0 4px;
+
+  color: #8b5cf6;
+
+  font-size: 8px;
+  font-weight: 700;
+
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.provider-company-modal-header h2 {
+  margin: 0;
+
+  color: #18181b;
+
+  font-size: 17px;
+  font-weight: 600;
+
+  letter-spacing: -0.025em;
+}
+
+.provider-company-modal-header span {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #8b8b94;
+
+  font-size: 9px;
+}
+
+/* =========================================================
+   MODAL FORM
+========================================================= */
+
+.provider-company-subscription-modal form {
+  padding: 17px;
+}
+
+.provider-company-subscription-modal label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #52525b;
+
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.provider-company-subscription-modal input {
+  width: 100%;
+  height: 40px;
+
+  padding: 0 10px;
+
+  border: 1px solid #dedddb;
+  border-radius: 8px;
+
+  outline: none;
+
+  background: #ffffff;
+
+  color: #27272a;
+
+  font-family: inherit;
+  font-size: 10px;
+}
+
+.provider-company-subscription-modal input:focus {
+  border-color: #aaa5ff;
+
+  box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.07);
+}
+
+/* =========================================================
+   MODAL ACTIONS
+========================================================= */
+
+.provider-company-modal-actions {
+  margin-top: 15px;
+
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 7px;
+}
+
+.provider-company-modal-actions button {
+  min-height: 38px;
+
+  padding: 0 13px;
+
+  border-radius: 8px;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.provider-company-modal-actions button:first-child {
+  border: 1px solid #dedddb;
+
+  background: #ffffff;
+
+  color: #52525b;
+}
+
+.provider-company-modal-actions button:last-child {
+  border: 1px solid #635bff;
+
+  background: #635bff;
+
+  color: #ffffff;
+}
+
+.provider-company-modal-actions button:last-child:hover {
+  background: #554df0;
+}
+
+.provider-company-modal-actions button:disabled,
+.provider-company-modal-header button:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   RESPONSIVE - LAPTOP
+
+   IMPORTANT:
+   Summary grid inga change pannala.
+   Desktop/laptop-la 5 cards same row-la than irukkum.
+========================================================= */
+
+@media (max-width: 1280px) {
+  .provider-companies-toolbar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .provider-companies-search {
+    grid-column: 1 / -1;
+  }
+
+  .provider-companies-clear-btn {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE - TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+  .provider-companies-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+  .provider-companies-header {
+    margin-bottom: 17px;
+
+    align-items: center;
+
+    gap: 12px;
+  }
+
+  .provider-companies-eyebrow {
+    margin-bottom: 4px;
+
+    font-size: 8px;
+  }
+
+  .provider-companies-header h1 {
+    font-size: 22px;
+  }
+
+  .provider-companies-header > div > p:last-child {
+    display: none;
+  }
+
+  .provider-companies-refresh-btn {
+    width: 36px;
+    height: 36px;
+
+    padding: 0;
+
+    border-radius: 8px;
+
+    font-size: 0;
+  }
+
+  .provider-companies-refresh-btn svg {
+    font-size: 14px;
+  }
+
+  .provider-companies-summary-grid {
+    margin-bottom: 13px;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 7px;
+  }
+
+  .provider-company-summary-card {
+    min-height: 86px;
+
+    padding: 11px;
+
+    gap: 8px;
+
+    border-radius: 9px;
+  }
+
+  .provider-company-summary-icon {
+    width: 29px;
+    height: 29px;
+
+    border-radius: 7px;
+
+    font-size: 13px;
+  }
+
+  .provider-company-summary-card p {
+    margin-bottom: 4px;
+
+    font-size: 7px;
+  }
+
+  .provider-company-summary-card strong {
+    font-size: 15px;
+  }
+
+  .provider-company-summary-card small {
+    display: none;
+  }
+
+  .provider-companies-workspace {
+    overflow: visible;
+
+    border: none;
+    border-radius: 0;
+
+    background: transparent;
+  }
+
+  .provider-companies-toolbar {
+    margin-bottom: 9px;
+    padding: 10px;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 7px;
+
+    border: 1px solid #e7e5e4;
+    border-radius: 10px;
+
+    background: #ffffff;
+  }
+
+  .provider-companies-search {
+    grid-column: 1 / -1;
+  }
+
+  .provider-companies-search input,
+  .provider-companies-toolbar select,
+  .provider-companies-clear-btn {
+    height: 38px;
+
+    font-size: 9px;
+  }
+
+  .provider-companies-clear-btn {
+    grid-column: 1 / -1;
+  }
+
+  .provider-companies-result-bar {
+    min-height: 42px;
+
+    margin-bottom: 9px;
+    padding: 8px 10px;
+
+    border: 1px solid #e7e5e4;
+    border-radius: 9px;
+
+    background: #ffffff;
+  }
+
+  .provider-companies-result-bar span {
+    display: none;
+  }
+
+  .provider-companies-content {
+    min-height: 0;
+  }
+
+  .provider-companies-desktop-table {
+    display: none;
+  }
+
+  .provider-companies-mobile-list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+  }
+
+  .provider-companies-state {
+    min-height: 230px;
+
+    border: 1px solid #e7e5e4;
+    border-radius: 10px;
+
+    background: #ffffff;
+  }
+
+  .provider-company-drawer {
+    width: 100%;
+  }
+
+  .provider-company-modal-overlay {
+    padding: 0;
+
+    align-items: end;
+  }
+
+  .provider-company-subscription-modal {
+    width: 100%;
+
+    border: none;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .provider-company-modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .provider-company-modal-actions button {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 470px) {
+  .provider-company-mobile-card {
+    padding: 12px;
+  }
+
+  .provider-company-mobile-head .provider-company-info {
+    max-width: calc(100% - 78px);
+  }
+
+  .provider-company-info strong {
+    max-width: 150px;
+  }
+
+  .provider-company-info span,
+  .provider-company-info small {
+    max-width: 150px;
+  }
+
+  .provider-company-mobile-actions button {
+    min-height: 35px;
+  }
+
+  .provider-company-drawer-header {
+    padding: 15px;
+  }
+
+  .provider-company-drawer-body {
+    padding: 15px;
+  }
+}
+
+/* =========================================================
+   EXTRA SMALL MOBILE
+========================================================= */
+
+@media (max-width: 390px) {
+  .provider-companies-header h1 {
+    font-size: 20px;
+  }
+
+  .provider-companies-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 6px;
+  }
+
+  .provider-company-summary-card {
+    padding: 10px;
+  }
+
+  .provider-companies-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .provider-companies-search,
+  .provider-companies-clear-btn {
+    grid-column: auto;
+  }
+
+  .provider-company-mobile-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .provider-company-mobile-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

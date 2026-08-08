@@ -9,13 +9,8 @@ import "../styles/layout.css";
 const ProviderLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const openSidebar = () => {
-    setIsSidebarOpen(true);
-  };
-
-  const closeSidebar = () => {
-    setIsSidebarOpen(false);
-  };
+  const openSidebar = () => setIsSidebarOpen(true);
+  const closeSidebar = () => setIsSidebarOpen(false);
 
   return (
     <div className="provider-layout">

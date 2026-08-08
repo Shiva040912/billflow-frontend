@@ -1,5 +1,24 @@
-import { useEffect, useMemo, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+
 import { useNavigate } from "react-router-dom";
+
+import {
+  FiArrowLeft,
+  FiCheck,
+  FiCheckCircle,
+  FiCreditCard,
+  FiEdit2,
+  FiLock,
+  FiMapPin,
+  FiShield,
+  FiUser,
+  FiZap,
+} from "react-icons/fi";
 
 import api from "../services/axios";
 
@@ -8,74 +27,209 @@ import "../styles/payment.css";
 const Payment = () => {
   const navigate = useNavigate();
 
-  const [isPaying, setIsPaying] = useState(false);
+  const isVerificationRunningRef =
+    useRef(false);
+
+  const [isPaying, setIsPaying] =
+    useState(false);
 
   const registrationData = useMemo(() => {
-    const savedData = sessionStorage.getItem(
-      "billFlowCompanyRegistration",
-    );
+    const savedData =
+      sessionStorage.getItem(
+        "billFlowCompanyRegistration"
+      );
 
-    return savedData ? JSON.parse(savedData) : null;
+    if (!savedData) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(savedData);
+    } catch (error) {
+      console.error(
+        "Company registration data parse error:",
+        error
+      );
+
+      return null;
+    }
   }, []);
 
   const selectedPlan = useMemo(() => {
-    const savedPlan = sessionStorage.getItem(
-      "billFlowSelectedPlan",
-    );
+    const savedPlan =
+      sessionStorage.getItem(
+        "billFlowSelectedPlan"
+      );
 
-    return savedPlan ? JSON.parse(savedPlan) : null;
+    if (!savedPlan) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(savedPlan);
+    } catch (error) {
+      console.error(
+        "Selected plan data parse error:",
+        error
+      );
+
+      return null;
+    }
   }, []);
 
   useEffect(() => {
     if (!registrationData) {
-      navigate("/create-company", { replace: true });
+      navigate("/create-company", {
+        replace: true,
+      });
+
       return;
     }
 
     if (!selectedPlan) {
-      navigate("/choose-plan", { replace: true });
+      navigate("/choose-plan", {
+        replace: true,
+      });
     }
-  }, [navigate, registrationData, selectedPlan]);
+  }, [
+    navigate,
+    registrationData,
+    selectedPlan,
+  ]);
 
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
-      const existingScript = document.querySelector(
-        'script[src="https://checkout.razorpay.com/v1/checkout.js"]',
-      );
+      const existingScript =
+        document.querySelector(
+          'script[src="https://checkout.razorpay.com/v1/checkout.js"]'
+        );
 
       if (existingScript) {
         resolve(true);
         return;
       }
 
-      const script = document.createElement("script");
+      const script =
+        document.createElement("script");
 
       script.src =
         "https://checkout.razorpay.com/v1/checkout.js";
 
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
+      script.onload = () => {
+        resolve(true);
+      };
+
+      script.onerror = () => {
+        resolve(false);
+      };
 
       document.body.appendChild(script);
     });
   };
 
-  if (!registrationData || !selectedPlan) {
+  const getErrorMessage = (
+    error,
+    fallbackMessage
+  ) => {
+    const backendMessage =
+      error?.response?.data?.message;
+
+    if (Array.isArray(backendMessage)) {
+      return backendMessage.join("\n");
+    }
+
+    if (
+      typeof backendMessage === "string" &&
+      backendMessage.trim()
+    ) {
+      return backendMessage;
+    }
+
+    const backendError =
+      error?.response?.data?.error;
+
+    if (
+      typeof backendError === "string" &&
+      backendError.trim()
+    ) {
+      return backendError;
+    }
+
+    if (
+      typeof error?.message === "string" &&
+      error.message.trim()
+    ) {
+      return error.message;
+    }
+
+    return fallbackMessage;
+  };
+
+  if (
+    !registrationData ||
+    !selectedPlan
+  ) {
     return null;
   }
 
-  const gstAmount = Math.round(selectedPlan.price * 0.18);
-  const totalAmount = selectedPlan.price + gstAmount;
+  const planPrice = Number(
+    selectedPlan.price || 0
+  );
+
+  const gstAmount = Math.round(
+    planPrice * 0.18
+  );
+
+  const totalAmount =
+    planPrice + gstAmount;
+
+  const formatCurrency = (value) =>
+    new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 0,
+    }).format(Number(value || 0));
+
+  const formatBusinessType = (
+    value
+  ) => {
+    if (!value) {
+      return "Not available";
+    }
+
+    return String(value)
+      .split("_")
+      .map(
+        (word) =>
+          word.charAt(0).toUpperCase() +
+          word.slice(1)
+      )
+      .join(" ");
+  };
 
   const handlePayment = async () => {
+    if (
+      isPaying ||
+      isVerificationRunningRef.current
+    ) {
+      return;
+    }
+
     try {
       setIsPaying(true);
 
-      const scriptLoaded = await loadRazorpayScript();
+      const scriptLoaded =
+        await loadRazorpayScript();
 
       if (!scriptLoaded) {
         throw new Error(
-          "Razorpay checkout load aagala. Internet check pannu.",
+          "Razorpay checkout load aagala. Internet connection check pannu."
+        );
+      }
+
+      if (!window.Razorpay) {
+        throw new Error(
+          "Razorpay checkout initialize aagala. Page refresh panni try pannu."
         );
       }
 
@@ -84,80 +238,169 @@ const Payment = () => {
         {
           amount: totalAmount,
           planName: selectedPlan.name,
-        },
+        }
       );
 
-      const orderData = response.data;
+      const orderData =
+        response.data || {};
+
+      if (
+        !orderData.orderId ||
+        !orderData.keyId ||
+        !orderData.amount
+      ) {
+        throw new Error(
+          "Payment order response incomplete-ah irukku."
+        );
+      }
 
       const options = {
         key: orderData.keyId,
+
         amount: orderData.amount,
-        currency: orderData.currency,
+
+        currency:
+          orderData.currency || "INR",
+
         name: "BillFlow",
-        description: `${selectedPlan.name} Subscription`,
+
+        description:
+          `${selectedPlan.name} Subscription`,
+
         order_id: orderData.orderId,
 
-        handler: async function (paymentResponse) {
+        handler: async function (
+          paymentResponse
+        ) {
+          if (
+            isVerificationRunningRef.current
+          ) {
+            return;
+          }
+
+          isVerificationRunningRef.current =
+            true;
+
           try {
-            const verifyResponse = await api.post(
-              "/payments/verify-payment",
+            const verifyPayload = {
+              razorpayOrderId:
+                paymentResponse.razorpay_order_id,
+
+              razorpayPaymentId:
+                paymentResponse.razorpay_payment_id,
+
+              razorpaySignature:
+                paymentResponse.razorpay_signature,
+
+              companyName:
+                registrationData.companyName,
+
+              ownerName:
+                registrationData.ownerName,
+
+              email:
+                registrationData.email,
+
+              phone:
+                registrationData.phone,
+
+              address:
+                registrationData.address,
+
+              password:
+                registrationData.password,
+
+              planName:
+                selectedPlan.name,
+
+              planAmount:
+                totalAmount,
+            };
+
+            console.log(
+              "Payment verification starting:",
               {
                 razorpayOrderId:
-                  paymentResponse.razorpay_order_id,
+                  verifyPayload.razorpayOrderId,
+
                 razorpayPaymentId:
-                  paymentResponse.razorpay_payment_id,
-                razorpaySignature:
-                  paymentResponse.razorpay_signature,
+                  verifyPayload.razorpayPaymentId,
 
-                companyName: registrationData.companyName,
-                ownerName: registrationData.ownerName,
-                email: registrationData.email,
-                phone: registrationData.phone,
-                address: registrationData.address,
-                password: registrationData.password,
+                companyName:
+                  verifyPayload.companyName,
 
-                planName: selectedPlan.name,
-                planAmount: totalAmount,
-              },
+                planName:
+                  verifyPayload.planName,
+
+                planAmount:
+                  verifyPayload.planAmount,
+              }
             );
 
-            const verificationData =
-              verifyResponse.data;
+            const verifyResponse =
+              await api.post(
+                "/payments/verify-payment",
+                verifyPayload
+              );
 
-            if (
-              !verificationData.verified ||
-              !verificationData.accessToken
-            ) {
-              throw new Error(
-                "Payment verified response incomplete-ah irukku",
+            const verificationData =
+              verifyResponse.data || {};
+
+            console.log(
+              "Payment verification success:",
+              verificationData
+            );
+
+            const accessToken =
+              verificationData.accessToken ||
+              verificationData.access_token ||
+              verificationData.token;
+
+            const ownerData =
+              verificationData.owner ||
+              verificationData.user ||
+              null;
+
+            const companyData =
+              verificationData.company ||
+              null;
+
+            if (accessToken) {
+              localStorage.setItem(
+                "billFlowAccessToken",
+                accessToken
               );
             }
 
-            localStorage.setItem(
-              "billFlowAccessToken",
-              verificationData.accessToken,
-            );
+            if (ownerData) {
+              localStorage.setItem(
+                "billFlowUser",
+                JSON.stringify(
+                  ownerData
+                )
+              );
+            }
 
-            localStorage.setItem(
-              "billFlowUser",
-              JSON.stringify(verificationData.owner),
-            );
+            if (companyData) {
+              localStorage.setItem(
+                "billFlowCompany",
+                JSON.stringify(
+                  companyData
+                )
+              );
+            }
 
-            localStorage.setItem(
-              "billFlowCompany",
-              JSON.stringify(verificationData.company),
+            sessionStorage.removeItem(
+              "billFlowCompanyRegistration"
             );
 
             sessionStorage.removeItem(
-              "billFlowCompanyRegistration",
-            );
-
-            sessionStorage.removeItem(
-              "billFlowSelectedPlan",
+              "billFlowSelectedPlan"
             );
 
             alert(
-              "Payment verified. BillFlow account successfully created.",
+              verificationData.message ||
+                "Payment verified. BillFlow account successfully created."
             );
 
             navigate("/login", {
@@ -166,67 +409,180 @@ const Payment = () => {
           } catch (error) {
             console.error(
               "Payment verification error:",
-              error,
+              error
             );
 
-            alert(
-              error.message ||
-                "Payment successful, aana verification fail aagiduchu.",
+            console.error(
+              "Payment verification response:",
+              JSON.stringify(
+                error?.response?.data,
+                null,
+                2
+              )
             );
+
+            console.error(
+              "Payment verification status:",
+              error?.response?.status
+            );
+
+            const errorStatus =
+              error?.response?.status;
+
+            const backendMessage =
+              error?.response?.data
+                ?.message;
+
+            const normalizedMessage =
+              Array.isArray(
+                backendMessage
+              )
+                ? backendMessage.join(
+                    "\n"
+                  )
+                : backendMessage;
+
+            const accountAlreadyCreated =
+              errorStatus === 409 &&
+              typeof normalizedMessage ===
+                "string" &&
+              [
+                "already exists",
+                "already registered",
+                "already processed",
+                "already verified",
+              ].some((text) =>
+                normalizedMessage
+                  .toLowerCase()
+                  .includes(text)
+              );
+
+            if (
+              accountAlreadyCreated
+            ) {
+              sessionStorage.removeItem(
+                "billFlowCompanyRegistration"
+              );
+
+              sessionStorage.removeItem(
+                "billFlowSelectedPlan"
+              );
+
+              alert(
+                "Company account already created successfully. Please login."
+              );
+
+              navigate("/login", {
+                replace: true,
+              });
+
+              return;
+            }
+
+            const message =
+              getErrorMessage(
+                error,
+                "Payment successful, aana account verification fail aagiduchu."
+              );
+
+            alert(message);
 
             setIsPaying(false);
+          } finally {
+            isVerificationRunningRef.current =
+              false;
           }
         },
 
         prefill: {
-          name: registrationData.ownerName,
-          email: registrationData.email,
-          contact: registrationData.phone,
+          name:
+            registrationData.ownerName,
+
+          email:
+            registrationData.email,
+
+          contact:
+            registrationData.phone,
         },
 
         notes: {
-          companyName: registrationData.companyName,
-          planName: selectedPlan.name,
+          companyName:
+            registrationData.companyName,
+
+          planName:
+            selectedPlan.name,
         },
 
         theme: {
-          color: "#2563eb",
+          color: "#18181b",
         },
 
         modal: {
           ondismiss: function () {
-            setIsPaying(false);
+            if (
+              !isVerificationRunningRef.current
+            ) {
+              setIsPaying(false);
+            }
           },
         },
       };
 
-      const razorpay = new window.Razorpay(options);
+      const razorpay =
+        new window.Razorpay(
+          options
+        );
 
       razorpay.on(
         "payment.failed",
         function (failureResponse) {
           console.error(
             "Razorpay payment failed:",
-            failureResponse.error,
+            failureResponse?.error
           );
 
-          alert(
-            failureResponse.error.description ||
-              "Payment failed. Try again.",
-          );
+          const failureMessage =
+            failureResponse?.error
+              ?.description ||
+            failureResponse?.error
+              ?.reason ||
+            "Payment failed. Try again.";
+
+          alert(failureMessage);
+
+          isVerificationRunningRef.current =
+            false;
 
           setIsPaying(false);
-        },
+        }
       );
 
       razorpay.open();
     } catch (error) {
-      console.error("Payment error:", error);
-
-      alert(
-        error.message ||
-          "Payment start panna mudiyala. Try again.",
+      console.error(
+        "Payment start error:",
+        error
       );
+
+      console.error(
+        "Payment start response:",
+        JSON.stringify(
+          error?.response?.data,
+          null,
+          2
+        )
+      );
+
+      const message =
+        getErrorMessage(
+          error,
+          "Payment start panna mudiyala. Try again."
+        );
+
+      alert(message);
+
+      isVerificationRunningRef.current =
+        false;
 
       setIsPaying(false);
     }
@@ -234,37 +590,95 @@ const Payment = () => {
 
   return (
     <main className="payment-page">
+      <header className="payment-topbar">
+        <button
+          type="button"
+          className="payment-brand"
+          onClick={() =>
+            navigate("/")
+          }
+        >
+          <span className="payment-brand-logo">
+            <FiZap />
+          </span>
+
+          <span className="payment-brand-text">
+            <strong>
+              Bill<span>Flow</span>
+            </strong>
+
+            <small>
+              Business Setup
+            </small>
+          </span>
+        </button>
+
+        <button
+          type="button"
+          className="payment-topbar-back"
+          onClick={() =>
+            navigate(
+              "/choose-plan"
+            )
+          }
+          disabled={isPaying}
+        >
+          <FiArrowLeft />
+
+          <span>
+            Choose Plan
+          </span>
+        </button>
+      </header>
+
       <section className="payment-container">
         <div className="registration-stepper">
           <div className="registration-step completed">
-            <span>✓</span>
-            <p>Company Details</p>
+            <span>
+              <FiCheck />
+            </span>
+
+            <p>
+              Company Details
+            </p>
           </div>
 
-          <div className="registration-step-line completed"></div>
+          <div className="registration-step-line completed" />
 
           <div className="registration-step completed">
-            <span>✓</span>
-            <p>Choose Plan</p>
+            <span>
+              <FiCheck />
+            </span>
+
+            <p>
+              Choose Plan
+            </p>
           </div>
 
-          <div className="registration-step-line completed"></div>
+          <div className="registration-step-line completed" />
 
           <div className="registration-step active">
             <span>3</span>
-            <p>Payment</p>
+
+            <p>
+              Payment
+            </p>
           </div>
         </div>
 
         <div className="payment-header">
           <span className="payment-step-badge">
-            BillFlow Registration
+            Step 3 of 3
           </span>
 
-          <h1>Complete your payment</h1>
+          <h1>
+            Complete your
+            <span> subscription.</span>
+          </h1>
 
           <p>
-            Payment successful aana udane company account activate aagum.
+            Review your company and plan details before
+            completing the secure payment.
           </p>
         </div>
 
@@ -273,65 +687,165 @@ const Payment = () => {
             <div className="payment-card-heading">
               <div>
                 <span className="payment-small-label">
-                  Company Details
+                  Business Details
                 </span>
 
-                <h2>{registrationData.companyName}</h2>
+                <h2>
+                  {
+                    registrationData.companyName
+                  }
+                </h2>
+
+                <p>
+                  Review your company information before
+                  continuing.
+                </p>
               </div>
 
               <button
                 type="button"
                 className="payment-edit-button"
-                onClick={() => navigate("/create-company")}
+                onClick={() =>
+                  navigate(
+                    "/create-company"
+                  )
+                }
                 disabled={isPaying}
               >
+                <FiEdit2 />
                 Edit
               </button>
             </div>
 
             <div className="payment-details-grid">
               <div className="payment-detail-item">
-                <span>Owner Name</span>
-                <strong>{registrationData.ownerName}</strong>
+                <span className="payment-detail-icon">
+                  <FiUser />
+                </span>
+
+                <div>
+                  <span>
+                    Owner Name
+                  </span>
+
+                  <strong>
+                    {
+                      registrationData.ownerName
+                    }
+                  </strong>
+                </div>
               </div>
 
               <div className="payment-detail-item">
-                <span>Email</span>
-                <strong>{registrationData.email}</strong>
+                <span className="payment-detail-icon">
+                  <FiCreditCard />
+                </span>
+
+                <div>
+                  <span>
+                    Email Address
+                  </span>
+
+                  <strong>
+                    {
+                      registrationData.email
+                    }
+                  </strong>
+                </div>
               </div>
 
               <div className="payment-detail-item">
-                <span>Phone</span>
-                <strong>{registrationData.phone}</strong>
+                <span className="payment-detail-icon">
+                  <FiUser />
+                </span>
+
+                <div>
+                  <span>
+                    Phone Number
+                  </span>
+
+                  <strong>
+                    {
+                      registrationData.phone
+                    }
+                  </strong>
+                </div>
               </div>
 
               <div className="payment-detail-item">
-                <span>Business Type</span>
-                <strong>{registrationData.businessType}</strong>
+                <span className="payment-detail-icon">
+                  <FiZap />
+                </span>
+
+                <div>
+                  <span>
+                    Business Type
+                  </span>
+
+                  <strong>
+                    {formatBusinessType(
+                      registrationData.businessType
+                    )}
+                  </strong>
+                </div>
               </div>
 
               <div className="payment-detail-item payment-detail-full">
-                <span>Address</span>
-                <strong>{registrationData.address}</strong>
+                <span className="payment-detail-icon">
+                  <FiMapPin />
+                </span>
+
+                <div>
+                  <span>
+                    Business Address
+                  </span>
+
+                  <strong>
+                    {
+                      registrationData.address
+                    }
+                  </strong>
+                </div>
               </div>
 
               {registrationData.gstNumber && (
                 <div className="payment-detail-item">
-                  <span>GST Number</span>
-                  <strong>{registrationData.gstNumber}</strong>
+                  <span className="payment-detail-icon">
+                    <FiShield />
+                  </span>
+
+                  <div>
+                    <span>
+                      GST Number
+                    </span>
+
+                    <strong>
+                      {
+                        registrationData.gstNumber
+                      }
+                    </strong>
+                  </div>
                 </div>
               )}
             </div>
 
             <div className="secure-payment-box">
-              <div className="secure-payment-icon">✓</div>
+              <div className="secure-payment-icon">
+                <FiShield />
+              </div>
 
               <div>
-                <h3>Secure Razorpay Payment</h3>
+                <span>
+                  Secure Checkout
+                </span>
+
+                <h3>
+                  Razorpay protected payment
+                </h3>
 
                 <p>
-                  UPI, card, net banking and supported wallets use
-                  pannalaam.
+                  Pay using UPI, cards, net banking or
+                  supported payment methods through Razorpay.
                 </p>
               </div>
             </div>
@@ -339,11 +853,23 @@ const Payment = () => {
 
           <aside className="payment-summary-card">
             <div className="payment-summary-heading">
-              <span>Selected Plan</span>
+              <div>
+                <span>
+                  Order Summary
+                </span>
+
+                <small>
+                  Selected subscription
+                </small>
+              </div>
 
               <button
                 type="button"
-                onClick={() => navigate("/choose-plan")}
+                onClick={() =>
+                  navigate(
+                    "/choose-plan"
+                  )
+                }
                 disabled={isPaying}
               >
                 Change
@@ -352,8 +878,18 @@ const Payment = () => {
 
             <div className="selected-plan-summary">
               <div>
-                <h2>{selectedPlan.name}</h2>
-                <p>{selectedPlan.description}</p>
+                <span className="selected-plan-label">
+                  BillFlow Plan
+                </span>
+
+                <h2>
+                  {selectedPlan.name}
+                </h2>
+
+                <p>
+                  {selectedPlan.description ||
+                    "BillFlow subscription plan."}
+                </p>
               </div>
 
               {selectedPlan.popular && (
@@ -365,19 +901,47 @@ const Payment = () => {
 
             <div className="payment-price-details">
               <div>
-                <span>Plan Price</span>
-                <strong>₹{selectedPlan.price}</strong>
+                <span>
+                  Plan Price
+                </span>
+
+                <strong>
+                  {formatCurrency(
+                    planPrice
+                  )}
+                </strong>
               </div>
 
               <div>
-                <span>GST (18%)</span>
-                <strong>₹{gstAmount}</strong>
+                <span>
+                  GST
+                  <small>18%</small>
+                </span>
+
+                <strong>
+                  {formatCurrency(
+                    gstAmount
+                  )}
+                </strong>
               </div>
             </div>
 
             <div className="payment-total-row">
-              <span>Total Amount</span>
-              <strong>₹{totalAmount}</strong>
+              <div>
+                <span>
+                  Total Amount
+                </span>
+
+                <small>
+                  Inclusive of GST
+                </small>
+              </div>
+
+              <strong>
+                {formatCurrency(
+                  totalAmount
+                )}
+              </strong>
             </div>
 
             <button
@@ -386,23 +950,48 @@ const Payment = () => {
               onClick={handlePayment}
               disabled={isPaying}
             >
-              {isPaying
-                ? "Payment Processing..."
-                : `Pay ₹${totalAmount}`}
+              {isPaying ? (
+                <>
+                  <span className="payment-button-loader" />
+                  Processing Payment
+                </>
+              ) : (
+                <>
+                  <FiLock />
+                  Pay{" "}
+                  {formatCurrency(
+                    totalAmount
+                  )}
+                </>
+              )}
             </button>
+
+            <div className="payment-provider-note">
+              <FiCheckCircle />
+
+              <span>
+                Secured by Razorpay
+              </span>
+            </div>
 
             <button
               type="button"
               className="payment-back-button"
-              onClick={() => navigate("/choose-plan")}
+              onClick={() =>
+                navigate(
+                  "/choose-plan"
+                )
+              }
               disabled={isPaying}
             >
+              <FiArrowLeft />
+
               Back to Plans
             </button>
 
             <p className="payment-terms-text">
-              Payment continue pannina BillFlow terms and subscription
-              policy accept pannuringa.
+              By continuing, you agree to the BillFlow
+              subscription and payment terms.
             </p>
           </aside>
         </div>

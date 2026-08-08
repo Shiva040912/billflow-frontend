@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import {
   FiAlertTriangle,
+  FiArrowRight,
   FiDollarSign,
   FiPackage,
   FiShoppingBag,
@@ -16,97 +18,134 @@ import "../styles/dashboard.css";
 const Dashboard = () => {
   const navigate = useNavigate();
 
-  const [dashboardData, setDashboardData] = useState({
-    todaySales: 0,
-    totalBills: 0,
-    totalProducts: 0,
-    totalCustomers: 0,
-    totalStaff: 0,
-    recentSales: [],
-    lowStockProducts: [],
-  });
+  const [dashboardData, setDashboardData] =
+    useState({
+      todaySales: 0,
+      totalBills: 0,
+      totalProducts: 0,
+      totalCustomers: 0,
+      totalStaff: 0,
+      recentSales: [],
+      lowStockProducts: [],
+    });
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] =
+    useState(true);
+
+  const [errorMessage, setErrorMessage] =
+    useState("");
 
   useEffect(() => {
-    const fetchDashboardSummary = async () => {
-      try {
-        setIsLoading(true);
-        setErrorMessage("");
+    const fetchDashboardSummary =
+      async () => {
+        try {
+          setIsLoading(true);
+          setErrorMessage("");
 
-        const response = await api.get(
-          "/dashboard/summary",
-        );
+          const response =
+            await api.get(
+              "/dashboard/summary"
+            );
 
-        setDashboardData(response.data);
-      } catch (error) {
-        console.error(
-          "Dashboard summary fetch error:",
-          error,
-        );
-
-        if (error.response?.status === 401) {
-          localStorage.removeItem(
-            "billFlowAccessToken",
+          setDashboardData(
+            response.data
           );
-          localStorage.removeItem("billFlowUser");
-          localStorage.removeItem(
-            "billFlowCompany",
+        } catch (error) {
+          console.error(
+            "Dashboard summary fetch error:",
+            error
           );
 
-          navigate("/login", {
-            replace: true,
-          });
+          if (
+            error.response?.status ===
+            401
+          ) {
+            localStorage.removeItem(
+              "billFlowAccessToken"
+            );
 
-          return;
+            localStorage.removeItem(
+              "billFlowUser"
+            );
+
+            localStorage.removeItem(
+              "billFlowCompany"
+            );
+
+            navigate("/login", {
+              replace: true,
+            });
+
+            return;
+          }
+
+          setErrorMessage(
+            error.response?.data
+              ?.message ||
+              "Unable to load dashboard summary."
+          );
+        } finally {
+          setIsLoading(false);
         }
-
-        setErrorMessage(
-          error.response?.data?.message ||
-            "Unable to load dashboard summary.",
-        );
-      } finally {
-        setIsLoading(false);
-      }
-    };
+      };
 
     fetchDashboardSummary();
   }, [navigate]);
 
-  const formatCurrency = (amount) =>
-    new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
-      maximumFractionDigits: 2,
-    }).format(Number(amount || 0));
+  const formatCurrency = (
+    amount
+  ) =>
+    new Intl.NumberFormat(
+      "en-IN",
+      {
+        style: "currency",
+        currency: "INR",
+        maximumFractionDigits: 2,
+      }
+    ).format(
+      Number(amount || 0)
+    );
 
   const summaryCards = [
     {
       title: "Today's Sales",
       value: formatCurrency(
-        dashboardData.todaySales,
+        dashboardData.todaySales
       ),
-      description: "Total sales recorded today",
+      description:
+        "Revenue recorded today",
       icon: <FiDollarSign />,
+      className: "sales",
     },
     {
       title: "Total Bills",
-      value: dashboardData.totalBills ?? 0,
-      description: "Bills generated today",
+      value:
+        dashboardData.totalBills ??
+        0,
+      description:
+        "Bills generated today",
       icon: <FiShoppingBag />,
+      className: "bills",
     },
     {
-      title: "Total Products",
-      value: dashboardData.totalProducts ?? 0,
-      description: "Active products available",
+      title: "Products",
+      value:
+        dashboardData.totalProducts ??
+        0,
+      description:
+        "Active products",
       icon: <FiPackage />,
+      className: "products",
     },
     {
-      title: "Total Customers",
-      value: dashboardData.totalCustomers ?? 0,
-      description: "Registered customers",
+      title: "Customers",
+      value:
+        dashboardData.totalCustomers ??
+        0,
+      description:
+        "Registered customers",
       icon: <FiUsers />,
+      className: "customers",
     },
   ];
 
@@ -114,25 +153,33 @@ const Dashboard = () => {
     <div className="dashboard-page">
       <section className="dashboard-header">
         <div className="dashboard-header-content">
-          <p className="dashboard-eyebrow">
-            Overview
-          </p>
+          <span className="dashboard-eyebrow">
+            Business Overview
+          </span>
 
           <h1>Dashboard</h1>
 
           <p className="dashboard-header-description">
-            Welcome back. Here is your business
-            summary.
+            Your sales, billing,
+            customers and stock at a
+            glance.
           </p>
         </div>
 
         <button
           type="button"
           className="dashboard-primary-btn"
-          onClick={() => navigate("/billing")}
+          onClick={() =>
+            navigate("/billing")
+          }
         >
           <FiShoppingBag />
-          <span>Create New Bill</span>
+
+          <span>
+            Create New Bill
+          </span>
+
+          <FiArrowRight />
         </button>
       </section>
 
@@ -143,84 +190,112 @@ const Dashboard = () => {
         >
           <FiAlertTriangle />
 
-          <span>{errorMessage}</span>
+          <span>
+            {errorMessage}
+          </span>
         </div>
       )}
 
       <section className="dashboard-summary-grid">
-        {summaryCards.map((card) => (
-          <article
-            className="dashboard-summary-card"
-            key={card.title}
-          >
-            <div className="summary-card-top">
-              <div className="summary-card-icon">
-                {card.icon}
+        {summaryCards.map(
+          (card) => (
+            <article
+              className={`dashboard-summary-card ${card.className}`}
+              key={card.title}
+            >
+              <div className="summary-card-top">
+                <div className="summary-card-icon">
+                  {card.icon}
+                </div>
+
+                <span className="summary-card-growth">
+                  <FiTrendingUp />
+                  Live
+                </span>
               </div>
 
-              <span className="summary-card-growth">
-                <FiTrendingUp />
-                0%
-              </span>
-            </div>
+              <div className="summary-card-content">
+                <p className="summary-card-title">
+                  {card.title}
+                </p>
 
-            <p className="summary-card-title">
-              {card.title}
-            </p>
+                <h2>
+                  {isLoading
+                    ? "..."
+                    : card.value}
+                </h2>
 
-            <h2>
-              {isLoading ? "..." : card.value}
-            </h2>
-
-            <span className="summary-card-description">
-              {isLoading
-                ? "Loading dashboard data..."
-                : card.description}
-            </span>
-          </article>
-        ))}
+                <span className="summary-card-description">
+                  {isLoading
+                    ? "Loading data..."
+                    : card.description}
+                </span>
+              </div>
+            </article>
+          )
+        )}
       </section>
 
       <section className="dashboard-bottom-grid">
-        <article className="dashboard-panel">
+        <article className="dashboard-panel dashboard-sales-panel">
           <div className="dashboard-panel-header">
             <div className="dashboard-panel-heading">
-              <h3>Recent Sales</h3>
+              <span>
+                Latest Activity
+              </span>
+
+              <h3>
+                Recent Sales
+              </h3>
 
               <p>
-                Latest bills and customer purchases
+                Latest customer bills
+                and purchases.
               </p>
             </div>
 
             <button
               type="button"
               className="dashboard-secondary-btn"
-              onClick={() => navigate("/sales")}
+              onClick={() =>
+                navigate("/sales")
+              }
             >
               View All
+              <FiArrowRight />
             </button>
           </div>
 
           {isLoading ? (
             <div className="dashboard-empty-state">
-              <FiShoppingBag />
+              <span className="dashboard-loader" />
 
-              <h4>Loading recent sales</h4>
+              <h4>
+                Loading sales
+              </h4>
 
               <p>
-                Please wait while sales are being
-                loaded.
+                Fetching your latest
+                business activity.
               </p>
             </div>
-          ) : dashboardData.recentSales?.length >
+          ) : dashboardData
+              .recentSales?.length >
             0 ? (
             <div className="dashboard-recent-sales">
               {dashboardData.recentSales.map(
                 (sale) => (
                   <div
                     className="dashboard-sale-item"
-                    key={sale.id || sale._id}
+                    key={
+                      sale.id ||
+                      sale._id
+                    }
                   >
+                    <div className="dashboard-sale-avatar">
+                      <FiShoppingBag />
+                    </div>
+
                     <div className="dashboard-item-details">
                       <strong>
                         {sale.customerName ||
@@ -228,38 +303,64 @@ const Dashboard = () => {
                       </strong>
 
                       <span>
-                        {sale.invoiceNumber || "Bill"}
+                        {sale.invoiceNumber ||
+                          "Bill"}
                       </span>
                     </div>
 
                     <strong className="dashboard-sale-amount">
                       {formatCurrency(
-                        sale.totalAmount,
+                        sale.totalAmount
                       )}
                     </strong>
                   </div>
-                ),
+                )
               )}
             </div>
           ) : (
             <div className="dashboard-empty-state">
-              <FiShoppingBag />
+              <div className="dashboard-empty-icon sales">
+                <FiShoppingBag />
+              </div>
 
-              <h4>No sales available</h4>
+              <h4>
+                No sales yet
+              </h4>
 
               <p>
-                Your latest sales will appear here.
+                New bills and sales
+                will appear here.
               </p>
+
+              <button
+                type="button"
+                onClick={() =>
+                  navigate(
+                    "/billing"
+                  )
+                }
+              >
+                Create First Bill
+              </button>
             </div>
           )}
         </article>
 
-        <article className="dashboard-panel">
+        <article className="dashboard-panel dashboard-stock-panel">
           <div className="dashboard-panel-header">
             <div className="dashboard-panel-heading">
-              <h3>Low Stock Alert</h3>
+              <span>
+                Inventory
+              </span>
 
-              <p>Products that need restocking</p>
+              <h3>
+                Low Stock
+              </h3>
+
+              <p>
+                Products that need
+                attention.
+              </p>
             </div>
 
             <div className="dashboard-warning-icon">
@@ -269,16 +370,19 @@ const Dashboard = () => {
 
           {isLoading ? (
             <div className="dashboard-empty-state">
-              <FiPackage />
+              <span className="dashboard-loader" />
 
-              <h4>Loading stock details</h4>
+              <h4>
+                Checking stock
+              </h4>
 
               <p>
-                Please wait while stock data is being
-                loaded.
+                Loading inventory
+                status.
               </p>
             </div>
-          ) : dashboardData.lowStockProducts
+          ) : dashboardData
+              .lowStockProducts
               ?.length > 0 ? (
             <div className="dashboard-low-stock-list">
               {dashboardData.lowStockProducts.map(
@@ -286,32 +390,46 @@ const Dashboard = () => {
                   <div
                     className="dashboard-stock-item"
                     key={
-                      product.id || product._id
+                      product.id ||
+                      product._id
                     }
                   >
+                    <div className="dashboard-stock-avatar">
+                      <FiPackage />
+                    </div>
+
                     <div className="dashboard-item-details">
                       <strong>
                         {product.name}
                       </strong>
 
-                      <span>Low stock warning</span>
+                      <span>
+                        Restock required
+                      </span>
                     </div>
 
                     <strong className="dashboard-stock-count">
-                      {product.stock ?? 0} left
+                      {product.stock ??
+                        0}{" "}
+                      left
                     </strong>
                   </div>
-                ),
+                )
               )}
             </div>
           ) : (
             <div className="dashboard-empty-state">
-              <FiPackage />
+              <div className="dashboard-empty-icon stock">
+                <FiPackage />
+              </div>
 
-              <h4>No low-stock products</h4>
+              <h4>
+                Stock looks healthy
+              </h4>
 
               <p>
-                Stock alerts will appear here.
+                There are no low-stock
+                products right now.
               </p>
             </div>
           )}

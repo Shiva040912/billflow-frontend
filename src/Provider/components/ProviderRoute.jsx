@@ -1,4 +1,8 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import {
+  Navigate,
+  Route,
+  Routes,
+} from "react-router-dom";
 
 import ProviderProtectedRoute from "../components/providerProtectedRoute";
 import ProviderPermissionRoute from "../components/ProviderPermissionRoute";
@@ -11,28 +15,56 @@ import Employees from "../pages/Employees";
 import Plans from "../pages/Plans";
 import Subscriptions from "../pages/Subscriptions";
 import Payments from "../pages/Payments";
+
 import Reports from "../pages/Reports";
 import Settings from "../pages/Settings";
 
 const ProviderRoutes = () => {
   return (
     <Routes>
-      <Route path="login" element={<Login />} />
+      <Route
+        path="login"
+        element={<Login />}
+      />
 
       <Route element={<ProviderProtectedRoute />}>
         <Route element={<ProviderLayout />}>
-          <Route path="dashboard" element={<Dashboard />} />
+          <Route
+            path="dashboard"
+            element={<Dashboard />}
+          />
 
-          <Route element={<ProviderPermissionRoute permission="companies" />}>
-            <Route path="companies" element={<Companies />} />
+          <Route
+            element={
+              <ProviderPermissionRoute permission="companies" />
+            }
+          >
+            <Route
+              path="companies"
+              element={<Companies />}
+            />
           </Route>
 
-          <Route element={<ProviderPermissionRoute permission="employees" />}>
-            <Route path="employees" element={<Employees />} />
+          <Route
+            element={
+              <ProviderPermissionRoute permission="employees" />
+            }
+          >
+            <Route
+              path="employees"
+              element={<Employees />}
+            />
           </Route>
 
-          <Route element={<ProviderPermissionRoute permission="plans" />}>
-            <Route path="plans" element={<Plans />} />
+          <Route
+            element={
+              <ProviderPermissionRoute permission="plans" />
+            }
+          >
+            <Route
+              path="plans"
+              element={<Plans />}
+            />
           </Route>
 
           <Route
@@ -40,28 +72,66 @@ const ProviderRoutes = () => {
               <ProviderPermissionRoute permission="subscriptions" />
             }
           >
-            <Route path="subscriptions" element={<Subscriptions />} />
+            <Route
+              path="subscriptions"
+              element={<Subscriptions />}
+            />
           </Route>
 
-          <Route element={<ProviderPermissionRoute permission="payments" />}>
-            <Route path="payments" element={<Payments />} />
+          <Route
+            element={
+              <ProviderPermissionRoute permission="payments" />
+            }
+          >
+            <Route
+              path="payments"
+              element={<Payments />}
+            />
           </Route>
 
-          <Route element={<ProviderPermissionRoute permission="reports" />}>
-            <Route path="reports" element={<Reports />} />
+
+          <Route
+            element={
+              <ProviderPermissionRoute permission="reports" />
+            }
+          >
+            <Route
+              path="reports"
+              element={<Reports />}
+            />
           </Route>
 
-          <Route element={<ProviderPermissionRoute permission="settings" />}>
-            <Route path="settings" element={<Settings />} />
+          <Route
+            element={
+              <ProviderPermissionRoute permission="settings" />
+            }
+          >
+            <Route
+              path="settings"
+              element={<Settings />}
+            />
           </Route>
         </Route>
       </Route>
 
-      <Route path="" element={<Navigate to="dashboard" replace />} />
+      <Route
+        path=""
+        element={
+          <Navigate
+            to="dashboard"
+            replace
+          />
+        }
+      />
 
       <Route
         path="*"
-        element={<Navigate to="/provider/dashboard" replace />}
+        element={
+          <Navigate
+            to="/provider/dashboard"
+            replace
+          />
+        }
       />
     </Routes>
   );

@@ -1,9 +1,20 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FiEye, FiEyeOff, FiLock, FiMail } from "react-icons/fi";
+
+import {
+  FiArrowRight,
+  FiEye,
+  FiEyeOff,
+  FiLock,
+  FiMail,
+  FiShield,
+  FiZap,
+} from "react-icons/fi";
+
 import toast from "react-hot-toast";
 
 import { providerLogin } from "../services/auth";
+
 import "../styles/login.css";
 
 const Login = () => {
@@ -65,24 +76,58 @@ const Login = () => {
         password: formData.password,
       });
 
+      console.log("Provider login response:", response);
+
+      const accessToken =
+        response.accessToken ||
+        response.access_token ||
+        response.token ||
+        response.data?.accessToken ||
+        response.data?.access_token ||
+        response.data?.token;
+
+      const providerUser =
+        response.user ||
+        response.data?.user;
+
+      if (!accessToken) {
+        throw new Error(
+          "Access token was not found in login response"
+        );
+      }
+
+      if (!providerUser) {
+        throw new Error(
+          "Provider user was not found in login response"
+        );
+      }
+
       localStorage.setItem(
         "billFlowProviderAccessToken",
-        response.access_token
+        accessToken
       );
 
       localStorage.setItem(
         "billFlowProviderUser",
-        JSON.stringify(response.user)
+        JSON.stringify(providerUser)
       );
 
-      toast.success(response.message || "Login successful");
+      toast.success(
+        response.message ||
+          response.data?.message ||
+          "Login successful"
+      );
 
       navigate("/provider/dashboard", {
         replace: true,
       });
     } catch (error) {
+      console.error("Provider login error:", error);
+
       toast.error(
-        error.response?.data?.message || "Unable to login. Try again."
+        error.response?.data?.message ||
+          error.message ||
+          "Unable to login. Try again."
       );
     } finally {
       setIsLoggingIn(false);
@@ -91,98 +136,212 @@ const Login = () => {
 
   return (
     <main className="provider-login-page">
-      <section className="provider-login-card">
-        <div className="provider-login-brand">
-          <div className="provider-login-logo">B</div>
+      <section className="provider-login-visual">
+        <div className="provider-login-visual-content">
+          <div className="provider-login-main-brand">
+            <div className="provider-login-main-logo">
+              <FiZap />
+            </div>
+
+            <div>
+              <h1>
+                Bill<span>Flow</span>
+              </h1>
+
+              <p>Provider Console</p>
+            </div>
+          </div>
+
+          <div className="provider-login-visual-copy">
+            <span className="provider-login-visual-tag">
+              Provider Management
+            </span>
+
+            <h2>
+              Run your entire
+              <br />
+              platform from one
+              <br />
+              secure workspace.
+            </h2>
+
+            <p>
+              Manage companies, subscriptions, payments,
+              employees and support operations from the
+              BillFlow provider console.
+            </p>
+          </div>
+
+          <div className="provider-login-visual-footer">
+            <FiShield />
+
+            <span>
+              Protected provider administration
+            </span>
+          </div>
+        </div>
+
+        <div className="provider-login-decoration provider-login-decoration-one" />
+        <div className="provider-login-decoration provider-login-decoration-two" />
+      </section>
+
+      <section className="provider-login-form-side">
+        <div className="provider-login-mobile-brand">
+          <div className="provider-login-mobile-logo">
+            <FiZap />
+          </div>
 
           <div>
-            <h1>BillFlow</h1>
-            <p>Provider Administration</p>
+            <strong>
+              Bill<span>Flow</span>
+            </strong>
+
+            <small>Provider Console</small>
           </div>
         </div>
 
-        <div className="provider-login-heading">
-          <span>Secure Access</span>
-          <h2>Welcome back</h2>
-          <p>Login to manage the BillFlow platform.</p>
-        </div>
+        <div className="provider-login-card">
+          <div className="provider-login-heading">
+            <span>Secure access</span>
 
-        <form className="provider-login-form" onSubmit={handleSubmit}>
-          <div className="provider-form-group">
-            <label htmlFor="email">Email ID</label>
+            <h2>Welcome back</h2>
 
-            <div
-              className={`provider-input-wrapper ${
-                errors.email ? "provider-input-error" : ""
-              }`}
-            >
-              <FiMail />
-
-              <input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Enter your email ID"
-                autoComplete="email"
-              />
-            </div>
-
-            {errors.email && (
-              <small className="provider-error-message">
-                {errors.email}
-              </small>
-            )}
+            <p>
+              Enter your provider credentials to continue
+              to your workspace.
+            </p>
           </div>
 
-          <div className="provider-form-group">
-            <label htmlFor="password">Password</label>
-
-            <div
-              className={`provider-input-wrapper ${
-                errors.password ? "provider-input-error" : ""
-              }`}
-            >
-              <FiLock />
-
-              <input
-                id="password"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-                autoComplete="current-password"
-              />
-
-              <button
-                type="button"
-                className="provider-password-toggle"
-                onClick={() =>
-                  setShowPassword((currentValue) => !currentValue)
-                }
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              >
-                {showPassword ? <FiEyeOff /> : <FiEye />}
-              </button>
-            </div>
-
-            {errors.password && (
-              <small className="provider-error-message">
-                {errors.password}
-              </small>
-            )}
-          </div>
-
-          <button
-            type="submit"
-            className="provider-login-button"
-            disabled={isLoggingIn}
+          <form
+            className="provider-login-form"
+            onSubmit={handleSubmit}
+            noValidate
           >
-            {isLoggingIn ? "Logging in..." : "Login"}
-          </button>
-        </form>
+            <div className="provider-form-group">
+              <label htmlFor="email">
+                Email address
+              </label>
+
+              <div
+                className={`provider-input-wrapper ${
+                  errors.email
+                    ? "provider-input-error"
+                    : ""
+                }`}
+              >
+                <FiMail />
+
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="name@company.com"
+                  autoComplete="email"
+                />
+              </div>
+
+              {errors.email && (
+                <small className="provider-error-message">
+                  {errors.email}
+                </small>
+              )}
+            </div>
+
+            <div className="provider-form-group">
+              <div className="provider-password-label-row">
+                <label htmlFor="password">
+                  Password
+                </label>
+
+                <span>Provider access only</span>
+              </div>
+
+              <div
+                className={`provider-input-wrapper ${
+                  errors.password
+                    ? "provider-input-error"
+                    : ""
+                }`}
+              >
+                <FiLock />
+
+                <input
+                  id="password"
+                  name="password"
+                  type={
+                    showPassword
+                      ? "text"
+                      : "password"
+                  }
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Enter your password"
+                  autoComplete="current-password"
+                />
+
+                <button
+                  type="button"
+                  className="provider-password-toggle"
+                  onClick={() =>
+                    setShowPassword(
+                      (currentValue) => !currentValue
+                    )
+                  }
+                  aria-label={
+                    showPassword
+                      ? "Hide password"
+                      : "Show password"
+                  }
+                >
+                  {showPassword ? (
+                    <FiEyeOff />
+                  ) : (
+                    <FiEye />
+                  )}
+                </button>
+              </div>
+
+              {errors.password && (
+                <small className="provider-error-message">
+                  {errors.password}
+                </small>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              className="provider-login-button"
+              disabled={isLoggingIn}
+            >
+              <span>
+                {isLoggingIn
+                  ? "Signing in..."
+                  : "Sign in to BillFlow"}
+              </span>
+
+              {!isLoggingIn && <FiArrowRight />}
+
+              {isLoggingIn && (
+                <span className="provider-login-button-loader" />
+              )}
+            </button>
+          </form>
+
+          <div className="provider-login-security">
+            <FiShield />
+
+            <div>
+              <strong>Secure provider login</strong>
+
+              <span>
+                Your session is protected and restricted
+                to authorised provider accounts.
+              </span>
+            </div>
+          </div>
+        </div>
 
         <p className="provider-login-footer">
           BillFlow Provider Management System

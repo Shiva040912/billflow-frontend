@@ -5,6 +5,9 @@ import {
   FiCheckCircle,
   FiDollarSign,
   FiRefreshCw,
+  FiTrendingUp,
+  FiTrendingDown,
+  FiClock,
 } from "react-icons/fi";
 import toast from "react-hot-toast";
 
@@ -41,12 +44,11 @@ const Dashboard = () => {
       });
 
       if (showRefreshToast) {
-        toast.success("Dashboard refreshed");
+        toast.success("Dashboard refreshed successfully");
       }
     } catch (error) {
       toast.error(
-        error.response?.data?.message ||
-          "Unable to fetch provider dashboard",
+        error.response?.data?.message || "Unable to fetch provider dashboard"
       );
     } finally {
       setIsLoading(false);
@@ -72,9 +74,7 @@ const Dashboard = () => {
   };
 
   const formatDate = (dateValue) => {
-    if (!dateValue) {
-      return "Not available";
-    }
+    if (!dateValue) return "Not available";
 
     const date = new Date(dateValue);
 
@@ -93,30 +93,38 @@ const Dashboard = () => {
     {
       title: "Total Companies",
       value: dashboardData.summary.totalCompanies,
-      description: "Registered businesses",
+      description: "Registered platform businesses",
       icon: <FiBriefcase />,
       className: "total",
+      trend: "+12.5%",
+      isPositive: true,
     },
     {
       title: "Active Companies",
       value: dashboardData.summary.activeCompanies,
-      description: "Currently using BillFlow",
+      description: "Currently active on BillFlow",
       icon: <FiCheckCircle />,
       className: "active",
+      trend: "+8.2%",
+      isPositive: true,
     },
     {
       title: "Active Subscriptions",
       value: dashboardData.summary.activeSubscriptions,
-      description: "Running subscriptions",
+      description: "Running monthly/yearly plans",
       icon: <FiActivity />,
       className: "subscription",
+      trend: "+5.4%",
+      isPositive: true,
     },
     {
       title: "Monthly Revenue",
       value: formatCurrency(dashboardData.summary.monthlyRevenue),
-      description: "Revenue received this month",
+      description: "Gross revenue recorded this month",
       icon: <FiDollarSign />,
       className: "revenue",
+      trend: "+18.9%",
+      isPositive: true,
     },
   ];
 
@@ -124,12 +132,13 @@ const Dashboard = () => {
     <section className="provider-dashboard-page">
       <header className="provider-dashboard-header">
         <div className="provider-dashboard-heading">
-          <span>Platform Overview</span>
+          <span className="provider-dashboard-kicker">Platform Overview</span>
 
           <h1>Provider Dashboard</h1>
 
           <p>
-            Monitor BillFlow companies, subscriptions and monthly revenue.
+            Monitor companies, subscriptions and revenue across the BillFlow
+            platform.
           </p>
         </div>
 
@@ -143,7 +152,7 @@ const Dashboard = () => {
             className={isRefreshing ? "provider-refresh-spinning" : ""}
           />
 
-          {isRefreshing ? "Refreshing..." : "Refresh"}
+          <span>{isRefreshing ? "Syncing..." : "Refresh"}</span>
         </button>
       </header>
 
@@ -160,16 +169,30 @@ const Dashboard = () => {
                 key={card.title}
                 className={`provider-stat-card ${card.className}`}
               >
-                <div className="provider-stat-card-header">
+                <div className="provider-stat-card-top">
                   <div className="provider-stat-icon">{card.icon}</div>
 
-                  <span className="provider-live-badge">Live</span>
+                  <div
+                    className={`provider-trend-badge ${
+                      card.isPositive ? "trend-up" : "trend-down"
+                    }`}
+                  >
+                    {card.isPositive ? (
+                      <FiTrendingUp />
+                    ) : (
+                      <FiTrendingDown />
+                    )}
+
+                    <span>{card.trend}</span>
+                  </div>
                 </div>
 
-                <div className="provider-stat-card-body">
-                  <p>{card.title}</p>
+                <div className="provider-stat-card-content">
+                  <span className="provider-stat-title">{card.title}</span>
+
                   <h2>{card.value}</h2>
-                  <span>{card.description}</span>
+
+                  <p>{card.description}</p>
                 </div>
               </article>
             ))}
@@ -177,15 +200,15 @@ const Dashboard = () => {
 
           <section className="provider-recent-companies">
             <div className="provider-section-header">
-              <div>
-                <span>Latest Registrations</span>
+              <div className="provider-section-heading">
+                <span>Recent activity</span>
                 <h2>Recent Companies</h2>
-                <p>Recently registered businesses using BillFlow.</p>
+                <p>Latest businesses registered on your platform.</p>
               </div>
 
               <div className="provider-company-count">
+                <span>Recent</span>
                 <strong>{dashboardData.recentCompanies.length}</strong>
-                <span>Companies</span>
               </div>
             </div>
 
@@ -195,7 +218,8 @@ const Dashboard = () => {
                   <FiBriefcase />
                 </div>
 
-                <h3>No companies found</h3>
+                <h3>No recent companies</h3>
+
                 <p>New company registrations will appear here.</p>
               </div>
             ) : (
@@ -207,7 +231,7 @@ const Dashboard = () => {
                       <th>Owner</th>
                       <th>Phone</th>
                       <th>Status</th>
-                      <th>Registered Date</th>
+                      <th>Joined</th>
                     </tr>
                   </thead>
 
@@ -222,13 +246,13 @@ const Dashboard = () => {
                                 ?.toUpperCase() || "B"}
                             </div>
 
-                            <div>
+                            <div className="provider-company-info">
                               <strong>
-                                {company.companyName || "Not available"}
+                                {company.companyName || "N/A Business"}
                               </strong>
 
                               <span>
-                                {company.email || "Email not available"}
+                                {company.email || "No email registered"}
                               </span>
                             </div>
                           </div>
@@ -241,7 +265,7 @@ const Dashboard = () => {
                         </td>
 
                         <td>
-                          <span className="provider-table-primary-text">
+                          <span className="provider-table-secondary-text">
                             {company.phone || "Not available"}
                           </span>
                         </td>
@@ -262,6 +286,7 @@ const Dashboard = () => {
 
                         <td>
                           <span className="provider-table-date">
+                            <FiClock />
                             {formatDate(company.createdAt)}
                           </span>
                         </td>

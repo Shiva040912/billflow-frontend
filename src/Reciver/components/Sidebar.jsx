@@ -3,13 +3,14 @@ import {
   FiBox,
   FiCreditCard,
   FiGrid,
-  FiLogOut,
   FiPackage,
   FiSettings,
   FiShoppingCart,
   FiTruck,
+  FiUserCheck,
   FiUsers,
   FiX,
+  FiZap,
 } from "react-icons/fi";
 
 import {
@@ -17,37 +18,162 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-const Sidebar = ({ isOpen, onClose }) => {
-  const navigate = useNavigate();
+const ROLE_ACCESS = {
+  cashier: [
+    "dashboard",
+    "billing",
+    "customers",
+  ],
 
-  const handleLogout = () => {
-    localStorage.removeItem(
-      "billFlowAccessToken",
+  inventory_manager: [
+    "dashboard",
+    "products",
+    "categories",
+    "suppliers",
+    "inventory",
+  ],
+
+  sales_manager: [
+    "dashboard",
+    "customers",
+    "reports",
+  ],
+
+  accountant: [
+    "dashboard",
+    "billing",
+    "reports",
+  ],
+};
+
+const menuItems = [
+  {
+    name: "Dashboard",
+    path: "/dashboard",
+    permission: "dashboard",
+    icon: <FiGrid />,
+  },
+  {
+    name: "POS Billing",
+    path: "/billing",
+    permission: "billing",
+    icon: <FiCreditCard />,
+  },
+  {
+    name: "Products",
+    path: "/products",
+    permission: "products",
+    icon: <FiPackage />,
+  },
+  {
+    name: "Categories",
+    path: "/categories",
+    permission: "categories",
+    icon: <FiBox />,
+  },
+  {
+    name: "Customers",
+    path: "/customers",
+    permission: "customers",
+    icon: <FiUsers />,
+  },
+  {
+    name: "Employees",
+    path: "/employees",
+    permission: "employees",
+    icon: <FiUserCheck />,
+  },
+  {
+    name: "Suppliers",
+    path: "/suppliers",
+    permission: "suppliers",
+    icon: <FiTruck />,
+  },
+  {
+    name: "Inventory",
+    path: "/inventory",
+    permission: "inventory",
+    icon: <FiShoppingCart />,
+  },
+  {
+    name: "Reports",
+    path: "/reports",
+    permission: "reports",
+    icon: <FiBarChart2 />,
+  },
+  {
+    name: "Settings",
+    path: "/settings",
+    permission: "settings",
+    icon: <FiSettings />,
+  },
+];
+
+const Sidebar = ({
+  isOpen,
+  onClose,
+}) => {
+  const navigate =
+    useNavigate();
+
+  const storedUser =
+    localStorage.getItem(
+      "billFlowUser"
     );
-    localStorage.removeItem("billFlowUser");
-    localStorage.removeItem("billFlowCompany");
 
-    if (onClose) {
-      onClose();
-    }
+  let currentUser = null;
 
-    navigate("/", {
-      replace: true,
-    });
-  };
+  try {
+    currentUser =
+      storedUser
+        ? JSON.parse(
+            storedUser
+          )
+        : null;
+  } catch {
+    currentUser = null;
+  }
 
-  const handleNavigation = () => {
-    if (onClose) {
-      onClose();
-    }
-  };
+  const isOwner =
+    currentUser?.role ===
+      "owner" ||
+    currentUser?.accountType ===
+      "owner";
 
-  const handleBrandClick = () => {
-    navigate("/dashboard");
-    handleNavigation();
-  };
+  const employeeRole =
+    currentUser?.employeeRole;
 
-  const getLinkClassName = ({ isActive }) =>
+  const allowedMenuItems =
+    isOwner
+      ? menuItems
+      : menuItems.filter(
+          (item) =>
+            ROLE_ACCESS[
+              employeeRole
+            ]?.includes(
+              item.permission
+            )
+        );
+
+  const handleNavigation =
+    () => {
+      if (onClose) {
+        onClose();
+      }
+    };
+
+  const handleBrandClick =
+    () => {
+      navigate(
+        "/dashboard"
+      );
+
+      handleNavigation();
+    };
+
+  const getLinkClassName = ({
+    isActive,
+  }) =>
     isActive
       ? "sidebar-link active"
       : "sidebar-link";
@@ -61,17 +187,26 @@ const Sidebar = ({ isOpen, onClose }) => {
       }
       aria-label="Main navigation"
     >
-      <div className="sidebar-top">
+      <div className="sidebar-header">
         <button
           type="button"
           className="sidebar-brand"
-          onClick={handleBrandClick}
+          onClick={
+            handleBrandClick
+          }
         >
-          <div className="sidebar-logo">B</div>
+          <span className="sidebar-brand-logo">
+            <FiZap />
+          </span>
 
           <div className="sidebar-brand-details">
-            <h2>BillFlow</h2>
-            <p>Billing Software</p>
+            <h2>
+              Bill<span>Flow</span>
+            </h2>
+
+            <p>
+              Business Workspace
+            </p>
           </div>
         </button>
 
@@ -85,98 +220,49 @@ const Sidebar = ({ isOpen, onClose }) => {
         </button>
       </div>
 
+      <div className="sidebar-section-label">
+        Workspace
+      </div>
+
       <nav className="sidebar-nav">
-        <NavLink
-          to="/dashboard"
-          className={getLinkClassName}
-          onClick={handleNavigation}
-        >
-          <FiGrid />
-          <span>Dashboard</span>
-        </NavLink>
+        {allowedMenuItems.map(
+          (item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={
+                getLinkClassName
+              }
+              onClick={
+                handleNavigation
+              }
+            >
+              <span className="sidebar-link-icon">
+                {item.icon}
+              </span>
 
-        <NavLink
-          to="/billing"
-          className={getLinkClassName}
-          onClick={handleNavigation}
-        >
-          <FiCreditCard />
-          <span>POS Billing</span>
-        </NavLink>
-
-        <NavLink
-          to="/products"
-          className={getLinkClassName}
-          onClick={handleNavigation}
-        >
-          <FiBox />
-          <span>Products</span>
-        </NavLink>
-
-        <NavLink
-          to="/categories"
-          className={getLinkClassName}
-          onClick={handleNavigation}
-        >
-          <FiPackage />
-          <span>Categories</span>
-        </NavLink>
-
-        <NavLink
-          to="/customers"
-          className={getLinkClassName}
-          onClick={handleNavigation}
-        >
-          <FiUsers />
-          <span>Customers</span>
-        </NavLink>
-
-        <NavLink
-          to="/suppliers"
-          className={getLinkClassName}
-          onClick={handleNavigation}
-        >
-          <FiTruck />
-          <span>Suppliers</span>
-        </NavLink>
-
-        <NavLink
-          to="/inventory"
-          className={getLinkClassName}
-          onClick={handleNavigation}
-        >
-          <FiShoppingCart />
-          <span>Inventory</span>
-        </NavLink>
-
-        <NavLink
-          to="/reports"
-          className={getLinkClassName}
-          onClick={handleNavigation}
-        >
-          <FiBarChart2 />
-          <span>Reports</span>
-        </NavLink>
-
-        <NavLink
-          to="/settings"
-          className={getLinkClassName}
-          onClick={handleNavigation}
-        >
-          <FiSettings />
-          <span>Settings</span>
-        </NavLink>
+              <span>
+                {item.name}
+              </span>
+            </NavLink>
+          )
+        )}
       </nav>
 
-      <div className="sidebar-footer">
-        <button
-          type="button"
-          className="sidebar-logout-button"
-          onClick={handleLogout}
-        >
-          <FiLogOut />
-          <span>Logout</span>
-        </button>
+      <div className="sidebar-bottom-card">
+        <span className="sidebar-bottom-card-icon">
+          <FiZap />
+        </span>
+
+        <div>
+          <strong>
+            BillFlow Business
+          </strong>
+
+          <p>
+            Manage daily work faster.
+          </p>
+        </div>
       </div>
     </aside>
   );

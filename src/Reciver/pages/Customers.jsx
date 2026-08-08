@@ -1130,7 +1130,7 @@ const Customers = () => {
                     placeholder="Enter phone number"
                     value={formData.phone}
                     onChange={handleFormChange}
-                    maxLength={15}
+                    maxLength={10}
                     inputMode="numeric"
                     autoComplete="tel"
                   />

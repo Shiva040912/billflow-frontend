@@ -63,7 +63,7 @@ const INITIAL_SETTINGS = {
   dailySalesSummary: false,
   emailNotifications: true,
 
-  theme: "light",
+  
   language: "en-IN",
   dateFormat: "DD/MM/YYYY",
   timezone: "Asia/Kolkata",
@@ -296,7 +296,7 @@ const Settings = () => {
           settings.emailNotifications,
         ),
 
-        theme: settings.theme,
+        
         language: settings.language,
         dateFormat: settings.dateFormat,
         timezone: settings.timezone,
@@ -413,7 +413,7 @@ const Settings = () => {
     {
       id: "appearance",
       title: "Application",
-      description: "Theme and regional preferences",
+      description: "regional preferences",
       icon: <FiGlobe />,
     },
     {
@@ -1261,22 +1261,7 @@ const Settings = () => {
               </div>
 
               <div className="settings-form-grid">
-                <div className="settings-field">
-                  <label htmlFor="theme">Theme</label>
-
-                  <select
-                    id="theme"
-                    name="theme"
-                    value={settings.theme}
-                    onChange={handleChange}
-                  >
-                    <option value="light">Light</option>
-                    <option value="dark">Dark</option>
-                    <option value="system">
-                      System Default
-                    </option>
-                  </select>
-                </div>
+                
 
                 <div className="settings-field">
                   <label htmlFor="language">

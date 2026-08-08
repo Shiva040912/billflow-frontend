@@ -1,4 +1,19 @@
 import { useNavigate } from "react-router-dom";
+
+import {
+  FiArrowRight,
+  FiBarChart2,
+  FiBox,
+  FiCheck,
+  FiCreditCard,
+  FiFileText,
+  FiPackage,
+  FiShield,
+  FiShoppingBag,
+  FiUsers,
+  FiZap,
+} from "react-icons/fi";
+
 import "../styles/home.css";
 
 const Home = () => {
@@ -20,10 +35,16 @@ const Home = () => {
           className="home-brand"
           onClick={() => navigate("/")}
         >
-          <span className="home-brand-logo">BF</span>
+          <span className="home-brand-logo">
+            <FiZap />
+          </span>
+
           <span className="home-brand-content">
-            <strong>BillFlow</strong>
-            <small>Smart Billing Software</small>
+            <strong>
+              Bill<span>Flow</span>
+            </strong>
+
+            <small>Smart Business Billing</small>
           </span>
         </button>
 
@@ -47,26 +68,29 @@ const Home = () => {
             className="home-start-button"
             onClick={handleGetStarted}
           >
-            Get Started
+            Start Free
+            <FiArrowRight />
           </button>
         </div>
       </header>
 
       <section className="home-hero">
         <div className="home-hero-content">
-          <span className="home-hero-badge">
-            ✨ Simple. Secure. Built for your business growth.
-          </span>
+          <div className="home-hero-badge">
+            <span className="home-hero-badge-dot" />
+            Built for growing businesses
+          </div>
 
           <h1>
-            Manage your billing & business with <br />
-            <span>BillFlow Pro</span>
+            Billing that keeps your
+            <span> business moving.</span>
           </h1>
 
           <p>
-            Create professional bills instantly, manage products effortlessly,
-            track stock levels, handle customers, and monitor your
-            complete business performance from one smart dashboard.
+            Create invoices, manage products, track stock,
+            maintain customers and understand your sales —
+            all from one simple workspace built for everyday
+            business.
           </p>
 
           <div className="home-hero-actions">
@@ -75,7 +99,8 @@ const Home = () => {
               className="home-primary-button"
               onClick={handleGetStarted}
             >
-              Start Your Business Free
+              Start your business
+              <FiArrowRight />
             </button>
 
             <button
@@ -83,77 +108,144 @@ const Home = () => {
               className="home-secondary-button"
               onClick={handleLogin}
             >
-              Login to Dashboard
+              Login to dashboard
             </button>
           </div>
 
           <div className="home-hero-points">
-            <span>No complicated setup</span>
-            <span>Razorpay Secure</span>
-            <span>Lightning Fast Billing</span>
+            <span>
+              <FiCheck />
+              Quick setup
+            </span>
+
+            <span>
+              <FiCheck />
+              Secure payments
+            </span>
+
+            <span>
+              <FiCheck />
+              Easy billing
+            </span>
           </div>
         </div>
 
         <div className="home-dashboard-preview">
           <div className="home-preview-window">
-            <div className="home-preview-header">
-              <div>
-                <span className="preview-dot" />
-                <span className="preview-dot" />
-                <span className="preview-dot" />
+            <div className="home-preview-topbar">
+              <div className="home-preview-brand">
+                <span>
+                  <FiZap />
+                </span>
+
+                <strong>BillFlow</strong>
               </div>
-              <span>BillFlow Secure Workspace</span>
+
+              <button type="button">
+                Create Bill
+              </button>
             </div>
 
-            <div className="home-preview-body">
+            <div className="home-preview-layout">
               <aside className="home-preview-sidebar">
-                <div className="preview-logo-block" />
-                <div className="preview-menu active" />
-                <div className="preview-menu" />
-                <div className="preview-menu" />
-                <div className="preview-menu" />
+                <span className="home-preview-menu active">
+                  <FiBarChart2 />
+                </span>
+
+                <span className="home-preview-menu">
+                  <FiFileText />
+                </span>
+
+                <span className="home-preview-menu">
+                  <FiPackage />
+                </span>
+
+                <span className="home-preview-menu">
+                  <FiUsers />
+                </span>
               </aside>
 
               <div className="home-preview-main">
-                <div className="preview-heading">
+                <div className="home-preview-heading">
                   <div>
-                    <span />
-                    <small />
+                    <small>Business Overview</small>
+                    <strong>Good morning 👋</strong>
                   </div>
-                  <button type="button">Create Bill</button>
+
+                  <span>Today</span>
                 </div>
 
-                <div className="preview-stat-grid">
+                <div className="home-preview-stats">
                   <article>
-                    <span>Total Sales</span>
-                    <strong>₹48,250</strong>
-                    <small>+12.5%</small>
+                    <div className="home-preview-stat-icon sales">
+                      <FiCreditCard />
+                    </div>
+
+                    <span>Today Sales</span>
+                    <strong>₹8,640</strong>
+                    <small>+12.4%</small>
                   </article>
+
                   <article>
-                    <span>Total Orders</span>
-                    <strong>126</strong>
-                    <small>+8.2%</small>
+                    <div className="home-preview-stat-icon orders">
+                      <FiShoppingBag />
+                    </div>
+
+                    <span>Invoices</span>
+                    <strong>24</strong>
+                    <small>Today</small>
                   </article>
+
                   <article>
-                    <span>Products</span>
-                    <strong>84</strong>
-                    <small>Active</small>
+                    <div className="home-preview-stat-icon stock">
+                      <FiBox />
+                    </div>
+
+                    <span>Low Stock</span>
+                    <strong>3</strong>
+                    <small>Products</small>
                   </article>
                 </div>
 
-                <div className="preview-chart-card">
-                  <div className="preview-chart-heading">
-                    <span />
-                    <small />
+                <div className="home-preview-bottom">
+                  <div className="home-preview-chart-card">
+                    <div className="home-preview-chart-header">
+                      <div>
+                        <strong>Sales Overview</strong>
+                        <span>Last 7 days</span>
+                      </div>
+
+                      <small>₹48.2K</small>
+                    </div>
+
+                    <div className="home-preview-chart">
+                      <span style={{ height: "36%" }} />
+                      <span style={{ height: "52%" }} />
+                      <span style={{ height: "45%" }} />
+                      <span style={{ height: "68%" }} />
+                      <span style={{ height: "58%" }} />
+                      <span style={{ height: "84%" }} />
+                      <span style={{ height: "72%" }} />
+                    </div>
                   </div>
-                  <div className="preview-chart">
-                    <span style={{ height: "36%" }} />
-                    <span style={{ height: "52%" }} />
-                    <span style={{ height: "44%" }} />
-                    <span style={{ height: "70%" }} />
-                    <span style={{ height: "62%" }} />
-                    <span style={{ height: "86%" }} />
-                    <span style={{ height: "74%" }} />
+
+                  <div className="home-preview-stock-card">
+                    <strong>Stock Status</strong>
+
+                    <div>
+                      <span>Available</span>
+                      <b>81</b>
+                    </div>
+
+                    <div>
+                      <span>Low Stock</span>
+                      <b>3</b>
+                    </div>
+
+                    <div>
+                      <span>Out of Stock</span>
+                      <b>0</b>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -161,83 +253,180 @@ const Home = () => {
           </div>
 
           <div className="home-floating-card home-floating-sales">
-            <span>Today&apos;s Sales</span>
-            <strong>₹8,640</strong>
+            <span className="home-floating-icon">
+              <FiCreditCard />
+            </span>
+
+            <div>
+              <small>Today&apos;s Sales</small>
+              <strong>₹8,640</strong>
+            </div>
           </div>
 
           <div className="home-floating-card home-floating-stock">
-            <span>Stock Status</span>
-            <strong>All Good 🚀</strong>
+            <span className="home-floating-icon stock">
+              <FiCheck />
+            </span>
+
+            <div>
+              <small>Inventory</small>
+              <strong>Stock healthy</strong>
+            </div>
           </div>
         </div>
       </section>
 
-      <section id="features" className="home-features-section">
+      <section
+        id="features"
+        className="home-features-section"
+      >
         <div className="home-section-heading">
-          <span>Everything in one place</span>
-          <h2>Features designed for modern business owners</h2>
+          <span>Everything you need</span>
+
+          <h2>
+            One workspace for your daily business
+          </h2>
+
           <p>
-            Daily billing work simple-ah manage panna thevaiyana important tools ellame BillFlow-la irukkum.
+            BillFlow brings billing, inventory, customers and
+            business insights together without making your
+            daily work complicated.
           </p>
         </div>
 
         <div className="home-feature-grid">
           <article className="home-feature-card">
-            <div className="home-feature-icon">01</div>
-            <h3>Smart Billing</h3>
-            <p>Fast-ah professional bills create panni customers-ku provide pannalam.</p>
+            <div className="home-feature-icon billing">
+              <FiFileText />
+            </div>
+
+            <h3>Fast Billing</h3>
+
+            <p>
+              Create clean professional invoices quickly
+              without unnecessary steps.
+            </p>
           </article>
 
           <article className="home-feature-card">
-            <div className="home-feature-icon">02</div>
-            <h3>Stock Management</h3>
-            <p>Products stock, availability and low-stock details easy-ah monitor pannalam.</p>
+            <div className="home-feature-icon inventory">
+              <FiPackage />
+            </div>
+
+            <h3>Inventory Control</h3>
+
+            <p>
+              Keep track of available stock and identify
+              low-stock products before they become a problem.
+            </p>
           </article>
 
           <article className="home-feature-card">
-            <div className="home-feature-icon">03</div>
-            <h3>Sales Dashboard</h3>
-            <p>Sales, orders and business performance complete overview paarkalam.</p>
+            <div className="home-feature-icon sales">
+              <FiBarChart2 />
+            </div>
+
+            <h3>Sales Insights</h3>
+
+            <p>
+              Understand sales performance using clear
+              business metrics from one dashboard.
+            </p>
           </article>
 
           <article className="home-feature-card">
-            <div className="home-feature-icon">04</div>
-            <h3>Customer Management</h3>
-            <p>Customer details and purchase records organized-ah maintain pannalam.</p>
+            <div className="home-feature-icon customers">
+              <FiUsers />
+            </div>
+
+            <h3>Customer Records</h3>
+
+            <p>
+              Maintain customer details and purchase history
+              in one organized place.
+            </p>
           </article>
 
           <article className="home-feature-card">
-            <div className="home-feature-icon">05</div>
-            <h3>Employee Access</h3>
-            <p>Employees create panni avangalukku required access mattum provide pannalam.</p>
+            <div className="home-feature-icon employees">
+              <FiShoppingBag />
+            </div>
+
+            <h3>Business Operations</h3>
+
+            <p>
+              Manage products, suppliers and daily operations
+              without jumping between multiple tools.
+            </p>
           </article>
 
           <article className="home-feature-card">
-            <div className="home-feature-icon">06</div>
-            <h3>Secure Payments</h3>
-            <p>Razorpay payment complete pannitu company account secure-ah activate pannalam.</p>
+            <div className="home-feature-icon secure">
+              <FiShield />
+            </div>
+
+            <h3>Secure Platform</h3>
+
+            <p>
+              Business access and subscription payments are
+              handled through a secure workflow.
+            </p>
           </article>
         </div>
       </section>
 
-      <section id="pricing" className="home-pricing-section">
-        <div className="home-pricing-content">
-          <span className="home-pricing-label">Simple pricing</span>
-          <h2>Choose a plan that matches your business</h2>
+      <section
+        id="pricing"
+        className="home-pricing-section"
+      >
+        <div className="home-pricing-panel">
+          <div className="home-pricing-content">
+            <span className="home-pricing-label">
+              Flexible plans
+            </span>
+
+            <h2>
+              Start simple. Grow when your business grows.
+            </h2>
+
+            <p>
+              Create your company, choose the plan that fits
+              your business and start managing your daily
+              operations with BillFlow.
+            </p>
+          </div>
+
+          <div className="home-pricing-action">
+            <button
+              type="button"
+              onClick={handleGetStarted}
+            >
+              Explore plans
+              <FiArrowRight />
+            </button>
+
+            <span>
+              Choose monthly or yearly billing
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <section
+        id="about"
+        className="home-cta-section"
+      >
+        <div className="home-cta-content">
+          <span>Get started today</span>
+
+          <h2>
+            Your business deserves simpler software.
+          </h2>
+
           <p>
-            First company details register pannunga. Adhukku apram suitable plan select panni payment complete pannalam.
+            Set up your company and bring billing, stock,
+            customers and sales into one clean workspace.
           </p>
-          <button type="button" onClick={handleGetStarted}>
-            View Plans & Pricing
-          </button>
-        </div>
-      </section>
-
-      <section id="about" className="home-cta-section">
-        <div>
-          <span>Ready to get started?</span>
-          <h2>Take control of your business with BillFlow</h2>
-          <p>Company account create panni billing management-ah simple-ah start pannunga.</p>
         </div>
 
         <div className="home-cta-actions">
@@ -247,6 +436,7 @@ const Home = () => {
             onClick={handleGetStarted}
           >
             Create Company
+            <FiArrowRight />
           </button>
 
           <button
@@ -261,15 +451,24 @@ const Home = () => {
 
       <footer className="home-footer">
         <div className="home-footer-brand">
-          <span className="home-brand-logo">BF</span>
+          <span className="home-footer-logo">
+            <FiZap />
+          </span>
+
           <div>
-            <strong>BillFlow</strong>
-            <p>Smart billing for growing businesses.</p>
+            <strong>
+              Bill<span>Flow</span>
+            </strong>
+
+            <p>
+              Smart billing for growing businesses.
+            </p>
           </div>
         </div>
 
         <p>
-          © {new Date().getFullYear()} BillFlow. All rights reserved.
+          © {new Date().getFullYear()} BillFlow. All rights
+          reserved.
         </p>
       </footer>
     </main>

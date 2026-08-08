@@ -1,20 +1,32 @@
 import { useEffect, useMemo, useState } from "react";
+
 import {
+  FiEdit2,
   FiEye,
   FiEyeOff,
   FiPlus,
   FiRefreshCw,
   FiSearch,
+  FiTrash2,
+  FiUserCheck,
   FiUserPlus,
+  FiUserX,
   FiUsers,
   FiX,
 } from "react-icons/fi";
-import toast from "react-hot-toast";
 
 import {
   createProviderEmployee,
+  deleteProviderEmployee,
   getProviderEmployees,
+  toggleProviderEmployeeStatus,
+  updateProviderEmployee,
 } from "../services/employees";
+
+import {
+  showErrorToast,
+  showSuccessToast,
+} from "../../Reciver/utils/toast";
 
 import "../styles/employees.css";
 
@@ -79,25 +91,44 @@ const Employees = () => {
   const [isEmployeeModalOpen, setIsEmployeeModalOpen] =
     useState(false);
 
-  const [formData, setFormData] = useState(initialFormData);
+  const [modalMode, setModalMode] = useState("create");
+
+  const [selectedEmployee, setSelectedEmployee] =
+    useState(null);
+
+  const [formData, setFormData] =
+    useState(initialFormData);
+
   const [formErrors, setFormErrors] = useState({});
-  const [showPassword, setShowPassword] = useState(false);
-  const [isCreatingEmployee, setIsCreatingEmployee] =
+
+  const [showPassword, setShowPassword] =
     useState(false);
 
-  const fetchEmployees = async (showSuccessToast = false) => {
+  const [isSavingEmployee, setIsSavingEmployee] =
+    useState(false);
+
+  const [processingEmployeeId, setProcessingEmployeeId] =
+    useState(null);
+
+  const fetchEmployees = async (
+    shouldShowSuccessToast = false
+  ) => {
     try {
       const response = await getProviderEmployees();
 
-      setEmployees(response.employees || []);
+      setEmployees(
+        Array.isArray(response?.employees)
+          ? response.employees
+          : []
+      );
 
-      if (showSuccessToast) {
-        toast.success("Employees refreshed");
+      if (shouldShowSuccessToast) {
+        showSuccessToast("Employees refreshed");
       }
     } catch (error) {
-      toast.error(
-        error.response?.data?.message ||
-          "Unable to fetch provider employees",
+      showErrorToast(
+        error,
+        "Unable to fetch provider employees"
       );
     } finally {
       setIsLoading(false);
@@ -115,19 +146,30 @@ const Employees = () => {
     }
 
     const handleEscapeKey = (event) => {
-      if (event.key === "Escape" && !isCreatingEmployee) {
+      if (
+        event.key === "Escape" &&
+        !isSavingEmployee
+      ) {
         closeEmployeeModal();
       }
     };
 
-    document.addEventListener("keydown", handleEscapeKey);
+    document.addEventListener(
+      "keydown",
+      handleEscapeKey
+    );
+
     document.body.style.overflow = "hidden";
 
     return () => {
-      document.removeEventListener("keydown", handleEscapeKey);
+      document.removeEventListener(
+        "keydown",
+        handleEscapeKey
+      );
+
       document.body.style.overflow = "";
     };
-  }, [isEmployeeModalOpen, isCreatingEmployee]);
+  }, [isEmployeeModalOpen, isSavingEmployee]);
 
   const filteredEmployees = useMemo(() => {
     const normalizedSearchTerm = searchTerm
@@ -151,31 +193,60 @@ const Employees = () => {
       return searchableValues.some((value) =>
         String(value || "")
           .toLowerCase()
-          .includes(normalizedSearchTerm),
+          .includes(normalizedSearchTerm)
       );
     });
   }, [employees, searchTerm]);
 
   const activeEmployeesCount = useMemo(() => {
-    return employees.filter((employee) => employee.isActive).length;
+    return employees.filter(
+      (employee) => employee.isActive
+    ).length;
   }, [employees]);
 
   const inactiveEmployeesCount =
     employees.length - activeEmployeesCount;
 
-  const openEmployeeModal = () => {
+  const getEmployeeId = (employee) => {
+    return employee?._id || employee?.id;
+  };
+
+  const openCreateEmployeeModal = () => {
+    setModalMode("create");
+    setSelectedEmployee(null);
     setFormData(initialFormData);
     setFormErrors({});
     setShowPassword(false);
     setIsEmployeeModalOpen(true);
   };
 
+  const openEditEmployeeModal = (employee) => {
+    setModalMode("edit");
+
+    setSelectedEmployee(employee);
+
+    setFormData({
+      fullName: employee.fullName || "",
+      email: employee.email || "",
+      phone: employee.phone || "",
+      department: employee.department || "",
+      role: employee.role || "",
+      password: "",
+    });
+
+    setFormErrors({});
+    setShowPassword(false);
+    setIsEmployeeModalOpen(true);
+  };
+
   const closeEmployeeModal = () => {
-    if (isCreatingEmployee) {
+    if (isSavingEmployee) {
       return;
     }
 
     setIsEmployeeModalOpen(false);
+    setSelectedEmployee(null);
+    setModalMode("create");
     setFormData(initialFormData);
     setFormErrors({});
     setShowPassword(false);
@@ -184,7 +255,7 @@ const Employees = () => {
   const handleModalOverlayClick = (event) => {
     if (
       event.target === event.currentTarget &&
-      !isCreatingEmployee
+      !isSavingEmployee
     ) {
       closeEmployeeModal();
     }
@@ -213,24 +284,29 @@ const Employees = () => {
     const errors = {};
 
     if (!formData.fullName.trim()) {
-      errors.fullName = "Employee full name is required";
+      errors.fullName =
+        "Employee full name is required";
     }
 
     if (!formData.email.trim()) {
       errors.email = "Email ID is required";
     } else if (
       !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-        formData.email.trim(),
+        formData.email.trim()
       )
     ) {
       errors.email = "Enter a valid email ID";
     }
 
-    if (!formData.phone.trim()) {
+    const normalizedPhone = formData.phone
+      .trim()
+      .replace(/\s/g, "");
+
+    if (!normalizedPhone) {
       errors.phone = "Phone number is required";
     } else if (
       !/^(\+91)?[6-9]\d{9}$/.test(
-        formData.phone.trim().replace(/\s/g, ""),
+        normalizedPhone
       )
     ) {
       errors.phone =
@@ -238,18 +314,21 @@ const Employees = () => {
     }
 
     if (!formData.department) {
-      errors.department = "Select employee department";
+      errors.department =
+        "Select employee department";
     }
 
     if (!formData.role) {
       errors.role = "Select employee role";
     }
 
-    if (!formData.password) {
-      errors.password = "Password is required";
-    } else if (formData.password.length < 8) {
-      errors.password =
-        "Password must contain at least 8 characters";
+    if (modalMode === "create") {
+      if (!formData.password) {
+        errors.password = "Password is required";
+      } else if (formData.password.length < 8) {
+        errors.password =
+          "Password must contain at least 8 characters";
+      }
     }
 
     setFormErrors(errors);
@@ -257,7 +336,17 @@ const Employees = () => {
     return Object.keys(errors).length === 0;
   };
 
-  const handleCreateEmployee = async (event) => {
+  const formatPhoneNumber = (phone) => {
+    const phoneNumber = phone
+      .trim()
+      .replace(/\s/g, "");
+
+    return phoneNumber.startsWith("+91")
+      ? phoneNumber
+      : `+91${phoneNumber}`;
+  };
+
+  const handleEmployeeSubmit = async (event) => {
     event.preventDefault();
 
     if (!validateEmployeeForm()) {
@@ -265,52 +354,168 @@ const Employees = () => {
     }
 
     try {
-      setIsCreatingEmployee(true);
+      setIsSavingEmployee(true);
 
-      const phoneNumber = formData.phone
-        .trim()
-        .replace(/\s/g, "");
-
-      const formattedPhone = phoneNumber.startsWith("+91")
-        ? phoneNumber
-        : `+91${phoneNumber}`;
-
-      const response = await createProviderEmployee({
+      const commonEmployeeData = {
         fullName: formData.fullName.trim(),
-        email: formData.email.trim().toLowerCase(),
-        phone: formattedPhone,
+
+        email: formData.email
+          .trim()
+          .toLowerCase(),
+
+        phone: formatPhoneNumber(
+          formData.phone
+        ),
+
         department: formData.department,
         role: formData.role,
-        password: formData.password,
-      });
+      };
 
-      if (response.employee) {
-        setEmployees((currentEmployees) => [
-          response.employee,
-          ...currentEmployees,
-        ]);
+      if (modalMode === "create") {
+        const response =
+          await createProviderEmployee({
+            ...commonEmployeeData,
+            password: formData.password,
+          });
+
+        showSuccessToast(
+          response?.message ||
+            "Employee created successfully"
+        );
       } else {
-        await fetchEmployees();
+        const employeeId =
+          getEmployeeId(selectedEmployee);
+
+        if (!employeeId) {
+          showErrorToast(
+            null,
+            "Employee ID not found"
+          );
+
+          return;
+        }
+
+        const response =
+          await updateProviderEmployee(
+            employeeId,
+            commonEmployeeData
+          );
+
+        showSuccessToast(
+          response?.message ||
+            "Employee updated successfully"
+        );
       }
 
-      toast.success(
-        response.message || "Employee created successfully",
-      );
+      await fetchEmployees();
 
       setIsEmployeeModalOpen(false);
+      setSelectedEmployee(null);
+      setModalMode("create");
       setFormData(initialFormData);
       setFormErrors({});
       setShowPassword(false);
     } catch (error) {
-      const errorMessage = error.response?.data?.message;
-
-      toast.error(
-        Array.isArray(errorMessage)
-          ? errorMessage[0]
-          : errorMessage || "Unable to create employee",
+      showErrorToast(
+        error,
+        `Unable to ${
+          modalMode === "create"
+            ? "create"
+            : "update"
+        } employee`
       );
     } finally {
-      setIsCreatingEmployee(false);
+      setIsSavingEmployee(false);
+    }
+  };
+
+  const handleToggleStatus = async (employee) => {
+    const employeeId = getEmployeeId(employee);
+
+    if (!employeeId) {
+      showErrorToast(
+        null,
+        "Employee ID not found"
+      );
+
+      return;
+    }
+
+    try {
+      setProcessingEmployeeId(employeeId);
+
+      const response =
+        await toggleProviderEmployeeStatus(
+          employeeId
+        );
+
+      showSuccessToast(
+        response?.message ||
+          `Employee ${
+            employee.isActive
+              ? "deactivated"
+              : "activated"
+          } successfully`
+      );
+
+      await fetchEmployees();
+    } catch (error) {
+      showErrorToast(
+        error,
+        "Unable to change employee status"
+      );
+    } finally {
+      setProcessingEmployeeId(null);
+    }
+  };
+
+  const handleDeleteEmployee = async (employee) => {
+    const employeeId = getEmployeeId(employee);
+
+    if (!employeeId) {
+      showErrorToast(
+        null,
+        "Employee ID not found"
+      );
+
+      return;
+    }
+
+    const isConfirmed = window.confirm(
+      `Delete ${
+        employee.fullName || "this employee"
+      }?\n\nThis action will remove the employee account.`
+    );
+
+    if (!isConfirmed) {
+      return;
+    }
+
+    try {
+      setProcessingEmployeeId(employeeId);
+
+      const response =
+        await deleteProviderEmployee(employeeId);
+
+      showSuccessToast(
+        response?.message ||
+          "Employee deleted successfully"
+      );
+
+      setEmployees((currentEmployees) =>
+        currentEmployees.filter(
+          (currentEmployee) =>
+            getEmployeeId(currentEmployee) !==
+            employeeId
+        )
+      );
+    } catch (error) {
+      showErrorToast(
+        error,
+        "Unable to delete employee"
+      );
+    } finally {
+      setProcessingEmployeeId(null);
     }
   };
 
@@ -323,7 +528,8 @@ const Employees = () => {
       .split("_")
       .map(
         (word) =>
-          word.charAt(0).toUpperCase() + word.slice(1),
+          word.charAt(0).toUpperCase() +
+          word.slice(1)
       )
       .join(" ");
   };
@@ -355,8 +561,8 @@ const Employees = () => {
           <h1>Employees</h1>
 
           <p>
-            Provider employees, departments and account access
-            manage pannunga.
+            Manage provider employees,
+            departments, roles and account access.
           </p>
         </div>
 
@@ -376,14 +582,16 @@ const Employees = () => {
             />
 
             <span>
-              {isRefreshing ? "Refreshing..." : "Refresh"}
+              {isRefreshing
+                ? "Refreshing..."
+                : "Refresh"}
             </span>
           </button>
 
           <button
             type="button"
             className="provider-add-employee-btn"
-            onClick={openEmployeeModal}
+            onClick={openCreateEmployeeModal}
           >
             <FiPlus />
             <span>Add Employee</span>
@@ -400,28 +608,31 @@ const Employees = () => {
           <div>
             <span>Total Employees</span>
             <strong>{employees.length}</strong>
+            <small>All provider accounts</small>
           </div>
         </article>
 
         <article className="provider-employee-summary-card">
           <div className="provider-employee-summary-icon active">
-            <FiUserPlus />
+            <FiUserCheck />
           </div>
 
           <div>
             <span>Active Employees</span>
             <strong>{activeEmployeesCount}</strong>
+            <small>Access currently enabled</small>
           </div>
         </article>
 
         <article className="provider-employee-summary-card">
           <div className="provider-employee-summary-icon inactive">
-            <FiUsers />
+            <FiUserX />
           </div>
 
           <div>
             <span>Inactive Employees</span>
             <strong>{inactiveEmployeesCount}</strong>
+            <small>Access currently disabled</small>
           </div>
         </article>
       </div>
@@ -429,10 +640,18 @@ const Employees = () => {
       <section className="provider-employees-card">
         <div className="provider-employees-toolbar">
           <div>
+            <span className="provider-employees-toolbar-label">
+              Directory
+            </span>
+
             <h2>Employee List</h2>
+
             <p>
               {filteredEmployees.length} employee
-              {filteredEmployees.length === 1 ? "" : "s"} displayed
+              {filteredEmployees.length === 1
+                ? ""
+                : "s"}{" "}
+              displayed
             </p>
           </div>
 
@@ -452,7 +671,9 @@ const Employees = () => {
             {searchTerm && (
               <button
                 type="button"
-                onClick={() => setSearchTerm("")}
+                onClick={() =>
+                  setSearchTerm("")
+                }
                 aria-label="Clear employee search"
               >
                 <FiX />
@@ -480,8 +701,8 @@ const Employees = () => {
 
             <p>
               {searchTerm
-                ? "Search term-ah change panni try pannunga."
-                : "Add Employee button use panni first employee create pannunga."}
+                ? "Change the search term and try again."
+                : "Use Add Employee to create your first employee."}
             </p>
           </div>
         ) : (
@@ -496,76 +717,163 @@ const Employees = () => {
                   <th>Phone</th>
                   <th>Status</th>
                   <th>Created Date</th>
+
+                  <th className="provider-employee-actions-heading">
+                    Actions
+                  </th>
                 </tr>
               </thead>
 
               <tbody>
-                {filteredEmployees.map((employee) => (
-                  <tr key={employee._id || employee.id}>
-                    <td>
-                      <div className="provider-employee-profile-cell">
-                        <div className="provider-employee-avatar">
-                          {employee.fullName
-                            ?.charAt(0)
-                            ?.toUpperCase() || "E"}
-                        </div>
+                {filteredEmployees.map(
+                  (employee) => {
+                    const employeeId =
+                      getEmployeeId(employee);
 
-                        <div>
-                          <strong>
-                            {employee.fullName ||
+                    const isProcessing =
+                      processingEmployeeId ===
+                      employeeId;
+
+                    return (
+                      <tr key={employeeId}>
+                        <td>
+                          <div className="provider-employee-profile-cell">
+                            <div className="provider-employee-avatar">
+                              {employee.fullName
+                                ?.charAt(0)
+                                ?.toUpperCase() || "E"}
+                            </div>
+
+                            <div>
+                              <strong>
+                                {employee.fullName ||
+                                  "Not available"}
+                              </strong>
+
+                              <span>
+                                {employee.email ||
+                                  "Email not available"}
+                              </span>
+                            </div>
+                          </div>
+                        </td>
+
+                        <td>
+                          <span className="provider-employee-id">
+                            {employee.employeeId ||
                               "Not available"}
-                          </strong>
-
-                          <span>
-                            {employee.email ||
-                              "Email not available"}
                           </span>
-                        </div>
-                      </div>
-                    </td>
+                        </td>
 
-                    <td>
-                      <span className="provider-employee-id">
-                        {employee.employeeId ||
-                          "Not available"}
-                      </span>
-                    </td>
+                        <td>
+                          {formatDisplayText(
+                            employee.department
+                          )}
+                        </td>
 
-                    <td>
-                      {formatDisplayText(
-                        employee.department,
-                      )}
-                    </td>
+                        <td>
+                          <span className="provider-employee-role">
+                            {formatDisplayText(
+                              employee.role
+                            )}
+                          </span>
+                        </td>
 
-                    <td>
-                      <span className="provider-employee-role">
-                        {formatDisplayText(employee.role)}
-                      </span>
-                    </td>
+                        <td>
+                          {employee.phone ||
+                            "Not available"}
+                        </td>
 
-                    <td>
-                      {employee.phone || "Not available"}
-                    </td>
+                        <td>
+                          <span
+                            className={`provider-employee-status ${
+                              employee.isActive
+                                ? "active"
+                                : "inactive"
+                            }`}
+                          >
+                            <span />
 
-                    <td>
-                      <span
-                        className={`provider-employee-status ${
-                          employee.isActive
-                            ? "active"
-                            : "inactive"
-                        }`}
-                      >
-                        <span />
+                            {employee.isActive
+                              ? "Active"
+                              : "Inactive"}
+                          </span>
+                        </td>
 
-                        {employee.isActive
-                          ? "Active"
-                          : "Inactive"}
-                      </span>
-                    </td>
+                        <td>
+                          {formatDate(
+                            employee.createdAt
+                          )}
+                        </td>
 
-                    <td>{formatDate(employee.createdAt)}</td>
-                  </tr>
-                ))}
+                        <td>
+                          <div className="provider-employee-actions">
+                            <button
+                              type="button"
+                              className="provider-employee-action-btn edit"
+                              onClick={() =>
+                                openEditEmployeeModal(
+                                  employee
+                                )
+                              }
+                              disabled={isProcessing}
+                              title="Edit Employee"
+                              aria-label="Edit employee"
+                            >
+                              <FiEdit2 />
+                            </button>
+
+                            <button
+                              type="button"
+                              className={`provider-employee-action-btn ${
+                                employee.isActive
+                                  ? "deactivate"
+                                  : "activate"
+                              }`}
+                              onClick={() =>
+                                handleToggleStatus(
+                                  employee
+                                )
+                              }
+                              disabled={isProcessing}
+                              title={
+                                employee.isActive
+                                  ? "Deactivate Employee"
+                                  : "Activate Employee"
+                              }
+                              aria-label={
+                                employee.isActive
+                                  ? "Deactivate employee"
+                                  : "Activate employee"
+                              }
+                            >
+                              {employee.isActive ? (
+                                <FiUserX />
+                              ) : (
+                                <FiUserCheck />
+                              )}
+                            </button>
+
+                            <button
+                              type="button"
+                              className="provider-employee-action-btn delete"
+                              onClick={() =>
+                                handleDeleteEmployee(
+                                  employee
+                                )
+                              }
+                              disabled={isProcessing}
+                              title="Delete Employee"
+                              aria-label="Delete employee"
+                            >
+                              <FiTrash2 />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  }
+                )}
               </tbody>
             </table>
           </div>
@@ -582,24 +890,35 @@ const Employees = () => {
             className="provider-employee-modal"
             role="dialog"
             aria-modal="true"
-            aria-labelledby="provider-add-employee-title"
+            aria-labelledby="provider-employee-modal-title"
           >
             <header className="provider-employee-modal-header">
               <div>
                 <div className="provider-employee-modal-icon">
-                  <FiUserPlus />
+                  {modalMode === "create" ? (
+                    <FiUserPlus />
+                  ) : (
+                    <FiEdit2 />
+                  )}
                 </div>
 
                 <div>
-                  <span>Create Account</span>
+                  <span>
+                    {modalMode === "create"
+                      ? "Create Account"
+                      : "Update Account"}
+                  </span>
 
-                  <h2 id="provider-add-employee-title">
-                    Add New Employee
+                  <h2 id="provider-employee-modal-title">
+                    {modalMode === "create"
+                      ? "Add New Employee"
+                      : "Edit Employee"}
                   </h2>
 
                   <p>
-                    Employee details and login access create
-                    pannunga.
+                    {modalMode === "create"
+                      ? "Create employee details and login access."
+                      : "Update employee profile, department and role."}
                   </p>
                 </div>
               </div>
@@ -608,8 +927,8 @@ const Employees = () => {
                 type="button"
                 className="provider-employee-modal-close"
                 onClick={closeEmployeeModal}
-                disabled={isCreatingEmployee}
-                aria-label="Close add employee popup"
+                disabled={isSavingEmployee}
+                aria-label="Close employee popup"
               >
                 <FiX />
               </button>
@@ -617,7 +936,7 @@ const Employees = () => {
 
             <form
               className="provider-employee-form"
-              onSubmit={handleCreateEmployee}
+              onSubmit={handleEmployeeSubmit}
               noValidate
             >
               <div className="provider-employee-form-grid">
@@ -634,13 +953,17 @@ const Employees = () => {
                     onChange={handleFormChange}
                     placeholder="Enter employee full name"
                     className={
-                      formErrors.fullName ? "error" : ""
+                      formErrors.fullName
+                        ? "error"
+                        : ""
                     }
                     autoComplete="name"
                   />
 
                   {formErrors.fullName && (
-                    <small>{formErrors.fullName}</small>
+                    <small>
+                      {formErrors.fullName}
+                    </small>
                   )}
                 </div>
 
@@ -657,13 +980,17 @@ const Employees = () => {
                     onChange={handleFormChange}
                     placeholder="employee@billflow.com"
                     className={
-                      formErrors.email ? "error" : ""
+                      formErrors.email
+                        ? "error"
+                        : ""
                     }
                     autoComplete="email"
                   />
 
                   {formErrors.email && (
-                    <small>{formErrors.email}</small>
+                    <small>
+                      {formErrors.email}
+                    </small>
                   )}
                 </div>
 
@@ -680,13 +1007,17 @@ const Employees = () => {
                     onChange={handleFormChange}
                     placeholder="9876543210"
                     className={
-                      formErrors.phone ? "error" : ""
+                      formErrors.phone
+                        ? "error"
+                        : ""
                     }
                     autoComplete="tel"
                   />
 
                   {formErrors.phone && (
-                    <small>{formErrors.phone}</small>
+                    <small>
+                      {formErrors.phone}
+                    </small>
                   )}
                 </div>
 
@@ -701,25 +1032,31 @@ const Employees = () => {
                     value={formData.department}
                     onChange={handleFormChange}
                     className={
-                      formErrors.department ? "error" : ""
+                      formErrors.department
+                        ? "error"
+                        : ""
                     }
                   >
                     <option value="">
                       Select department
                     </option>
 
-                    {departmentOptions.map((department) => (
-                      <option
-                        key={department.value}
-                        value={department.value}
-                      >
-                        {department.label}
-                      </option>
-                    ))}
+                    {departmentOptions.map(
+                      (department) => (
+                        <option
+                          key={department.value}
+                          value={department.value}
+                        >
+                          {department.label}
+                        </option>
+                      )
+                    )}
                   </select>
 
                   {formErrors.department && (
-                    <small>{formErrors.department}</small>
+                    <small>
+                      {formErrors.department}
+                    </small>
                   )}
                 </div>
 
@@ -734,10 +1071,14 @@ const Employees = () => {
                     value={formData.role}
                     onChange={handleFormChange}
                     className={
-                      formErrors.role ? "error" : ""
+                      formErrors.role
+                        ? "error"
+                        : ""
                     }
                   >
-                    <option value="">Select role</option>
+                    <option value="">
+                      Select role
+                    </option>
 
                     {roleOptions.map((role) => (
                       <option
@@ -750,63 +1091,74 @@ const Employees = () => {
                   </select>
 
                   {formErrors.role && (
-                    <small>{formErrors.role}</small>
+                    <small>
+                      {formErrors.role}
+                    </small>
                   )}
                 </div>
 
-                <div className="provider-employee-form-group">
-                  <label htmlFor="providerEmployeePassword">
-                    Temporary Password
-                  </label>
+                {modalMode === "create" && (
+                  <div className="provider-employee-form-group">
+                    <label htmlFor="providerEmployeePassword">
+                      Temporary Password
+                    </label>
 
-                  <div
-                    className={`provider-employee-password-field ${
-                      formErrors.password ? "error" : ""
-                    }`}
-                  >
-                    <input
-                      id="providerEmployeePassword"
-                      name="password"
-                      type={
-                        showPassword ? "text" : "password"
-                      }
-                      value={formData.password}
-                      onChange={handleFormChange}
-                      placeholder="Minimum 8 characters"
-                      autoComplete="new-password"
-                    />
-
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setShowPassword(
-                          (currentValue) => !currentValue,
-                        )
-                      }
-                      aria-label={
-                        showPassword
-                          ? "Hide password"
-                          : "Show password"
-                      }
+                    <div
+                      className={`provider-employee-password-field ${
+                        formErrors.password
+                          ? "error"
+                          : ""
+                      }`}
                     >
-                      {showPassword ? (
-                        <FiEyeOff />
-                      ) : (
-                        <FiEye />
-                      )}
-                    </button>
-                  </div>
+                      <input
+                        id="providerEmployeePassword"
+                        name="password"
+                        type={
+                          showPassword
+                            ? "text"
+                            : "password"
+                        }
+                        value={formData.password}
+                        onChange={handleFormChange}
+                        placeholder="Minimum 8 characters"
+                        autoComplete="new-password"
+                      />
 
-                  {formErrors.password && (
-                    <small>{formErrors.password}</small>
-                  )}
-                </div>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowPassword(
+                            (currentValue) =>
+                              !currentValue
+                          )
+                        }
+                        aria-label={
+                          showPassword
+                            ? "Hide password"
+                            : "Show password"
+                        }
+                      >
+                        {showPassword ? (
+                          <FiEyeOff />
+                        ) : (
+                          <FiEye />
+                        )}
+                      </button>
+                    </div>
+
+                    {formErrors.password && (
+                      <small>
+                        {formErrors.password}
+                      </small>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="provider-employee-form-note">
-                Employee ID backend-la automatic-ah generate
-                aagum. Employee indha email and temporary
-                password use panni login pannalam.
+                {modalMode === "create"
+                  ? "Employee ID will be generated automatically. The employee can login using the registered email and temporary password."
+                  : "Employee ID and password are not changed while editing profile details."}
               </div>
 
               <footer className="provider-employee-modal-footer">
@@ -814,7 +1166,7 @@ const Employees = () => {
                   type="button"
                   className="provider-employee-cancel-btn"
                   onClick={closeEmployeeModal}
-                  disabled={isCreatingEmployee}
+                  disabled={isSavingEmployee}
                 >
                   Cancel
                 </button>
@@ -822,14 +1174,22 @@ const Employees = () => {
                 <button
                   type="submit"
                   className="provider-employee-create-btn"
-                  disabled={isCreatingEmployee}
+                  disabled={isSavingEmployee}
                 >
-                  <FiUserPlus />
+                  {modalMode === "create" ? (
+                    <FiUserPlus />
+                  ) : (
+                    <FiEdit2 />
+                  )}
 
                   <span>
-                    {isCreatingEmployee
-                      ? "Creating..."
-                      : "Create Employee"}
+                    {isSavingEmployee
+                      ? modalMode === "create"
+                        ? "Creating..."
+                        : "Updating..."
+                      : modalMode === "create"
+                        ? "Create Employee"
+                        : "Update Employee"}
                   </span>
                 </button>
               </footer>

@@ -150,7 +150,7 @@ const Inventory = () => {
     setEditingProduct(product);
 
     setStockForm({
-      stock: product.stock ?? "",
+      stock: "",
       lowStockAlert: product.lowStockAlert ?? "",
     });
   };
@@ -180,13 +180,21 @@ const Inventory = () => {
       return;
     }
 
-    const stock = Number(stockForm.stock);
+    const stockToAdd = Number(stockForm.stock);
+    const currentStock = Number(editingProduct.stock || 0);
+    const updatedStock = currentStock + stockToAdd;
+
     const lowStockAlert = Number(
       stockForm.lowStockAlert,
     );
 
-    if (stock < 0) {
-      toast.error("Stock negative-ah irukka koodathu");
+    if (stockToAdd < 0) {
+      toast.error("Add stock negative-ah irukka koodathu");
+      return;
+    }
+
+    if (!Number.isFinite(stockToAdd)) {
+      toast.error("Valid stock quantity enter pannu");
       return;
     }
 
@@ -203,7 +211,7 @@ const Inventory = () => {
       const response = await api.patch(
         `/products/${editingProduct._id}`,
         {
-          stock,
+          stock: updatedStock,
           lowStockAlert,
         },
       );
@@ -217,14 +225,16 @@ const Inventory = () => {
             ? {
                 ...product,
                 ...updatedProduct,
-                stock,
+                stock: updatedStock,
                 lowStockAlert,
               }
             : product,
         ),
       );
 
-      toast.success("Stock updated successfully");
+      toast.success(
+        `${stockToAdd} stock added successfully. Total stock: ${updatedStock}`,
+      );
 
       handleCloseEdit();
     } catch (error) {
@@ -588,7 +598,7 @@ const Inventory = () => {
                 </span>
 
                 <div>
-                  <p>Update product stock</p>
+                  <p>Add product stock</p>
                   <h2>{editingProduct.name}</h2>
                 </div>
               </div>
@@ -645,7 +655,7 @@ const Inventory = () => {
               <div className="stock-form-grid">
                 <div className="stock-form-group">
                   <label htmlFor="stock">
-                    Current Stock
+                    Add Stock Quantity
                   </label>
 
                   <div className="stock-input-wrap">
@@ -664,7 +674,7 @@ const Inventory = () => {
                   </div>
 
                   <span>
-                    Available product quantity
+                    Current stock: {Number(editingProduct.stock || 0).toLocaleString("en-IN")} {editingProduct.unit || "units"}
                   </span>
                 </div>
 
@@ -697,8 +707,8 @@ const Inventory = () => {
               <div className="stock-form-note">
                 <FiAlertTriangle />
                 <p>
-                  Stock update pannina product availability
-                  and stock value immediately update aagum.
+                  Enter panna quantity existing stock-oda add aagum.
+                  Example: current stock 10 + add stock 10 = total 20.
                 </p>
               </div>
 
@@ -725,7 +735,7 @@ const Inventory = () => {
                   ) : (
                     <>
                       <FiEdit2 />
-                      Update Stock
+                      Add Stock
                     </>
                   )}
                 </button>

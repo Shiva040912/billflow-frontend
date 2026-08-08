@@ -1,0 +1,1824 @@
+/* plan.css */
+
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+.provider-plans-page {
+  width: 100%;
+  min-width: 0;
+
+  font-family: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+
+  color: #18181b;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.provider-plans-header {
+  margin-bottom: 24px;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 22px;
+}
+
+.provider-plans-header > div:first-child {
+  min-width: 0;
+}
+
+.provider-plans-eyebrow {
+  margin: 0 0 6px;
+
+  color: #8b5cf6;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.provider-plans-header h1 {
+  margin: 0;
+
+  color: #18181b;
+
+  font-size: 28px;
+  font-weight: 600;
+
+  line-height: 1.15;
+
+  letter-spacing: -0.045em;
+}
+
+.provider-plans-header > div:first-child > p:last-child {
+  max-width: 600px;
+
+  margin: 7px 0 0;
+
+  color: #71717a;
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   HEADER ACTIONS
+========================================================= */
+
+.provider-plans-header-actions {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  flex-shrink: 0;
+}
+
+.provider-plans-refresh-btn,
+.provider-plans-add-btn {
+  height: 38px;
+
+  padding: 0 13px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  border-radius: 9px;
+
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.provider-plans-refresh-btn {
+  border: 1px solid #dedddb;
+
+  background: #ffffff;
+
+  color: #52525b;
+}
+
+.provider-plans-refresh-btn:hover:not(:disabled) {
+  background: #fafafa;
+
+  border-color: #cac8c5;
+
+  color: #18181b;
+}
+
+.provider-plans-add-btn {
+  border: 1px solid #635bff;
+
+  background: #635bff;
+
+  color: #ffffff;
+}
+
+.provider-plans-add-btn:hover:not(:disabled) {
+  border-color: #554df0;
+
+  background: #554df0;
+}
+
+.provider-plans-refresh-btn:disabled,
+.provider-plans-add-btn:disabled {
+  opacity: 0.5;
+
+  cursor: not-allowed;
+}
+
+.spinning {
+  animation: providerPlansSpin 0.75s linear infinite;
+}
+
+@keyframes providerPlansSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   SUMMARY GRID
+========================================================= */
+
+.provider-plans-summary-grid {
+  margin-bottom: 18px;
+
+  display: grid;
+
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  gap: 10px;
+}
+
+/* =========================================================
+   SUMMARY CARD
+========================================================= */
+
+.provider-plan-summary-card {
+  position: relative;
+
+  min-width: 0;
+  min-height: 112px;
+
+  padding: 15px;
+
+  display: flex;
+  align-items: flex-start;
+
+  gap: 11px;
+
+  overflow: hidden;
+
+  border: 1px solid #e7e5e4;
+  border-radius: 11px;
+
+  background: #ffffff;
+
+  transition:
+    border-color 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.provider-plan-summary-card:hover {
+  transform: translateY(-2px);
+
+  border-color: #d6d3d1;
+
+  box-shadow: 0 7px 20px rgba(24, 24, 27, 0.045);
+}
+
+.provider-plan-summary-card > div {
+  min-width: 0;
+}
+
+/* =========================================================
+   SUMMARY ICON
+========================================================= */
+
+.provider-plan-summary-icon {
+  width: 34px;
+  height: 34px;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border-radius: 8px;
+
+  font-size: 15px;
+}
+
+.provider-plan-summary-icon.total {
+  background: #f1f0ff;
+
+  color: #635bff;
+}
+
+.provider-plan-summary-icon.active {
+  background: #f0fdf4;
+
+  color: #16a34a;
+}
+
+.provider-plan-summary-icon.popular {
+  background: #fffbeb;
+
+  color: #d97706;
+}
+
+.provider-plan-summary-icon.revenue {
+  background: #f0fdfa;
+
+  color: #0f766e;
+}
+
+/* =========================================================
+   SUMMARY CONTENT
+========================================================= */
+
+.provider-plan-summary-card p,
+.provider-plan-summary-card strong,
+.provider-plan-summary-card small {
+  display: block;
+}
+
+.provider-plan-summary-card p {
+  margin: 0 0 7px;
+
+  overflow: hidden;
+
+  color: #71717a;
+
+  font-size: 9px;
+  font-weight: 500;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.provider-plan-summary-card strong {
+  overflow: hidden;
+
+  color: #18181b;
+
+  font-size: 19px;
+  font-weight: 600;
+
+  line-height: 1.1;
+
+  letter-spacing: -0.035em;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.provider-plan-summary-card small {
+  margin-top: 5px;
+
+  overflow: hidden;
+
+  color: #a1a1aa;
+
+  font-size: 8px;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* =========================================================
+   WORKSPACE
+========================================================= */
+
+.provider-plans-workspace {
+  overflow: hidden;
+
+  border: 1px solid #e7e5e4;
+  border-radius: 12px;
+
+  background: #ffffff;
+}
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.provider-plans-toolbar {
+  padding: 13px;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(260px, 1fr)
+    150px
+    150px
+    auto;
+
+  align-items: center;
+
+  gap: 8px;
+
+  border-bottom: 1px solid #eceae8;
+
+  background: #ffffff;
+}
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.provider-plans-search {
+  position: relative;
+
+  min-width: 0;
+}
+
+.provider-plans-search > svg {
+  position: absolute;
+
+  top: 50%;
+  left: 11px;
+
+  color: #a1a1aa;
+
+  font-size: 14px;
+
+  transform: translateY(-50%);
+
+  pointer-events: none;
+}
+
+.provider-plans-search input {
+  width: 100%;
+  height: 38px;
+
+  padding: 0 37px 0 34px;
+
+  border: 1px solid #dedddb;
+  border-radius: 8px;
+
+  outline: none;
+
+  background: #fafaf9;
+
+  color: #27272a;
+
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 500;
+
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.provider-plans-search input::placeholder {
+  color: #a1a1aa;
+}
+
+.provider-plans-search input:hover {
+  background: #ffffff;
+}
+
+.provider-plans-search input:focus {
+  background: #ffffff;
+
+  border-color: #aaa5ff;
+
+  box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.07);
+}
+
+.provider-plans-search button {
+  position: absolute;
+
+  top: 50%;
+  right: 6px;
+
+  width: 27px;
+  height: 27px;
+
+  padding: 0;
+
+  display: grid;
+  place-items: center;
+
+  border: none;
+  border-radius: 6px;
+
+  background: transparent;
+
+  color: #a1a1aa;
+
+  cursor: pointer;
+
+  transform: translateY(-50%);
+}
+
+.provider-plans-search button:hover {
+  background: #f4f4f5;
+
+  color: #52525b;
+}
+
+/* =========================================================
+   FILTERS
+========================================================= */
+
+.provider-plans-toolbar select {
+  width: 100%;
+  height: 38px;
+
+  padding: 0 10px;
+
+  border: 1px solid #dedddb;
+  border-radius: 8px;
+
+  outline: none;
+
+  background: #ffffff;
+
+  color: #52525b;
+
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.provider-plans-toolbar select:hover {
+  border-color: #cac8c5;
+}
+
+.provider-plans-toolbar select:focus {
+  border-color: #aaa5ff;
+
+  box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.07);
+}
+
+/* =========================================================
+   CLEAR FILTER
+========================================================= */
+
+.provider-plans-clear-btn {
+  height: 38px;
+
+  padding: 0 11px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 5px;
+
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #dc2626;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.provider-plans-clear-btn:hover {
+  background: #fef2f2;
+
+  border-color: #fca5a5;
+}
+
+/* =========================================================
+   RESULT BAR
+========================================================= */
+
+.provider-plans-result-bar {
+  min-height: 44px;
+
+  padding: 8px 15px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  border-bottom: 1px solid #eceae8;
+
+  background: #fafaf9;
+}
+
+.provider-plans-result-bar strong {
+  color: #3f3f46;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.provider-plans-result-bar span {
+  color: #a1a1aa;
+
+  font-size: 8px;
+}
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.provider-plans-content {
+  min-height: 320px;
+
+  padding: 14px;
+}
+
+/* =========================================================
+   PLAN GRID
+========================================================= */
+
+.provider-plans-grid {
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  align-items: stretch;
+
+  gap: 11px;
+}
+
+/* =========================================================
+   PLAN CARD
+========================================================= */
+
+.provider-plan-card {
+  position: relative;
+
+  min-width: 0;
+
+  padding: 16px;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  border: 1px solid #e7e5e4;
+  border-radius: 11px;
+
+  background: #ffffff;
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.provider-plan-card:hover {
+  transform: translateY(-2px);
+
+  border-color: #d6d3d1;
+
+  box-shadow: 0 8px 24px rgba(24, 24, 27, 0.05);
+}
+
+.provider-plan-card.popular {
+  border-color: #ddd9ff;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(241, 240, 255, 0.72) 0%,
+      #ffffff 125px
+    );
+}
+
+/* =========================================================
+   POPULAR LABEL
+========================================================= */
+
+.provider-plan-popular-label {
+  position: absolute;
+
+  top: 0;
+  right: 15px;
+
+  min-height: 24px;
+
+  padding: 0 8px;
+
+  display: inline-flex;
+  align-items: center;
+
+  gap: 4px;
+
+  border-radius: 0 0 7px 7px;
+
+  background: #635bff;
+
+  color: #ffffff;
+
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.provider-plan-popular-label svg {
+  font-size: 10px;
+}
+
+/* =========================================================
+   PLAN HEAD
+========================================================= */
+
+.provider-plan-card-head {
+  min-height: 73px;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 10px;
+}
+
+.provider-plan-card-head > div {
+  min-width: 0;
+}
+
+.provider-plan-card-head h2 {
+  margin: 0;
+
+  max-width: 170px;
+
+  overflow: hidden;
+
+  color: #18181b;
+
+  font-size: 17px;
+  font-weight: 600;
+
+  letter-spacing: -0.035em;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.provider-plan-card-head p {
+  margin: 6px 0 0;
+
+  display: -webkit-box;
+
+  overflow: hidden;
+
+  color: #8b8b94;
+
+  font-size: 9px;
+
+  line-height: 1.5;
+
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.provider-plan-status {
+  min-width: 58px;
+
+  padding: 4px 7px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 6px;
+
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.provider-plan-status.active {
+  background: #f0fdf4;
+
+  color: #15803d;
+}
+
+.provider-plan-status.inactive {
+  background: #f4f4f5;
+
+  color: #71717a;
+}
+
+/* =========================================================
+   PRICING
+========================================================= */
+
+.provider-plan-pricing {
+  margin-top: 12px;
+
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 7px;
+}
+
+.provider-plan-pricing > div {
+  min-width: 0;
+
+  padding: 10px;
+
+  border: 1px solid #eceae8;
+  border-radius: 8px;
+
+  background: #fafaf9;
+}
+
+.provider-plan-pricing span,
+.provider-plan-pricing strong {
+  display: block;
+}
+
+.provider-plan-pricing span {
+  color: #a1a1aa;
+
+  font-size: 8px;
+  font-weight: 500;
+}
+
+.provider-plan-pricing strong {
+  margin-top: 4px;
+
+  overflow: hidden;
+
+  color: #27272a;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  letter-spacing: -0.02em;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* =========================================================
+   LIMITS
+========================================================= */
+
+.provider-plan-limits {
+  margin-top: 8px;
+
+  display: grid;
+
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  gap: 5px;
+}
+
+.provider-plan-limits > div {
+  min-width: 0;
+
+  padding: 8px 5px;
+
+  border: 1px solid #f0efed;
+  border-radius: 7px;
+
+  text-align: center;
+}
+
+.provider-plan-limits span,
+.provider-plan-limits strong {
+  display: block;
+}
+
+.provider-plan-limits span {
+  overflow: hidden;
+
+  color: #a1a1aa;
+
+  font-size: 7px;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.provider-plan-limits strong {
+  margin-top: 4px;
+
+  overflow: hidden;
+
+  color: #3f3f46;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* =========================================================
+   TRIAL
+========================================================= */
+
+.provider-plan-trial {
+  min-height: 34px;
+
+  margin-top: 8px;
+  padding: 0 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  border: 1px solid #e6e3ff;
+  border-radius: 7px;
+
+  background: #faf9ff;
+
+  color: #6d65d8;
+
+  font-size: 8px;
+  font-weight: 500;
+}
+
+.provider-plan-trial strong {
+  color: #635bff;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   FEATURES
+========================================================= */
+
+.provider-plan-features {
+  min-height: 150px;
+
+  margin-top: 12px;
+  padding-top: 12px;
+
+  border-top: 1px solid #f0efed;
+}
+
+.provider-plan-features h3 {
+  margin: 0 0 9px;
+
+  color: #52525b;
+
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.provider-plan-features ul {
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+
+  list-style: none;
+}
+
+.provider-plan-features li {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 6px;
+
+  color: #71717a;
+
+  font-size: 8px;
+
+  line-height: 1.45;
+}
+
+.provider-plan-features li svg {
+  margin-top: 1px;
+
+  flex-shrink: 0;
+
+  color: #16a34a;
+
+  font-size: 10px;
+}
+
+.provider-plan-features > p {
+  margin: 0;
+
+  color: #a1a1aa;
+
+  font-size: 8px;
+}
+
+/* =========================================================
+   CARD ACTIONS
+========================================================= */
+
+.provider-plan-card-actions {
+  margin-top: auto;
+  padding-top: 12px;
+
+  display: grid;
+
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  gap: 5px;
+
+  border-top: 1px solid #f0efed;
+}
+
+.provider-plan-card-actions button {
+  min-width: 0;
+  min-height: 32px;
+
+  padding: 0 5px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 4px;
+
+  overflow: hidden;
+
+  border: 1px solid #e4e2df;
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #71717a;
+
+  font-size: 7px;
+  font-weight: 600;
+
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  transition:
+    background 0.16s ease,
+    color 0.16s ease,
+    border-color 0.16s ease;
+}
+
+.provider-plan-card-actions button svg {
+  flex-shrink: 0;
+
+  font-size: 10px;
+}
+
+.provider-plan-card-actions button:hover:not(:disabled) {
+  border-color: #ddd9ff;
+
+  background: #f1f0ff;
+
+  color: #635bff;
+}
+
+.provider-plan-card-actions button.popular {
+  border-color: #fde68a;
+
+  background: #fffbeb;
+
+  color: #b45309;
+}
+
+.provider-plan-card-actions button.warning {
+  border-color: #fed7aa;
+
+  background: #fff7ed;
+
+  color: #c2410c;
+}
+
+.provider-plan-card-actions button.success {
+  border-color: #bbf7d0;
+
+  background: #f0fdf4;
+
+  color: #15803d;
+}
+
+.provider-plan-card-actions button.delete {
+  border-color: #fecaca;
+
+  background: #fef2f2;
+
+  color: #dc2626;
+}
+
+.provider-plan-card-actions button:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   LOADING / EMPTY
+========================================================= */
+
+.provider-plans-state {
+  min-height: 310px;
+
+  padding: 40px 20px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+}
+
+.provider-plans-state > svg {
+  margin-bottom: 11px;
+
+  color: #a1a1aa;
+
+  font-size: 31px;
+}
+
+.provider-plans-state h3 {
+  margin: 0;
+
+  color: #3f3f46;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.provider-plans-state p {
+  max-width: 380px;
+
+  margin: 6px 0 0;
+
+  color: #a1a1aa;
+
+  font-size: 10px;
+
+  line-height: 1.55;
+}
+
+.provider-plans-state button {
+  height: 36px;
+
+  margin-top: 13px;
+  padding: 0 12px;
+
+  border: 1px solid #dedddb;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #52525b;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.provider-plans-state button:hover {
+  background: #fafafa;
+}
+
+.provider-plans-loader {
+  width: 29px;
+  height: 29px;
+
+  margin-bottom: 13px;
+
+  border: 3px solid #eceae8;
+  border-top-color: #635bff;
+  border-radius: 50%;
+
+  animation: providerPlansSpin 0.75s linear infinite;
+}
+
+/* =========================================================
+   MODAL OVERLAY
+========================================================= */
+
+.provider-plan-modal-overlay {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 1100;
+
+  padding: 18px;
+
+  display: grid;
+  place-items: center;
+
+  background: rgba(24, 24, 27, 0.45);
+
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.provider-plan-modal {
+  width: min(100%, 760px);
+  max-height: calc(100dvh - 36px);
+
+  overflow-y: auto;
+
+  border: 1px solid #e7e5e4;
+  border-radius: 13px;
+
+  background: #ffffff;
+
+  box-shadow: 0 25px 60px rgba(24, 24, 27, 0.18);
+}
+
+/* =========================================================
+   MODAL HEADER
+========================================================= */
+
+.provider-plan-modal-header {
+  position: sticky;
+
+  top: 0;
+
+  z-index: 3;
+
+  padding: 16px 18px;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 14px;
+
+  border-bottom: 1px solid #eceae8;
+
+  background: rgba(255, 255, 255, 0.97);
+
+  backdrop-filter: blur(12px);
+}
+
+.provider-plan-modal-header p {
+  margin: 0 0 4px;
+
+  color: #8b5cf6;
+
+  font-size: 8px;
+  font-weight: 700;
+
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.provider-plan-modal-header h2 {
+  margin: 0;
+
+  color: #18181b;
+
+  font-size: 17px;
+  font-weight: 600;
+
+  letter-spacing: -0.025em;
+}
+
+.provider-plan-modal-header > button {
+  width: 32px;
+  height: 32px;
+
+  padding: 0;
+
+  display: grid;
+  place-items: center;
+
+  flex-shrink: 0;
+
+  border: 1px solid #e4e2df;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #71717a;
+
+  font-size: 14px;
+
+  cursor: pointer;
+}
+
+.provider-plan-modal-header > button:hover:not(:disabled) {
+  background: #f4f4f5;
+
+  color: #27272a;
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.provider-plan-form {
+  padding: 18px;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 14px;
+}
+
+.provider-plan-form-row {
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 10px;
+}
+
+.provider-plan-form-row:first-child {
+  grid-template-columns: minmax(0, 1fr) 150px;
+}
+
+.provider-plan-form-grid {
+  display: grid;
+
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  gap: 10px;
+}
+
+.provider-plan-form-group {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+.provider-plan-form-group label {
+  color: #52525b;
+
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.provider-plan-form-group input,
+.provider-plan-form-group textarea {
+  width: 100%;
+
+  border: 1px solid #dedddb;
+  border-radius: 8px;
+
+  outline: none;
+
+  background: #ffffff;
+
+  color: #27272a;
+
+  font-family: inherit;
+  font-size: 10px;
+
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.provider-plan-form-group input {
+  height: 40px;
+
+  padding: 0 10px;
+}
+
+.provider-plan-form-group textarea {
+  min-height: 82px;
+
+  padding: 10px;
+
+  resize: vertical;
+}
+
+.provider-plan-form-group input::placeholder,
+.provider-plan-form-group textarea::placeholder {
+  color: #a1a1aa;
+}
+
+.provider-plan-form-group input:focus,
+.provider-plan-form-group textarea:focus {
+  border-color: #aaa5ff;
+
+  box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.07);
+}
+
+.provider-plan-form-group input:disabled,
+.provider-plan-form-group textarea:disabled {
+  background: #fafaf9;
+
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   CHECKBOX ROW
+========================================================= */
+
+.provider-plan-checkbox-row {
+  padding: 10px;
+
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 8px;
+
+  border: 1px solid #eceae8;
+  border-radius: 9px;
+
+  background: #fafaf9;
+}
+
+.provider-plan-checkbox-row label {
+  min-height: 38px;
+
+  padding: 0 10px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  border: 1px solid #e7e5e4;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #52525b;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.provider-plan-checkbox-row input {
+  width: 15px;
+  height: 15px;
+
+  accent-color: #635bff;
+}
+
+/* =========================================================
+   MODAL ACTIONS
+========================================================= */
+
+.provider-plan-modal-actions {
+  padding-top: 3px;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 7px;
+}
+
+.provider-plan-modal-actions button {
+  min-height: 38px;
+
+  padding: 0 13px;
+
+  border-radius: 8px;
+
+  font-family: inherit;
+  font-size: 9px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.provider-plan-modal-actions button:first-child {
+  border: 1px solid #dedddb;
+
+  background: #ffffff;
+
+  color: #52525b;
+}
+
+.provider-plan-modal-actions button:first-child:hover:not(:disabled) {
+  background: #fafafa;
+}
+
+.provider-plan-modal-actions button:last-child {
+  border: 1px solid #635bff;
+
+  background: #635bff;
+
+  color: #ffffff;
+}
+
+.provider-plan-modal-actions button:last-child:hover:not(:disabled) {
+  background: #554df0;
+}
+
+.provider-plan-modal-actions button:disabled,
+.provider-plan-modal-header button:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   LAPTOP
+========================================================= */
+
+@media (max-width: 1180px) {
+  .provider-plans-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .provider-plans-toolbar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .provider-plans-search {
+    grid-column: 1 / -1;
+  }
+
+  .provider-plans-clear-btn {
+    width: 100%;
+  }
+
+  .provider-plan-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+  .provider-plans-summary-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    gap: 7px;
+  }
+
+  .provider-plan-summary-card {
+    min-height: 95px;
+
+    padding: 11px;
+
+    gap: 8px;
+  }
+
+  .provider-plan-summary-icon {
+    width: 30px;
+    height: 30px;
+
+    font-size: 13px;
+  }
+
+  .provider-plan-summary-card p {
+    font-size: 7px;
+  }
+
+  .provider-plan-summary-card strong {
+    font-size: 16px;
+  }
+
+  .provider-plan-summary-card small {
+    display: none;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+  .provider-plans-header {
+    margin-bottom: 16px;
+
+    align-items: center;
+
+    gap: 12px;
+  }
+
+  .provider-plans-eyebrow {
+    margin-bottom: 4px;
+
+    font-size: 8px;
+  }
+
+  .provider-plans-header h1 {
+    font-size: 22px;
+  }
+
+  .provider-plans-header > div:first-child > p:last-child {
+    display: none;
+  }
+
+  .provider-plans-header-actions {
+    gap: 6px;
+  }
+
+  .provider-plans-refresh-btn {
+    width: 36px;
+    height: 36px;
+
+    padding: 0;
+
+    font-size: 0;
+  }
+
+  .provider-plans-refresh-btn svg {
+    font-size: 14px;
+  }
+
+  .provider-plans-add-btn {
+    height: 36px;
+
+    padding: 0 10px;
+  }
+
+  .provider-plans-summary-grid {
+    margin-bottom: 12px;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 7px;
+  }
+
+  .provider-plan-summary-card {
+    min-height: 82px;
+
+    padding: 10px;
+
+    border-radius: 9px;
+  }
+
+  .provider-plan-summary-icon {
+    width: 27px;
+    height: 27px;
+
+    border-radius: 7px;
+
+    font-size: 12px;
+  }
+
+  .provider-plan-summary-card p {
+    margin-bottom: 4px;
+  }
+
+  .provider-plan-summary-card strong {
+    font-size: 15px;
+  }
+
+  .provider-plans-workspace {
+    overflow: visible;
+
+    border: none;
+    border-radius: 0;
+
+    background: transparent;
+  }
+
+  .provider-plans-toolbar {
+    margin-bottom: 9px;
+    padding: 10px;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 7px;
+
+    border: 1px solid #e7e5e4;
+    border-radius: 10px;
+
+    background: #ffffff;
+  }
+
+  .provider-plans-search {
+    grid-column: 1 / -1;
+  }
+
+  .provider-plans-search input,
+  .provider-plans-toolbar select,
+  .provider-plans-clear-btn {
+    height: 38px;
+
+    font-size: 9px;
+  }
+
+  .provider-plans-clear-btn {
+    grid-column: 1 / -1;
+  }
+
+  .provider-plans-result-bar {
+    min-height: 42px;
+
+    margin-bottom: 9px;
+    padding: 8px 10px;
+
+    border: 1px solid #e7e5e4;
+    border-radius: 9px;
+
+    background: #ffffff;
+  }
+
+  .provider-plans-result-bar span {
+    display: none;
+  }
+
+  .provider-plans-content {
+    min-height: 0;
+
+    padding: 0;
+  }
+
+  .provider-plans-grid {
+    grid-template-columns: 1fr;
+
+    gap: 9px;
+  }
+
+  .provider-plan-card {
+    padding: 14px;
+
+    border-radius: 10px;
+  }
+
+  .provider-plan-card:hover {
+    transform: none;
+
+    box-shadow: none;
+  }
+
+  .provider-plan-card-head {
+    min-height: 67px;
+  }
+
+  .provider-plan-card-head h2 {
+    max-width: none;
+
+    font-size: 16px;
+  }
+
+  .provider-plan-pricing {
+    margin-top: 10px;
+  }
+
+  .provider-plan-limits {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .provider-plan-features {
+    min-height: auto;
+  }
+
+  .provider-plan-card-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 6px;
+  }
+
+  .provider-plan-card-actions button {
+    min-height: 35px;
+
+    font-size: 8px;
+  }
+
+  .provider-plans-state {
+    min-height: 230px;
+
+    border: 1px solid #e7e5e4;
+    border-radius: 10px;
+
+    background: #ffffff;
+  }
+
+  .provider-plan-modal-overlay {
+    padding: 0;
+
+    align-items: end;
+  }
+
+  .provider-plan-modal {
+    width: 100%;
+    max-height: 94dvh;
+
+    border: none;
+    border-radius: 16px 16px 0 0;
+  }
+
+  .provider-plan-modal-header {
+    padding: 15px;
+  }
+
+  .provider-plan-form {
+    padding: 15px;
+  }
+
+  .provider-plan-form-row,
+  .provider-plan-form-row:first-child,
+  .provider-plan-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .provider-plan-checkbox-row {
+    grid-template-columns: 1fr;
+  }
+
+  .provider-plan-modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .provider-plan-modal-actions button {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 420px) {
+  .provider-plans-header h1 {
+    font-size: 20px;
+  }
+
+  .provider-plans-add-btn {
+    width: 36px;
+
+    padding: 0;
+
+    font-size: 0;
+  }
+
+  .provider-plans-add-btn svg {
+    font-size: 14px;
+  }
+
+  .provider-plans-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 6px;
+  }
+
+  .provider-plan-summary-card {
+    padding: 9px;
+  }
+
+  .provider-plans-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .provider-plans-search,
+  .provider-plans-clear-btn {
+    grid-column: auto;
+  }
+
+  .provider-plan-pricing {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .provider-plan-limits {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .provider-plan-card-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

@@ -5,13 +5,20 @@ import {
   useRef,
   useState,
 } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../services/axios";
 import toast from "react-hot-toast";
 import {
+  FiArrowLeft,
+  FiCheckCircle,
   FiChevronDown,
+  FiClock,
   FiCommand,
+  FiCreditCard,
   FiDownload,
   FiMinus,
+  FiPauseCircle,
+  FiPlayCircle,
   FiPlus,
   FiPrinter,
   FiSearch,
@@ -25,8 +32,17 @@ import {
 import "../styles/billing.css";
 
 const DOUBLE_ENTER_DELAY = 650;
+const HOLD_BILL_STORAGE_KEY = "billFlowHeldBillingDraft";
+
+const PAYMENT_MODES = {
+  PAY_NOW: "pay_now",
+  PARTIAL: "partial",
+  PAY_LATER: "pay_later",
+};
 
 const Billing = () => {
+  const navigate = useNavigate();
+
   const [customers, setCustomers] = useState([]);
   const [products, setProducts] = useState([]);
   const [customerPhone, setCustomerPhone] = useState("");
@@ -37,9 +53,15 @@ const Billing = () => {
     phone: "",
     address: "",
   });
+
   const [productSearch, setProductSearch] = useState("");
   const [billItems, setBillItems] = useState([]);
+
+  const [paymentMode, setPaymentMode] = useState(PAYMENT_MODES.PAY_NOW);
   const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [amountReceived, setAmountReceived] = useState("");
+
+  const [hasHeldBill, setHasHeldBill] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSavingCustomer, setIsSavingCustomer] = useState(false);
   const [isGeneratingBill, setIsGeneratingBill] = useState(false);
@@ -52,10 +74,24 @@ const Billing = () => {
 
   const customerInputRef = useRef(null);
   const productInputRef = useRef(null);
-  const paymentSelectRef = useRef(null);
+  const paymentSectionRef = useRef(null);
   const printFrameRef = useRef(null);
   const lastEnterAtRef = useRef(0);
   const enterTimerRef = useRef(null);
+  const customerMenuRef = useRef(null);
+  const productMenuRef = useRef(null);
+  const customerItemRefs = useRef([]);
+  const productItemRefs = useRef([]);
+
+  const formatPrice = useCallback(
+    (value) =>
+      new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+        maximumFractionDigits: 2,
+      }).format(Number(value) || 0),
+    [],
+  );
 
   const handleUnauthorized = useCallback(() => {
     localStorage.removeItem("billFlowAccessToken");
@@ -96,8 +132,7 @@ const Billing = () => {
       }
 
       toast.error(
-        error.response?.data?.message ||
-          "Billing data load panna mudiyala",
+        error.response?.data?.message || "Billing data load panna mudiyala",
       );
     } finally {
       setIsLoading(false);
@@ -109,6 +144,8 @@ const Billing = () => {
   }, [fetchBillingData]);
 
   useEffect(() => {
+    setHasHeldBill(Boolean(localStorage.getItem(HOLD_BILL_STORAGE_KEY)));
+
     return () => {
       if (enterTimerRef.current) {
         window.clearTimeout(enterTimerRef.current);
@@ -139,36 +176,109 @@ const Billing = () => {
 
     return products
       .filter((product) => {
-        const name = product.name?.toLowerCase() || "";
-        const sku = product.sku?.toLowerCase() || "";
-        return name.includes(search) || sku.includes(search);
+        const name = String(product.name || "").toLowerCase();
+        const sku = String(product.sku || "").toLowerCase();
+        const barcode = String(product.barcode || "").toLowerCase();
+
+        return (
+          name.includes(search) ||
+          sku.includes(search) ||
+          barcode.includes(search)
+        );
       })
       .slice(0, 10);
   }, [products, productSearch]);
 
   useEffect(() => {
     setActiveCustomerIndex(0);
+    customerItemRefs.current = [];
   }, [customerPhone, matchedCustomers.length]);
 
   useEffect(() => {
     setActiveProductIndex(0);
+    productItemRefs.current = [];
   }, [productSearch, filteredProducts.length]);
 
-  const formatPrice = (value) =>
-    new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
-      maximumFractionDigits: 2,
-    }).format(Number(value) || 0);
+  const keepActiveSearchItemVisible = useCallback((menu, item) => {
+    if (!menu || !item) return;
+
+    window.requestAnimationFrame(() => {
+      const itemTop = item.offsetTop;
+      const itemBottom = itemTop + item.offsetHeight;
+      const visibleTop = menu.scrollTop;
+      const visibleBottom = menu.scrollTop + menu.clientHeight;
+
+      if (itemTop < visibleTop) {
+        menu.scrollTo({ top: itemTop, behavior: "smooth" });
+      } else if (itemBottom > visibleBottom) {
+        menu.scrollTo({
+          top: itemBottom - menu.clientHeight,
+          behavior: "smooth",
+        });
+      }
+
+      const menuRect = menu.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const topSafeArea = 92;
+      const bottomSafeArea = 18;
+
+      if (menuRect.bottom > viewportHeight - bottomSafeArea) {
+        window.scrollBy({
+          top: menuRect.bottom - viewportHeight + bottomSafeArea,
+          behavior: "smooth",
+        });
+      } else if (menuRect.top < topSafeArea) {
+        window.scrollBy({
+          top: menuRect.top - topSafeArea,
+          behavior: "smooth",
+        });
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (matchedCustomers.length === 0) return;
+
+    keepActiveSearchItemVisible(
+      customerMenuRef.current,
+      customerItemRefs.current[activeCustomerIndex],
+    );
+  }, [
+    activeCustomerIndex,
+    keepActiveSearchItemVisible,
+    matchedCustomers.length,
+  ]);
+
+  useEffect(() => {
+    if (filteredProducts.length === 0) return;
+
+    keepActiveSearchItemVisible(
+      productMenuRef.current,
+      productItemRefs.current[activeProductIndex],
+    );
+  }, [
+    activeProductIndex,
+    filteredProducts.length,
+    keepActiveSearchItemVisible,
+  ]);
 
   const selectCustomer = (customer) => {
     setSelectedCustomer(customer);
-    setCustomerPhone(customer.phone);
+    setCustomerPhone(customer.phone || "");
     setActiveCustomerIndex(0);
     window.setTimeout(() => productInputRef.current?.focus(), 0);
   };
 
   const clearSelectedCustomer = () => {
+    if (
+      paymentMode === PAYMENT_MODES.PARTIAL ||
+      paymentMode === PAYMENT_MODES.PAY_LATER
+    ) {
+      setPaymentMode(PAYMENT_MODES.PAY_NOW);
+      setPaymentMethod("cash");
+      setAmountReceived("");
+    }
+
     setSelectedCustomer(null);
     setCustomerPhone("");
     window.setTimeout(() => customerInputRef.current?.focus(), 0);
@@ -218,14 +328,11 @@ const Billing = () => {
     try {
       setIsSavingCustomer(true);
 
-      const response = await api.post(
-        "/customers",
-        {
-          name: newCustomer.name.trim(),
-          phone: newCustomer.phone.trim(),
-          address: newCustomer.address.trim(),
-        },
-      );
+      const response = await api.post("/customers", {
+        name: newCustomer.name.trim(),
+        phone: newCustomer.phone.trim(),
+        address: newCustomer.address.trim(),
+      });
 
       const createdCustomer = response.data;
 
@@ -234,7 +341,7 @@ const Billing = () => {
         ...previousCustomers,
       ]);
       setSelectedCustomer(createdCustomer);
-      setCustomerPhone(createdCustomer.phone);
+      setCustomerPhone(createdCustomer.phone || "");
       toast.success("Customer added successfully");
       closeAddCustomer();
       window.setTimeout(() => productInputRef.current?.focus(), 0);
@@ -282,6 +389,7 @@ const Billing = () => {
           productId: product._id,
           name: product.name,
           sku: product.sku || "",
+          barcode: product.barcode || "",
           price: Number(product.price),
           stock: Number(product.stock),
           gstRate: Number(product.gstRate) || 0,
@@ -322,19 +430,27 @@ const Billing = () => {
     );
   };
 
+  const resetCurrentBill = useCallback(() => {
+    setBillItems([]);
+    setProductSearch("");
+    setSelectedCustomer(null);
+    setCustomerPhone("");
+    setPaymentMode(PAYMENT_MODES.PAY_NOW);
+    setPaymentMethod("cash");
+    setAmountReceived("");
+  }, []);
+
   const clearBill = () => {
-    if (billItems.length === 0) return;
+    if (billItems.length === 0 && !selectedCustomer) return;
 
     const confirmed = window.confirm(
-      "Current bill-la irukura ella products-um clear pannalama?",
+      "Current bill-la irukura details ellam clear pannalama?",
     );
 
     if (!confirmed) return;
 
-    setBillItems([]);
-    setProductSearch("");
-    setGeneratedInvoice(null);
-    productInputRef.current?.focus();
+    resetCurrentBill();
+    window.setTimeout(() => customerInputRef.current?.focus(), 0);
   };
 
   const subtotal = useMemo(
@@ -356,18 +472,47 @@ const Billing = () => {
   );
 
   const grandTotal = subtotal + totalGst;
-  const totalQuantity = billItems.reduce(
-    (total, item) => total + Number(item.quantity || 0),
-    0,
+
+  const totalQuantity = useMemo(
+    () =>
+      billItems.reduce(
+        (total, item) => total + Number(item.quantity || 0),
+        0,
+      ),
+    [billItems],
   );
 
+  const numericAmountReceived = Number(amountReceived) || 0;
+
+  const paidNow = useMemo(() => {
+    if (paymentMode === PAYMENT_MODES.PAY_LATER) return 0;
+    if (paymentMode === PAYMENT_MODES.PARTIAL) return numericAmountReceived;
+    return grandTotal;
+  }, [grandTotal, numericAmountReceived, paymentMode]);
+
+  const amountDue = useMemo(() => {
+    if (paymentMode === PAYMENT_MODES.PAY_LATER) return grandTotal;
+    if (paymentMode === PAYMENT_MODES.PARTIAL) {
+      return Math.max(grandTotal - numericAmountReceived, 0);
+    }
+    return 0;
+  }, [grandTotal, numericAmountReceived, paymentMode]);
+
+  const balanceReturn = useMemo(() => {
+    if (
+      paymentMode !== PAYMENT_MODES.PAY_NOW ||
+      paymentMethod !== "cash"
+    ) {
+      return 0;
+    }
+
+    return Math.max(numericAmountReceived - grandTotal, 0);
+  }, [grandTotal, numericAmountReceived, paymentMethod, paymentMode]);
+
   const getInvoicePdfBlob = async (invoiceId) => {
-    const response = await api.get(
-      `/invoices/${invoiceId}/pdf`,
-      {
-        responseType: "blob",
-      },
-    );
+    const response = await api.get(`/invoices/${invoiceId}/pdf`, {
+      responseType: "blob",
+    });
 
     return new Blob([response.data], {
       type: "application/pdf",
@@ -414,8 +559,7 @@ const Billing = () => {
         }
 
         toast.error(
-          error.response?.data?.message ||
-            "Invoice print panna mudiyala",
+          error.response?.data?.message || "Invoice print panna mudiyala",
         );
       } finally {
         window.setTimeout(() => setIsPrinting(false), 500);
@@ -465,20 +609,178 @@ const Billing = () => {
     }
   };
 
+  const changePaymentMode = (nextMode) => {
+    if (
+      (nextMode === PAYMENT_MODES.PARTIAL ||
+        nextMode === PAYMENT_MODES.PAY_LATER) &&
+      !selectedCustomer
+    ) {
+      toast.error("Partial / Pay Later-ku customer select pannanum");
+      customerInputRef.current?.focus();
+      return;
+    }
+
+    setPaymentMode(nextMode);
+    setAmountReceived("");
+
+    if (nextMode === PAYMENT_MODES.PAY_LATER) {
+      setPaymentMethod("credit");
+      return;
+    }
+
+    if (paymentMethod === "credit") {
+      setPaymentMethod("cash");
+    }
+  };
+
+  const handlePaymentMethodChange = (method) => {
+    setPaymentMethod(method);
+
+    if (paymentMode === PAYMENT_MODES.PAY_NOW && method !== "cash") {
+      setAmountReceived("");
+    }
+  };
+
+  const holdBill = useCallback(() => {
+    if (billItems.length === 0) {
+      toast.error("Hold panna current bill-la products illa");
+      return;
+    }
+
+    const existingHeldBill = localStorage.getItem(HOLD_BILL_STORAGE_KEY);
+
+    if (existingHeldBill) {
+      const confirmed = window.confirm(
+        "Already oru held bill iruku. Adha replace pannalama?",
+      );
+
+      if (!confirmed) return;
+    }
+
+    const heldDraft = {
+      selectedCustomer,
+      customerPhone,
+      billItems,
+      paymentMode,
+      paymentMethod,
+      amountReceived,
+      heldAt: new Date().toISOString(),
+    };
+
+    localStorage.setItem(HOLD_BILL_STORAGE_KEY, JSON.stringify(heldDraft));
+    setHasHeldBill(true);
+    resetCurrentBill();
+    toast.success("Bill held successfully");
+    window.setTimeout(() => customerInputRef.current?.focus(), 0);
+  }, [
+    amountReceived,
+    billItems,
+    customerPhone,
+    paymentMethod,
+    paymentMode,
+    resetCurrentBill,
+    selectedCustomer,
+  ]);
+
+  const resumeBill = useCallback(() => {
+    const savedDraft = localStorage.getItem(HOLD_BILL_STORAGE_KEY);
+
+    if (!savedDraft) {
+      setHasHeldBill(false);
+      toast.error("Held bill available illa");
+      return;
+    }
+
+    if (billItems.length > 0 || selectedCustomer) {
+      const confirmed = window.confirm(
+        "Current bill replace aagum. Held bill resume pannalama?",
+      );
+
+      if (!confirmed) return;
+    }
+
+    try {
+      const heldDraft = JSON.parse(savedDraft);
+
+      setSelectedCustomer(heldDraft.selectedCustomer || null);
+      setCustomerPhone(heldDraft.customerPhone || "");
+      setBillItems(Array.isArray(heldDraft.billItems) ? heldDraft.billItems : []);
+      setPaymentMode(heldDraft.paymentMode || PAYMENT_MODES.PAY_NOW);
+      setPaymentMethod(heldDraft.paymentMethod || "cash");
+      setAmountReceived(String(heldDraft.amountReceived || ""));
+
+      localStorage.removeItem(HOLD_BILL_STORAGE_KEY);
+      setHasHeldBill(false);
+      toast.success("Held bill resumed");
+      window.setTimeout(() => productInputRef.current?.focus(), 0);
+    } catch (error) {
+      console.error("Resume held bill error:", error);
+      localStorage.removeItem(HOLD_BILL_STORAGE_KEY);
+      setHasHeldBill(false);
+      toast.error("Held bill data invalid. Cleared safely.");
+    }
+  }, [billItems.length, selectedCustomer]);
+
+  const validatePayment = useCallback(() => {
+    if (!selectedCustomer) {
+      toast.error("Customer select illa add pannu");
+      customerInputRef.current?.focus();
+      return false;
+    }
+
+    if (billItems.length === 0) {
+      toast.error("Minimum one product add pannu");
+      productInputRef.current?.focus();
+      return false;
+    }
+
+    if (paymentMode === PAYMENT_MODES.PARTIAL) {
+      if (numericAmountReceived <= 0) {
+        toast.error("Partial payment amount 0-ku mela irukanum");
+        paymentSectionRef.current?.scrollIntoView({ behavior: "smooth" });
+        return false;
+      }
+
+      if (numericAmountReceived >= grandTotal) {
+        toast.error("Partial amount Grand Total vida kammiya irukanum");
+        return false;
+      }
+    }
+
+    if (
+      paymentMode === PAYMENT_MODES.PAY_NOW &&
+      paymentMethod === "cash" &&
+      amountReceived !== "" &&
+      numericAmountReceived < grandTotal
+    ) {
+      toast.error("Cash Received Grand Total-ku kammiya iruka koodathu");
+      return false;
+    }
+
+    return true;
+  }, [
+    amountReceived,
+    billItems.length,
+    grandTotal,
+    numericAmountReceived,
+    paymentMethod,
+    paymentMode,
+    selectedCustomer,
+  ]);
+
   const handleGenerateBill = useCallback(
     async ({ autoPrint = false } = {}) => {
       if (isGeneratingBill) return;
+      if (!validatePayment()) return;
 
-      if (!selectedCustomer) {
-        toast.error("Customer select illa add pannu");
-        customerInputRef.current?.focus();
-        return;
-      }
+      let resolvedPaymentMethod = paymentMethod;
+      let resolvedPaidAmount = Number(grandTotal);
 
-      if (billItems.length === 0) {
-        toast.error("Minimum one product add pannu");
-        productInputRef.current?.focus();
-        return;
+      if (paymentMode === PAYMENT_MODES.PAY_LATER) {
+        resolvedPaymentMethod = "credit";
+        resolvedPaidAmount = 0;
+      } else if (paymentMode === PAYMENT_MODES.PARTIAL) {
+        resolvedPaidAmount = Number(numericAmountReceived);
       }
 
       const invoicePayload = {
@@ -492,19 +794,14 @@ const Billing = () => {
           gstRate: Number(item.gstRate) || 0,
         })),
         discount: 0,
-        paymentMethod,
-        paidAmount:
-          paymentMethod === "credit" ? 0 : Number(grandTotal),
+        paymentMethod: resolvedPaymentMethod,
+        paidAmount: resolvedPaidAmount,
       };
 
       try {
         setIsGeneratingBill(true);
 
-        const response = await api.post(
-          "/invoices",
-          invoicePayload,
-        );
-
+        const response = await api.post("/invoices", invoicePayload);
         const createdInvoice = response.data?.invoice;
 
         if (!createdInvoice?._id) {
@@ -520,13 +817,8 @@ const Billing = () => {
           await printInvoice(createdInvoice);
         }
 
-        setBillItems([]);
-        setProductSearch("");
-        setSelectedCustomer(null);
-        setCustomerPhone("");
-        setPaymentMethod("cash");
+        resetCurrentBill();
         await fetchBillingData();
-
         window.setTimeout(() => customerInputRef.current?.focus(), 100);
       } catch (error) {
         console.error("Generate invoice error:", error);
@@ -554,9 +846,13 @@ const Billing = () => {
       grandTotal,
       handleUnauthorized,
       isGeneratingBill,
+      numericAmountReceived,
       paymentMethod,
+      paymentMode,
       printInvoice,
+      resetCurrentBill,
       selectedCustomer,
+      validatePayment,
     ],
   );
 
@@ -567,6 +863,12 @@ const Billing = () => {
         event.stopPropagation();
         openAddCustomer();
       }
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setCustomerPhone("");
+      }
+
       return;
     }
 
@@ -576,6 +878,7 @@ const Billing = () => {
       setActiveCustomerIndex((current) =>
         current >= matchedCustomers.length - 1 ? 0 : current + 1,
       );
+      return;
     }
 
     if (event.key === "ArrowUp") {
@@ -584,12 +887,14 @@ const Billing = () => {
       setActiveCustomerIndex((current) =>
         current <= 0 ? matchedCustomers.length - 1 : current - 1,
       );
+      return;
     }
 
     if (event.key === "Enter") {
       event.preventDefault();
       event.stopPropagation();
       selectCustomer(matchedCustomers[activeCustomerIndex]);
+      return;
     }
 
     if (event.key === "Escape") {
@@ -599,6 +904,12 @@ const Billing = () => {
   };
 
   const handleProductSearchKeyDown = (event) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      setProductSearch("");
+      return;
+    }
+
     if (filteredProducts.length === 0) return;
 
     if (event.key === "ArrowDown") {
@@ -607,6 +918,7 @@ const Billing = () => {
       setActiveProductIndex((current) =>
         current >= filteredProducts.length - 1 ? 0 : current + 1,
       );
+      return;
     }
 
     if (event.key === "ArrowUp") {
@@ -615,17 +927,13 @@ const Billing = () => {
       setActiveProductIndex((current) =>
         current <= 0 ? filteredProducts.length - 1 : current - 1,
       );
+      return;
     }
 
     if (event.key === "Enter") {
       event.preventDefault();
       event.stopPropagation();
       addProductToBill(filteredProducts[activeProductIndex]);
-    }
-
-    if (event.key === "Escape") {
-      event.preventDefault();
-      setProductSearch("");
     }
   };
 
@@ -648,7 +956,22 @@ const Billing = () => {
 
     if (event.key === "F6") {
       event.preventDefault();
-      paymentSelectRef.current?.focus();
+      paymentSectionRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      return;
+    }
+
+    if (event.key === "F8") {
+      event.preventDefault();
+      holdBill();
+      return;
+    }
+
+    if (event.key === "F9") {
+      event.preventDefault();
+      resumeBill();
       return;
     }
 
@@ -662,12 +985,17 @@ const Billing = () => {
 
     const target = event.target;
     const tagName = target?.tagName?.toLowerCase();
+    const inputType = target?.type;
     const isTextArea = tagName === "textarea";
     const isButton = tagName === "button";
+    const isSelect = tagName === "select";
+    const isNumberInput = tagName === "input" && inputType === "number";
     const hasOpenSearch =
       matchedCustomers.length > 0 || filteredProducts.length > 0;
 
-    if (isTextArea || isButton || hasOpenSearch) return;
+    if (isTextArea || isButton || isSelect || isNumberInput || hasOpenSearch) {
+      return;
+    }
 
     const now = Date.now();
     const isDoubleEnter = now - lastEnterAtRef.current <= DOUBLE_ENTER_DELAY;
@@ -678,6 +1006,7 @@ const Billing = () => {
       if (enterTimerRef.current) {
         window.clearTimeout(enterTimerRef.current);
       }
+
       setEnterArmed(false);
       lastEnterAtRef.current = 0;
       handleGenerateBill({ autoPrint: true });
@@ -697,12 +1026,36 @@ const Billing = () => {
     }, DOUBLE_ENTER_DELAY);
   };
 
+  const primaryActionLabel = useMemo(() => {
+    if (isGeneratingBill) return "Generating...";
+    if (isPrinting) return "Opening Print...";
+
+    if (paymentMode === PAYMENT_MODES.PARTIAL) {
+      return "Collect Payment & Print";
+    }
+
+    if (paymentMode === PAYMENT_MODES.PAY_LATER) {
+      return "Create Pay Later Bill";
+    }
+
+    return "Complete Sale & Print";
+  }, [isGeneratingBill, isPrinting, paymentMode]);
+
+  const generatedPaymentStatus =
+    generatedInvoice?.paymentStatus ||
+    generatedInvoice?.status ||
+    generatedInvoice?.payment?.status ||
+    null;
+
   if (isLoading) {
     return (
-      <div className="billing-page">
+      <div className="billing-page billing-page-loading">
         <div className="billing-loading">
           <span className="billing-loader" />
-          Billing workspace loading...
+          <div>
+            <strong>BillFlow POS</strong>
+            <span>Billing workspace loading...</span>
+          </div>
         </div>
       </div>
     );
@@ -710,55 +1063,93 @@ const Billing = () => {
 
   return (
     <>
-      <div
-        className="billing-page"
-        onKeyDown={handleBillingKeyDown}
-      >
-        <header className="billing-command-header">
-          <div>
-            <div className="billing-eyebrow">Point of Sale</div>
-            <h1>New Invoice</h1>
-            <p>Fast keyboard-first billing workspace</p>
+      <div className="billing-page" onKeyDown={handleBillingKeyDown}>
+        <header className="billing-pos-header">
+          <div className="billing-brand-cluster">
+            <div className="billing-brand-mark">BF</div>
+            <div className="billing-brand-copy">
+              <span>BillFlow POS</span>
+              <strong>Billing Counter</strong>
+            </div>
           </div>
 
-          <div className="billing-shortcut-bar">
-            <span><kbd>F2</kbd> Customer</span>
-            <span><kbd>F4</kbd> Product</span>
-            <span><kbd>F6</kbd> Payment</span>
-            <span className={enterArmed ? "is-armed" : ""}>
-              <kbd>Enter ×2</kbd> Generate & Print
+          <div className="billing-counter-meta">
+            <span className="billing-counter-live">
+              <i /> Counter Ready
             </span>
+            <span>{billItems.length} line items</span>
+            <span>{totalQuantity} units</span>
+            {hasHeldBill && (
+              <span className="billing-held-indicator">
+                <FiPauseCircle /> Held bill available
+              </span>
+            )}
           </div>
+
+          <button
+            type="button"
+            className="billing-back-btn"
+            onClick={() => navigate("/dashboard")}
+          >
+            <FiArrowLeft />
+            Back to Dashboard
+          </button>
         </header>
+
+        <div className="billing-shortcut-strip">
+          <span><kbd>F2</kbd> Customer</span>
+          <span><kbd>F4</kbd> Product</span>
+          <span><kbd>F6</kbd> Payment</span>
+          <span><kbd>F8</kbd> Hold</span>
+          <span><kbd>F9</kbd> Resume</span>
+          <span className={enterArmed ? "is-armed" : ""}>
+            <kbd>Enter ×2</kbd> Generate & Print
+          </span>
+        </div>
 
         <main className="billing-pos-layout">
           <section className="billing-workspace">
-            <div className="billing-workspace-toolbar">
-              <div className="billing-workspace-title">
-                <FiShoppingCart />
-                <div>
-                  <strong>Current Bill</strong>
-                  <span>
-                    {billItems.length} products · {totalQuantity} units
-                  </span>
-                </div>
+            <div className="billing-workspace-topline">
+              <div>
+                <span className="billing-section-kicker">CURRENT SALE</span>
+                <h1>New Invoice</h1>
               </div>
 
-              <button
-                type="button"
-                className="billing-clear-btn"
-                onClick={clearBill}
-                disabled={billItems.length === 0}
-              >
-                <FiTrash2 /> Clear Bill
-              </button>
+              <div className="billing-bill-actions">
+                <button
+                  type="button"
+                  className="billing-hold-btn"
+                  onClick={holdBill}
+                  disabled={billItems.length === 0}
+                >
+                  <FiPauseCircle /> Hold Bill
+                </button>
+
+                <button
+                  type="button"
+                  className={`billing-resume-btn ${hasHeldBill ? "has-bill" : ""}`}
+                  onClick={resumeBill}
+                  disabled={!hasHeldBill}
+                >
+                  <FiPlayCircle /> Resume
+                </button>
+
+                <button
+                  type="button"
+                  className="billing-clear-btn"
+                  onClick={clearBill}
+                  disabled={billItems.length === 0 && !selectedCustomer}
+                >
+                  <FiTrash2 /> Clear
+                </button>
+              </div>
             </div>
 
             <div className="billing-search-zone">
               <div className="billing-search-block">
                 <div className="billing-search-label-row">
                   <label htmlFor="customer-search">Customer</label>
-                  <span>Search name or phone</span>
+                  <span>Name / phone</span>
                 </div>
 
                 {!selectedCustomer ? (
@@ -768,21 +1159,25 @@ const Billing = () => {
                       ref={customerInputRef}
                       id="customer-search"
                       type="text"
-                      placeholder="Customer name / phone"
+                      placeholder="Search customer name or phone"
                       value={customerPhone}
                       autoComplete="off"
-                      onChange={(event) =>
-                        setCustomerPhone(event.target.value)
-                      }
+                      onChange={(event) => setCustomerPhone(event.target.value)}
                       onKeyDown={handleCustomerSearchKeyDown}
                       aria-expanded={matchedCustomers.length > 0}
                     />
                     <FiChevronDown className="billing-combobox-chevron" />
 
                     {matchedCustomers.length > 0 && (
-                      <div className="billing-combobox-menu">
+                      <div
+                        ref={customerMenuRef}
+                        className="billing-combobox-menu"
+                      >
                         {matchedCustomers.map((customer, index) => (
                           <button
+                            ref={(element) => {
+                              customerItemRefs.current[index] = element;
+                            }}
                             key={customer._id}
                             type="button"
                             className={
@@ -800,6 +1195,7 @@ const Billing = () => {
                             </span>
                           </button>
                         ))}
+
                         <div className="billing-menu-hint">
                           <span><kbd>↑</kbd><kbd>↓</kbd> Navigate</span>
                           <span><kbd>Enter</kbd> Select</span>
@@ -822,9 +1218,10 @@ const Billing = () => {
                     <div className="billing-avatar">
                       {selectedCustomer.name?.charAt(0)?.toUpperCase() || "C"}
                     </div>
-                    <div>
+                    <div className="billing-selected-party-copy">
+                      <span>Selected Customer</span>
                       <strong>{selectedCustomer.name}</strong>
-                      <span>{selectedCustomer.phone}</span>
+                      <small>{selectedCustomer.phone}</small>
                     </div>
                     <button
                       type="button"
@@ -839,8 +1236,8 @@ const Billing = () => {
 
               <div className="billing-search-block billing-product-search-block">
                 <div className="billing-search-label-row">
-                  <label htmlFor="product-search">Product</label>
-                  <span>Name or SKU · Arrow + Enter</span>
+                  <label htmlFor="product-search">Product / Barcode</label>
+                  <span>Name · SKU · barcode</span>
                 </div>
 
                 <div className="billing-combobox">
@@ -859,9 +1256,15 @@ const Billing = () => {
                   <FiCommand className="billing-combobox-chevron" />
 
                   {filteredProducts.length > 0 && (
-                    <div className="billing-combobox-menu billing-product-menu">
+                    <div
+                      ref={productMenuRef}
+                      className="billing-combobox-menu billing-product-menu"
+                    >
                       {filteredProducts.map((product, index) => (
                         <button
+                          ref={(element) => {
+                            productItemRefs.current[index] = element;
+                          }}
                           key={product._id}
                           type="button"
                           className={
@@ -872,7 +1275,10 @@ const Billing = () => {
                         >
                           <span className="billing-result-primary">
                             <strong>{product.name}</strong>
-                            <small>{product.sku || "No SKU"}</small>
+                            <small>
+                              {product.sku || "No SKU"}
+                              {product.barcode ? ` · ${product.barcode}` : ""}
+                            </small>
                           </span>
                           <span className="billing-result-price">
                             <strong>{formatPrice(product.price)}</strong>
@@ -880,6 +1286,7 @@ const Billing = () => {
                           </span>
                         </button>
                       ))}
+
                       <div className="billing-menu-hint">
                         <span><kbd>↑</kbd><kbd>↓</kbd> Navigate</span>
                         <span><kbd>Enter</kbd> Add Product</span>
@@ -891,13 +1298,21 @@ const Billing = () => {
             </div>
 
             <div className="billing-items-panel">
+              <div className="billing-items-panel-head">
+                <div>
+                  <FiShoppingCart />
+                  <strong>Bill Items</strong>
+                </div>
+                <span>{billItems.length} products · {totalQuantity} units</span>
+              </div>
+
               {billItems.length === 0 ? (
                 <div className="billing-empty-state">
                   <div className="billing-empty-icon">
                     <FiShoppingCart />
                   </div>
-                  <h3>Bill is empty</h3>
-                  <p>Search a product and press Enter to add it.</p>
+                  <h3>Ready for billing</h3>
+                  <p>Product search-la item scan/search panni Enter press pannu.</p>
                   <button
                     type="button"
                     onClick={() => productInputRef.current?.focus()}
@@ -909,92 +1324,95 @@ const Billing = () => {
                 <>
                   <div className="billing-table-scroll billing-desktop-items">
                     <table className="billing-pos-table">
-                    <thead>
-                      <tr>
-                        <th className="billing-col-index">#</th>
-                        <th>Item</th>
-                        <th>Rate</th>
-                        <th>Qty</th>
-                        <th>GST</th>
-                        <th className="billing-text-right">Amount</th>
-                        <th aria-label="Actions" />
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {billItems.map((item, index) => {
-                        const itemSubtotal = item.price * item.quantity;
-                        const itemGst =
-                          (itemSubtotal * item.gstRate) / 100;
-                        const itemTotal = itemSubtotal + itemGst;
+                      <thead>
+                        <tr>
+                          <th className="billing-col-index">#</th>
+                          <th>Item</th>
+                          <th>Rate</th>
+                          <th>Qty</th>
+                          <th>GST</th>
+                          <th className="billing-text-right">Amount</th>
+                          <th aria-label="Actions" />
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {billItems.map((item, index) => {
+                          const itemSubtotal = item.price * item.quantity;
+                          const itemGst =
+                            (itemSubtotal * item.gstRate) / 100;
+                          const itemTotal = itemSubtotal + itemGst;
 
-                        return (
-                          <tr key={item.productId}>
-                            <td className="billing-row-number">{index + 1}</td>
-                            <td>
-                              <div className="billing-item-info">
-                                <strong>{item.name}</strong>
-                                <span>{item.sku || "No SKU"}</span>
-                              </div>
-                            </td>
-                            <td>{formatPrice(item.price)}</td>
-                            <td>
-                              <div className="billing-qty-stepper">
+                          return (
+                            <tr key={item.productId}>
+                              <td className="billing-row-number">{index + 1}</td>
+                              <td>
+                                <div className="billing-item-info">
+                                  <strong>{item.name}</strong>
+                                  <span>
+                                    {item.sku || "No SKU"}
+                                    {item.barcode ? ` · ${item.barcode}` : ""}
+                                  </span>
+                                </div>
+                              </td>
+                              <td>{formatPrice(item.price)}</td>
+                              <td>
+                                <div className="billing-qty-stepper">
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      updateQuantity(
+                                        item.productId,
+                                        item.quantity - 1,
+                                      )
+                                    }
+                                    disabled={item.quantity <= 1}
+                                  >
+                                    <FiMinus />
+                                  </button>
+                                  <input
+                                    type="number"
+                                    min="1"
+                                    max={item.stock}
+                                    value={item.quantity}
+                                    onChange={(event) =>
+                                      updateQuantity(
+                                        item.productId,
+                                        event.target.value,
+                                      )
+                                    }
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      updateQuantity(
+                                        item.productId,
+                                        item.quantity + 1,
+                                      )
+                                    }
+                                    disabled={item.quantity >= item.stock}
+                                  >
+                                    <FiPlus />
+                                  </button>
+                                </div>
+                              </td>
+                              <td>{item.gstRate}%</td>
+                              <td className="billing-text-right billing-amount-cell">
+                                {formatPrice(itemTotal)}
+                              </td>
+                              <td>
                                 <button
                                   type="button"
-                                  onClick={() =>
-                                    updateQuantity(
-                                      item.productId,
-                                      item.quantity - 1,
-                                    )
-                                  }
-                                  disabled={item.quantity <= 1}
+                                  className="billing-row-delete"
+                                  onClick={() => removeBillItem(item.productId)}
+                                  aria-label={`Remove ${item.name}`}
                                 >
-                                  <FiMinus />
+                                  <FiTrash2 />
                                 </button>
-                                <input
-                                  type="number"
-                                  min="1"
-                                  max={item.stock}
-                                  value={item.quantity}
-                                  onChange={(event) =>
-                                    updateQuantity(
-                                      item.productId,
-                                      event.target.value,
-                                    )
-                                  }
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    updateQuantity(
-                                      item.productId,
-                                      item.quantity + 1,
-                                    )
-                                  }
-                                  disabled={item.quantity >= item.stock}
-                                >
-                                  <FiPlus />
-                                </button>
-                              </div>
-                            </td>
-                            <td>{item.gstRate}%</td>
-                            <td className="billing-text-right billing-amount-cell">
-                              {formatPrice(itemTotal)}
-                            </td>
-                            <td>
-                              <button
-                                type="button"
-                                className="billing-row-delete"
-                                onClick={() => removeBillItem(item.productId)}
-                                aria-label={`Remove ${item.name}`}
-                              >
-                                <FiTrash2 />
-                              </button>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
                     </table>
                   </div>
 
@@ -1015,7 +1433,10 @@ const Billing = () => {
                                 Item {index + 1}
                               </span>
                               <strong>{item.name}</strong>
-                              <small>{item.sku || "No SKU"}</small>
+                              <small>
+                                {item.sku || "No SKU"}
+                                {item.barcode ? ` · ${item.barcode}` : ""}
+                              </small>
                             </div>
 
                             <button
@@ -1095,23 +1516,163 @@ const Billing = () => {
 
           <aside className="billing-checkout-panel">
             <div className="billing-checkout-head">
-              <span>Checkout</span>
-              <strong>{totalQuantity} units</strong>
+              <div>
+                <span>CHECKOUT</span>
+                <strong>Payment Summary</strong>
+              </div>
+              <span className="billing-checkout-count">{totalQuantity} units</span>
             </div>
 
-            <div className="billing-payment-section">
-              <label htmlFor="payment-method">Payment Method</label>
-              <select
-                ref={paymentSelectRef}
-                id="payment-method"
-                value={paymentMethod}
-                onChange={(event) => setPaymentMethod(event.target.value)}
-              >
-                <option value="cash">Cash</option>
-                <option value="upi">UPI</option>
-                <option value="card">Card</option>
-                <option value="credit">Credit</option>
-              </select>
+            <div className="billing-checkout-customer">
+              <span>Customer</span>
+              {selectedCustomer ? (
+                <div>
+                  <div className="billing-mini-avatar">
+                    {selectedCustomer.name?.charAt(0)?.toUpperCase() || "C"}
+                  </div>
+                  <div>
+                    <strong>{selectedCustomer.name}</strong>
+                    <small>{selectedCustomer.phone}</small>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => customerInputRef.current?.focus()}
+                >
+                  <FiUserPlus /> Select customer
+                </button>
+              )}
+            </div>
+
+            <div className="billing-payment-section" ref={paymentSectionRef}>
+              <div className="billing-payment-title-row">
+                <div>
+                  <span>Payment Type</span>
+                  <strong>How will this bill be settled?</strong>
+                </div>
+              </div>
+
+              <div className="billing-payment-mode-grid">
+                <button
+                  type="button"
+                  className={
+                    paymentMode === PAYMENT_MODES.PAY_NOW ? "active" : ""
+                  }
+                  onClick={() => changePaymentMode(PAYMENT_MODES.PAY_NOW)}
+                >
+                  <FiCheckCircle />
+                  <span>
+                    <strong>Pay Now</strong>
+                    <small>Full payment</small>
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  className={
+                    paymentMode === PAYMENT_MODES.PARTIAL ? "active" : ""
+                  }
+                  onClick={() => changePaymentMode(PAYMENT_MODES.PARTIAL)}
+                >
+                  <FiCreditCard />
+                  <span>
+                    <strong>Partial</strong>
+                    <small>Pay some now</small>
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  className={
+                    paymentMode === PAYMENT_MODES.PAY_LATER ? "active" : ""
+                  }
+                  onClick={() => changePaymentMode(PAYMENT_MODES.PAY_LATER)}
+                >
+                  <FiClock />
+                  <span>
+                    <strong>Pay Later</strong>
+                    <small>Credit sale</small>
+                  </span>
+                </button>
+              </div>
+
+              {paymentMode !== PAYMENT_MODES.PAY_LATER && (
+                <div className="billing-payment-methods">
+                  <span>Payment Method</span>
+                  <div className="billing-method-grid">
+                    {[
+                      { value: "cash", label: "Cash" },
+                      { value: "upi", label: "UPI" },
+                      { value: "card", label: "Card" },
+                    ].map((method) => (
+                      <button
+                        key={method.value}
+                        type="button"
+                        className={
+                          paymentMethod === method.value ? "active" : ""
+                        }
+                        onClick={() =>
+                          handlePaymentMethodChange(method.value)
+                        }
+                      >
+                        {method.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {paymentMode === PAYMENT_MODES.PAY_NOW &&
+                paymentMethod === "cash" && (
+                  <div className="billing-money-input-group">
+                    <label htmlFor="cash-received">Cash Received</label>
+                    <div className="billing-money-input">
+                      <span>₹</span>
+                      <input
+                        id="cash-received"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={amountReceived}
+                        onChange={(event) =>
+                          setAmountReceived(event.target.value)
+                        }
+                        placeholder={grandTotal.toFixed(2)}
+                      />
+                    </div>
+                  </div>
+                )}
+
+              {paymentMode === PAYMENT_MODES.PARTIAL && (
+                <div className="billing-money-input-group">
+                  <label htmlFor="partial-received">Amount Received</label>
+                  <div className="billing-money-input">
+                    <span>₹</span>
+                    <input
+                      id="partial-received"
+                      type="number"
+                      min="0"
+                      max={Math.max(grandTotal - 0.01, 0)}
+                      step="0.01"
+                      value={amountReceived}
+                      onChange={(event) => setAmountReceived(event.target.value)}
+                      placeholder="Enter partial amount"
+                    />
+                  </div>
+                  <small>0 vida adhigama, Grand Total vida kammiya irukanum.</small>
+                </div>
+              )}
+
+              {paymentMode === PAYMENT_MODES.PAY_LATER && (
+                <div className="billing-credit-note">
+                  <FiClock />
+                  <div>
+                    <strong>Pay Later / Credit Sale</strong>
+                    <span>Paid now ₹0. Full bill amount customer-ku due aagum.</span>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="billing-totals">
@@ -1123,11 +1684,45 @@ const Billing = () => {
                 <span>Total GST</span>
                 <strong>{formatPrice(totalGst)}</strong>
               </div>
+              <div>
+                <span>Discount</span>
+                <strong>{formatPrice(0)}</strong>
+              </div>
+
               <div className="billing-total-divider" />
+
               <div className="billing-grand-total">
                 <span>Grand Total</span>
                 <strong>{formatPrice(grandTotal)}</strong>
               </div>
+
+              {paymentMode === PAYMENT_MODES.PARTIAL && (
+                <>
+                  <div className="billing-payment-result-row paid">
+                    <span>Paying Now</span>
+                    <strong>{formatPrice(paidNow)}</strong>
+                  </div>
+                  <div className="billing-payment-result-row due">
+                    <span>Balance Due</span>
+                    <strong>{formatPrice(amountDue)}</strong>
+                  </div>
+                </>
+              )}
+
+              {paymentMode === PAYMENT_MODES.PAY_LATER && (
+                <div className="billing-payment-result-row due billing-due-highlight">
+                  <span>Amount Due</span>
+                  <strong>{formatPrice(amountDue)}</strong>
+                </div>
+              )}
+
+              {paymentMode === PAYMENT_MODES.PAY_NOW &&
+                paymentMethod === "cash" && (
+                  <div className="billing-payment-result-row return">
+                    <span>Balance to Return</span>
+                    <strong>{formatPrice(balanceReturn)}</strong>
+                  </div>
+                )}
             </div>
 
             <div className="billing-primary-actions">
@@ -1137,18 +1732,12 @@ const Billing = () => {
                   enterArmed ? "is-armed" : ""
                 }`}
                 onClick={() => handleGenerateBill({ autoPrint: true })}
-                disabled={isGeneratingBill || isPrinting}
+                disabled={isGeneratingBill || isPrinting || billItems.length === 0}
               >
                 <FiPrinter />
                 <span>
-                  <strong>
-                    {isGeneratingBill
-                      ? "Generating..."
-                      : isPrinting
-                        ? "Opening Print..."
-                        : "Generate & Print"}
-                  </strong>
-                  <small>Double tap Enter</small>
+                  <strong>{primaryActionLabel}</strong>
+                  <small>Double Enter shortcut</small>
                 </span>
               </button>
 
@@ -1156,9 +1745,9 @@ const Billing = () => {
                 type="button"
                 className="billing-generate-only-btn"
                 onClick={() => handleGenerateBill({ autoPrint: false })}
-                disabled={isGeneratingBill}
+                disabled={isGeneratingBill || billItems.length === 0}
               >
-                Generate Only
+                Generate without Print
               </button>
             </div>
 
@@ -1183,8 +1772,16 @@ const Billing = () => {
 
             {generatedInvoice && (
               <div className="billing-last-invoice">
-                <span>Last generated</span>
-                <strong>{generatedInvoice.invoiceNumber}</strong>
+                <div className="billing-last-invoice-icon">
+                  <FiCheckCircle />
+                </div>
+                <div>
+                  <span>Last generated invoice</span>
+                  <strong>{generatedInvoice.invoiceNumber}</strong>
+                  {generatedPaymentStatus && (
+                    <small>{String(generatedPaymentStatus)}</small>
+                  )}
+                </div>
               </div>
             )}
           </aside>
@@ -1209,7 +1806,7 @@ const Billing = () => {
           <div className="billing-customer-modal">
             <div className="billing-modal-header">
               <div>
-                <span>New Contact</span>
+                <span>NEW CONTACT</span>
                 <h2>Add Customer</h2>
                 <p>Create customer without leaving billing.</p>
               </div>
@@ -1250,7 +1847,7 @@ const Billing = () => {
                       phone: event.target.value.replace(/\D/g, ""),
                     }))
                   }
-                  maxLength={15}
+                  maxLength={10}
                 />
               </div>
 

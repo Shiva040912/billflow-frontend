@@ -1,366 +1,1322 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* =========================================================
+   PAGE
+========================================================= */
+
 .choose-plan-page {
+  width: 100%;
   min-height: 100vh;
-  padding: 50px 20px;
+
   background:
     radial-gradient(
-      circle at top right,
-      rgba(79, 70, 229, 0.14),
-      transparent 32%
+      circle at 92% 5%,
+      rgba(99, 91, 255, 0.045),
+      transparent 25%
     ),
-    linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+    #f7f7f6;
+
+  color: #18181b;
+
+  font-family: "DM Sans", system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
+
+/* =========================================================
+   TOPBAR
+========================================================= */
+
+.choose-plan-topbar {
+  position: sticky;
+  top: 0;
+
+  z-index: 1000;
+
+  width: 100%;
+  min-height: 66px;
+
+  padding:
+    0 clamp(18px, 5vw, 64px);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  border-bottom:
+    1px solid rgba(228, 228, 231, 0.95);
+
+  background:
+    rgba(247, 247, 246, 0.96);
+
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.choose-plan-brand {
+  padding: 0;
+
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  border: none;
+
+  background: transparent;
+
+  cursor: pointer;
+}
+
+.choose-plan-brand-logo {
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 8px;
+
+  background: #18181b;
+
+  color: #ffffff;
+
+  font-size: 13px;
+}
+
+.choose-plan-brand-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.choose-plan-brand-text strong {
+  color: #18181b;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  line-height: 1;
+
+  letter-spacing: -0.035em;
+}
+
+.choose-plan-brand-text strong span {
+  color: #635bff;
+}
+
+.choose-plan-brand-text small {
+  margin-top: 3px;
+
+  color: #a1a1aa;
+
+  font-size: 7px;
+}
+
+/* =========================================================
+   TOPBAR BACK
+========================================================= */
+
+.choose-plan-topbar-back {
+  min-height: 35px;
+
+  padding: 0 10px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  border: 1px solid #dedddb;
+  border-radius: 8px;
+
+  background: #ffffff;
+
+  color: #71717a;
+
+  font-family: inherit;
+  font-size: 8px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.choose-plan-topbar-back:hover {
+  background: #fafafa;
+
+  border-color: #cac8c5;
+
+  color: #18181b;
+}
+
+/* =========================================================
+   CONTAINER
+========================================================= */
 
 .choose-plan-container {
-  width: min(1180px, 100%);
+  width:
+    min(
+      1180px,
+      calc(100% - 40px)
+    );
+
   margin: 0 auto;
+
+  padding: 38px 0 65px;
 }
 
+/* =========================================================
+   STEPPER
+========================================================= */
+
+.registration-stepper {
+  width: min(630px, 100%);
+
+  margin:
+    0 auto 30px;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.registration-step {
+  width: 110px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-align: center;
+}
+
+.registration-step > span {
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #dedddb;
+  border-radius: 50%;
+
+  background: #ffffff;
+
+  color: #a1a1aa;
+
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.registration-step.active > span {
+  border-color: #18181b;
+
+  background: #18181b;
+
+  color: #ffffff;
+}
+
+.registration-step.completed > span {
+  border-color: #bbf7d0;
+
+  background: #f0fdf4;
+
+  color: #16a34a;
+}
+
+.registration-step > span svg {
+  font-size: 11px;
+}
+
+.registration-step p {
+  margin: 7px 0 0;
+
+  color: #a1a1aa;
+
+  font-size: 7px;
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+.registration-step.active p {
+  color: #3f3f46;
+}
+
+.registration-step.completed p {
+  color: #16a34a;
+}
+
+.registration-step-line {
+  width: 95px;
+  height: 1px;
+
+  flex-shrink: 1;
+
+  margin-top: 16px;
+
+  background: #dedddb;
+}
+
+.registration-step-line.completed {
+  background: #86efac;
+}
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
 .choose-plan-header {
-  margin-bottom: 34px;
+  max-width: 690px;
+
+  margin:
+    0 auto 34px;
+
   text-align: center;
 }
 
 .choose-plan-badge {
   display: inline-flex;
-  margin-bottom: 14px;
-  padding: 8px 14px;
-  border: 1px solid rgba(37, 99, 235, 0.18);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.85);
-  color: #2563eb;
-  font-size: 13px;
-  font-weight: 800;
+
+  padding: 5px 8px;
+
+  border: 1px solid #e6e3ff;
+  border-radius: 6px;
+
+  background: #f8f7ff;
+
+  color: #635bff;
+
+  font-size: 7px;
+  font-weight: 700;
+
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .choose-plan-header h1 {
-  margin: 0;
-  color: #0f172a;
-  font-size: clamp(32px, 5vw, 48px);
-  line-height: 1.1;
+  margin: 14px 0 0;
+
+  color: #18181b;
+
+  font-size:
+    clamp(
+      32px,
+      4vw,
+      46px
+    );
+
+  font-weight: 500;
+
+  line-height: 1.06;
+
+  letter-spacing: -0.055em;
+}
+
+.choose-plan-header h1 span {
+  color: #635bff;
 }
 
 .choose-plan-header p {
-  margin: 14px 0 0;
-  color: #64748b;
+  max-width: 610px;
+
+  margin: 13px auto 0;
+
+  color: #71717a;
+
+  font-size: 11px;
+
+  line-height: 1.7;
+}
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.choose-plan-error {
+  max-width: 700px;
+
+  margin:
+    0 auto 18px;
+
+  padding: 10px 12px;
+
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+
+  background: #fef2f2;
+
+  color: #dc2626;
+
+  font-size: 8px;
+  font-weight: 600;
+
+  text-align: center;
+}
+
+/* =========================================================
+   LOADING / EMPTY
+========================================================= */
+
+.choose-plan-loading,
+.choose-plan-empty {
+  min-height: 310px;
+
+  padding: 35px 20px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #e7e5e4;
+  border-radius: 13px;
+
+  background: #ffffff;
+
+  text-align: center;
+}
+
+.choose-plan-loader {
+  width: 29px;
+  height: 29px;
+
+  margin-bottom: 12px;
+
+  border: 3px solid #eceae8;
+  border-top-color: #635bff;
+  border-radius: 50%;
+
+  animation:
+    choosePlanSpin
+    0.75s linear infinite;
+}
+
+@keyframes choosePlanSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.choose-plan-empty-icon {
+  width: 40px;
+  height: 40px;
+
+  margin-bottom: 11px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  background: #f1f0ff;
+
+  color: #635bff;
+
   font-size: 16px;
 }
 
+.choose-plan-loading h3,
+.choose-plan-empty h3 {
+  margin: 0;
+
+  color: #3f3f46;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.choose-plan-loading p,
+.choose-plan-empty p {
+  margin: 5px 0 0;
+
+  color: #a1a1aa;
+
+  font-size: 9px;
+}
+
+/* =========================================================
+   PLANS GRID
+========================================================= */
+
 .plans-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 22px;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  align-items: stretch;
+
+  gap: 12px;
 }
+
+/* =========================================================
+   PLAN CARD
+========================================================= */
 
 .plan-card {
   position: relative;
+
+  min-width: 0;
+
+  padding: 20px;
+
   display: flex;
-  min-height: 500px;
   flex-direction: column;
-  padding: 28px;
-  border: 1px solid #dbe3ef;
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+
+  overflow: hidden;
+
+  border: 1px solid #e7e5e4;
+  border-radius: 13px;
+
+  background: #ffffff;
+
   cursor: pointer;
+
   transition:
-    transform 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
 }
 
 .plan-card:hover {
-  transform: translateY(-5px);
-  border-color: #93c5fd;
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.13);
+  transform: translateY(-3px);
+
+  border-color: #d6d3d1;
+
+  box-shadow:
+    0 12px 32px
+    rgba(24, 24, 27, 0.06);
 }
 
 .plan-card-selected {
-  border: 2px solid #2563eb;
-  box-shadow: 0 24px 65px rgba(37, 99, 235, 0.17);
+  border-color: #aaa5ff;
+
+  box-shadow:
+    0 0 0 2px
+    rgba(99, 91, 255, 0.07);
 }
+
+.plan-card-popular {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(241, 240, 255, 0.68),
+      #ffffff 105px
+    );
+}
+
+/* =========================================================
+   POPULAR
+========================================================= */
 
 .popular-badge {
   position: absolute;
-  top: -13px;
+
+  top: 0;
   left: 50%;
-  padding: 7px 14px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #2563eb, #4f46e5);
+
+  min-height: 24px;
+
+  padding: 0 9px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 4px;
+
+  border-radius:
+    0 0 7px 7px;
+
+  background: #635bff;
+
   color: #ffffff;
-  font-size: 12px;
-  font-weight: 800;
-  transform: translateX(-50%);
+
+  font-size: 7px;
+  font-weight: 600;
+
+  white-space: nowrap;
+
+  transform:
+    translateX(-50%);
 }
+
+.popular-badge svg {
+  font-size: 9px;
+}
+
+/* =========================================================
+   SELECTION
+========================================================= */
+
+.plan-card-selection {
+  position: absolute;
+
+  top: 14px;
+  right: 14px;
+}
+
+.plan-selection-indicator {
+  width: 21px;
+  height: 21px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #dedddb;
+  border-radius: 50%;
+
+  background: #ffffff;
+
+  color: #ffffff;
+
+  font-size: 9px;
+}
+
+.plan-selection-indicator.selected {
+  border-color: #635bff;
+
+  background: #635bff;
+}
+
+/* =========================================================
+   HIDE ORIGINAL RADIO VISUALLY
+========================================================= */
+
+.plan-radio {
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+
+  overflow: hidden;
+
+  opacity: 0;
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   CARD HEADER
+========================================================= */
 
 .plan-card-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
+  min-height: 90px;
+
+  padding-right: 28px;
 }
 
-.plan-card h2 {
+.plan-card-top > div:first-child {
+  min-width: 0;
+}
+
+.plan-name-label {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #a1a1aa;
+
+  font-size: 6px;
+  font-weight: 600;
+
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.plan-card-top h2 {
   margin: 0;
-  color: #0f172a;
-  font-size: 25px;
+
+  color: #18181b;
+
+  font-size: 19px;
+  font-weight: 600;
+
+  line-height: 1.2;
+
+  letter-spacing: -0.035em;
 }
 
 .plan-card-top p {
-  margin: 8px 0 0;
-  color: #64748b;
-  font-size: 14px;
-  line-height: 1.6;
+  margin: 6px 0 0;
+
+  display: -webkit-box;
+
+  overflow: hidden;
+
+  color: #8b8b94;
+
+  font-size: 9px;
+
+  line-height: 1.55;
+
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
-.plan-radio input {
-  width: 20px;
-  height: 20px;
-  accent-color: #2563eb;
-}
+/* =========================================================
+   PRICE
+========================================================= */
 
 .plan-price {
+  margin-top: 13px;
+
   display: flex;
   align-items: flex-end;
-  margin: 28px 0;
-  color: #0f172a;
-}
 
-.plan-price .currency {
-  margin-bottom: 8px;
-  font-size: 20px;
-  font-weight: 800;
+  gap: 4px;
 }
 
 .plan-price strong {
-  font-size: 48px;
+  color: #18181b;
+
+  font-size: 29px;
+  font-weight: 600;
+
   line-height: 1;
+
+  letter-spacing: -0.055em;
 }
 
 .billing-cycle {
-  margin: 0 0 7px 5px;
-  color: #64748b;
-  font-size: 14px;
+  padding-bottom: 3px;
+
+  color: #a1a1aa;
+
+  font-size: 8px;
 }
 
-.plan-features {
+/* =========================================================
+   YEARLY
+========================================================= */
+
+.plan-yearly-price {
+  min-height: 30px;
+
+  margin: 9px 0 0;
+  padding: 0 9px;
+
   display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 14px;
-  margin: 0 0 28px;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 8px;
+
+  border: 1px solid #f0efed;
+  border-radius: 7px;
+
+  background: #fafaf9;
+}
+
+.plan-yearly-price span {
+  color: #a1a1aa;
+
+  font-size: 7px;
+}
+
+.plan-yearly-price strong {
+  color: #52525b;
+
+  font-size: 8px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   TRIAL
+========================================================= */
+
+.plan-trial {
+  min-height: 32px;
+
+  margin-top: 8px;
+  padding: 0 9px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+
+  border: 1px solid #bbf7d0;
+  border-radius: 7px;
+
+  background: #f0fdf4;
+
+  color: #15803d;
+
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.plan-trial svg {
+  flex-shrink: 0;
+
+  font-size: 11px;
+}
+
+/* =========================================================
+   LIMITS
+========================================================= */
+
+.plan-limits {
+  margin-top: 13px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 6px;
+}
+
+.plan-limits > div {
+  min-width: 0;
+
+  padding: 8px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  border: 1px solid #f0efed;
+  border-radius: 7px;
+
+  background: #fafaf9;
+}
+
+.plan-limit-icon {
+  width: 25px;
+  height: 25px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 6px;
+
+  background: #f1f0ff;
+
+  color: #635bff;
+
+  font-size: 10px;
+}
+
+.plan-limit-icon.products {
+  background: #fff7ed;
+
+  color: #ea580c;
+}
+
+.plan-limit-icon.customers {
+  background: #eff6ff;
+
+  color: #2563eb;
+}
+
+.plan-limit-icon.invoices {
+  background: #f0fdf4;
+
+  color: #16a34a;
+}
+
+.plan-limits > div > div {
+  min-width: 0;
+}
+
+.plan-limits small,
+.plan-limits strong {
+  display: block;
+}
+
+.plan-limits small {
+  color: #a1a1aa;
+
+  font-size: 6px;
+}
+
+.plan-limits strong {
+  margin-top: 2px;
+
+  overflow: hidden;
+
+  color: #3f3f46;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* =========================================================
+   FEATURE TITLE
+========================================================= */
+
+.plan-feature-title {
+  margin-top: 15px;
+  padding-top: 13px;
+
+  border-top: 1px solid #f0efed;
+
+  color: #52525b;
+
+  font-size: 8px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   FEATURES
+========================================================= */
+
+.plan-features {
+  min-height: 130px;
+
+  margin: 9px 0 16px;
   padding: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+
   list-style: none;
 }
 
 .plan-features li {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  color: #334155;
-  font-size: 14px;
-  line-height: 1.5;
+
+  gap: 7px;
+
+  color: #71717a;
+
+  font-size: 8px;
+
+  line-height: 1.45;
 }
 
 .feature-check {
-  display: inline-flex;
-  width: 22px;
-  height: 22px;
-  flex-shrink: 0;
+  width: 17px;
+  height: 17px;
+
+  display: flex;
   align-items: center;
   justify-content: center;
+
+  flex-shrink: 0;
+
   border-radius: 50%;
-  background: #dcfce7;
-  color: #15803d;
-  font-size: 12px;
-  font-weight: 900;
+
+  background: #f0fdf4;
+
+  color: #16a34a;
+
+  font-size: 8px;
 }
+
+/* =========================================================
+   SELECT BUTTON
+========================================================= */
 
 .select-plan-button {
   width: 100%;
-  height: 48px;
-  border: 1px solid #cbd5e1;
-  border-radius: 13px;
+  min-height: 37px;
+
+  margin-top: auto;
+
+  padding: 0 11px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  border: 1px solid #dedddb;
+  border-radius: 8px;
+
   background: #ffffff;
-  color: #334155;
-  font-size: 14px;
-  font-weight: 800;
+
+  color: #52525b;
+
+  font-family: inherit;
+  font-size: 8px;
+  font-weight: 600;
+
   cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.select-plan-button:hover {
+  border-color: #ddd9ff;
+
+  background: #f8f7ff;
+
+  color: #635bff;
 }
 
 .select-plan-button.selected {
-  border-color: #2563eb;
-  background: #eff6ff;
-  color: #2563eb;
+  border-color: #18181b;
+
+  background: #18181b;
+
+  color: #ffffff;
 }
 
+/* =========================================================
+   SECURITY
+========================================================= */
+
+.choose-plan-security {
+  max-width: 520px;
+
+  margin:
+    24px auto 0;
+
+  padding: 10px 12px;
+
+  display: flex;
+  align-items: flex-start;
+
+  gap: 8px;
+
+  border: 1px solid #e7e5e4;
+  border-radius: 8px;
+
+  background: #fafaf9;
+}
+
+.choose-plan-security > svg {
+  margin-top: 1px;
+
+  flex-shrink: 0;
+
+  color: #635bff;
+
+  font-size: 12px;
+}
+
+.choose-plan-security strong,
+.choose-plan-security span {
+  display: block;
+}
+
+.choose-plan-security strong {
+  color: #52525b;
+
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.choose-plan-security span {
+  margin-top: 2px;
+
+  color: #a1a1aa;
+
+  font-size: 7px;
+
+  line-height: 1.5;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
 .choose-plan-footer {
+  margin-top: 22px;
+
+  padding-top: 20px;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 18px;
-  margin-top: 28px;
-  padding: 22px 24px;
-  border: 1px solid #e2e8f0;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.92);
+
+  gap: 12px;
+
+  border-top: 1px solid #e7e5e4;
 }
 
 .back-button,
 .continue-payment-button {
-  min-width: 150px;
-  height: 48px;
-  padding: 0 22px;
-  border-radius: 13px;
-  font-size: 14px;
-  font-weight: 800;
+  min-height: 39px;
+
+  padding: 0 13px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  border-radius: 8px;
+
+  font-family: inherit;
+  font-size: 8px;
+  font-weight: 600;
+
   cursor: pointer;
+
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
 }
 
 .back-button {
-  border: 1px solid #cbd5e1;
+  border: 1px solid #dedddb;
+
   background: #ffffff;
-  color: #334155;
+
+  color: #52525b;
+}
+
+.back-button:hover {
+  background: #fafafa;
+
+  border-color: #cac8c5;
+
+  color: #18181b;
 }
 
 .continue-payment-button {
-  border: 0;
-  background: linear-gradient(135deg, #2563eb, #4f46e5);
+  min-width: 175px;
+
+  border: 1px solid #18181b;
+
+  background: #18181b;
+
   color: #ffffff;
-  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.24);
 }
 
-@media (max-width: 900px) {
+.continue-payment-button:hover:not(:disabled) {
+  background: #27272a;
+
+  border-color: #27272a;
+
+  transform: translateY(-1px);
+}
+
+.continue-payment-button:disabled {
+  border-color: #d4d4d8;
+
+  background: #d4d4d8;
+
+  color: #ffffff;
+
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 980px) {
+  .plans-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .plan-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+
+    width: calc(50% - 6px);
+
+    justify-self: center;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 680px) {
+  .choose-plan-topbar {
+    min-height: 62px;
+
+    padding: 0 14px;
+  }
+
+  .choose-plan-topbar-back {
+    width: 34px;
+    height: 34px;
+
+    padding: 0;
+
+    font-size: 0;
+  }
+
+  .choose-plan-topbar-back svg {
+    font-size: 13px;
+  }
+
+  .choose-plan-container {
+    width: calc(100% - 24px);
+
+    padding:
+      22px 0 45px;
+  }
+
+  .registration-stepper {
+    margin-bottom: 22px;
+  }
+
+  .registration-step {
+    width: 82px;
+  }
+
+  .registration-step > span {
+    width: 29px;
+    height: 29px;
+
+    font-size: 8px;
+  }
+
+  .registration-step p {
+    max-width: 75px;
+
+    font-size: 6px;
+
+    white-space: normal;
+  }
+
+  .registration-step-line {
+    width: 30px;
+
+    margin-top: 14px;
+  }
+
+  .choose-plan-header {
+    margin-bottom: 25px;
+  }
+
+  .choose-plan-header h1 {
+    font-size: 31px;
+  }
+
+  .choose-plan-header p {
+    font-size: 10px;
+  }
+
   .plans-grid {
     grid-template-columns: 1fr;
+
+    gap: 10px;
   }
 
-  .plan-card {
+  .plan-card,
+  .plan-card:last-child:nth-child(odd) {
+    width: 100%;
+
+    grid-column: auto;
+
+    padding: 17px;
+
+    border-radius: 11px;
+  }
+
+  .plan-card:hover {
+    transform: none;
+
+    box-shadow: none;
+  }
+
+  .plan-features {
     min-height: auto;
-  }
-}
-
-@media (max-width: 600px) {
-  .choose-plan-page {
-    padding: 30px 14px;
-  }
-
-  .plan-card {
-    padding: 24px 20px;
   }
 
   .choose-plan-footer {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction:
+      column-reverse;
+
+    gap: 7px;
   }
 
   .back-button,
   .continue-payment-button {
     width: 100%;
+    min-width: 0;
   }
 }
 
-/* =========================================
-   REGISTRATION STEPPER
-========================================= */
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
 
-.registration-stepper {
-  display: flex;
-  width: min(720px, 100%);
-  margin: 0 auto 34px;
-  align-items: flex-start;
-  justify-content: center;
-}
+@media (max-width: 390px) {
+  .choose-plan-container {
+    width: calc(100% - 18px);
+  }
 
-.registration-step {
-  display: flex;
-  width: 130px;
-  flex-shrink: 0;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.registration-step span {
-  display: inline-flex;
-  width: 40px;
-  height: 40px;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #cbd5e1;
-  border-radius: 50%;
-  background: #ffffff;
-  color: #64748b;
-  font-size: 14px;
-  font-weight: 800;
-}
-
-.registration-step p {
-  margin: 9px 0 0;
-  color: #94a3b8;
-  font-size: 12px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.registration-step.active span {
-  border-color: #2563eb;
-  background: linear-gradient(135deg, #2563eb, #4f46e5);
-  color: #ffffff;
-  box-shadow: 0 9px 22px rgba(37, 99, 235, 0.28);
-}
-
-.registration-step.active p {
-  color: #2563eb;
-}
-
-.registration-step.completed span {
-  border-color: #16a34a;
-  background: #16a34a;
-  color: #ffffff;
-  box-shadow: 0 8px 20px rgba(22, 163, 74, 0.22);
-}
-
-.registration-step.completed p {
-  color: #15803d;
-}
-
-.registration-step-line {
-  width: 100px;
-  height: 2px;
-  flex-shrink: 1;
-  margin-top: 19px;
-  border-radius: 999px;
-  background: #cbd5e1;
-}
-
-.registration-step-line.completed {
-  background: #16a34a;
-}
-
-@media (max-width: 600px) {
-  .registration-stepper {
-    margin-bottom: 28px;
+  .choose-plan-brand-text small {
+    display: none;
   }
 
   .registration-step {
-    width: 88px;
-  }
-
-  .registration-step span {
-    width: 34px;
-    height: 34px;
-    font-size: 12px;
-  }
-
-  .registration-step p {
-    max-width: 78px;
-    margin-top: 7px;
-    font-size: 9px;
-    white-space: normal;
+    width: 72px;
   }
 
   .registration-step-line {
-    width: 36px;
-    margin-top: 16px;
+    width: 22px;
+  }
+
+  .choose-plan-header h1 {
+    font-size: 28px;
+  }
+
+  .plan-card {
+    padding: 15px;
+  }
+
+  .plan-price strong {
+    font-size: 26px;
+  }
+
+  .plan-limits {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
   }
 }

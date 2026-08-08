@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   FiEdit2,
+  FiMapPin,
   FiPlus,
   FiSearch,
   FiTrash2,
@@ -45,6 +46,7 @@ const Suppliers = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] =
     useState(false);
+
   const [deletingSupplierId, setDeletingSupplierId] =
     useState(null);
 
@@ -55,7 +57,9 @@ const Suppliers = () => {
       const response = await getSuppliers();
 
       setSuppliers(
-        Array.isArray(response) ? response : [],
+        Array.isArray(response)
+          ? response
+          : [],
       );
     } catch (error) {
       const message =
@@ -101,6 +105,27 @@ const Suppliers = () => {
     });
   }, [suppliers, searchTerm]);
 
+  const activeSuppliers = useMemo(
+    () =>
+      suppliers.filter(
+        (supplier) => supplier.isActive,
+      ).length,
+    [suppliers],
+  );
+
+  const openingBalance = useMemo(
+    () =>
+      suppliers.reduce(
+        (total, supplier) =>
+          total +
+          Number(
+            supplier.openingBalance || 0,
+          ),
+        0,
+      ),
+    [suppliers],
+  );
+
   const resetForm = () => {
     setFormData(initialFormData);
     setEditingSupplierId(null);
@@ -115,51 +140,94 @@ const Suppliers = () => {
 
   const handleEditSupplier = (supplier) => {
     setFormData({
-      supplierName: supplier.supplierName || "",
-      companyName: supplier.companyName || "",
-      phone: supplier.phone || "",
-      email: supplier.email || "",
-      gstNumber: supplier.gstNumber || "",
-      address: supplier.address || "",
-      city: supplier.city || "",
-      state: supplier.state || "",
-      pincode: supplier.pincode || "",
+      supplierName:
+        supplier.supplierName || "",
+
+      companyName:
+        supplier.companyName || "",
+
+      phone:
+        supplier.phone || "",
+
+      email:
+        supplier.email || "",
+
+      gstNumber:
+        supplier.gstNumber || "",
+
+      address:
+        supplier.address || "",
+
+      city:
+        supplier.city || "",
+
+      state:
+        supplier.state || "",
+
+      pincode:
+        supplier.pincode || "",
+
       openingBalance:
         supplier.openingBalance ?? "",
-      isActive: supplier.isActive ?? true,
-      notes: supplier.notes || "",
+
+      isActive:
+        supplier.isActive ?? true,
+
+      notes:
+        supplier.notes || "",
     });
 
-    setEditingSupplierId(supplier._id);
+    setEditingSupplierId(
+      supplier._id,
+    );
+
     setIsFormOpen(true);
   };
 
   const handleChange = (event) => {
-    const { name, value, type, checked } =
-      event.target;
+    const {
+      name,
+      value,
+      type,
+      checked,
+    } = event.target;
 
     setFormData((currentData) => ({
       ...currentData,
+
       [name]:
-        type === "checkbox" ? checked : value,
+        type === "checkbox"
+          ? checked
+          : value,
     }));
   };
 
   const validateForm = () => {
     if (!formData.supplierName.trim()) {
-      toast.error("Supplier name required");
+      toast.error(
+        "Supplier name required",
+      );
+
       return false;
     }
 
     if (!formData.phone.trim()) {
-      toast.error("Phone number required");
+      toast.error(
+        "Phone number required",
+      );
+
       return false;
     }
 
-    if (!/^[0-9]{10}$/.test(formData.phone.trim())) {
+    if (
+      !/^[0-9]{10}$/.test(
+        formData.phone.trim(),
+      )
+    ) {
       toast.error(
         "Valid 10 digit phone number enter pannu",
       );
+
       return false;
     }
 
@@ -169,26 +237,35 @@ const Suppliers = () => {
         formData.email.trim(),
       )
     ) {
-      toast.error("Valid email enter pannu");
+      toast.error(
+        "Valid email enter pannu",
+      );
+
       return false;
     }
 
     if (
       formData.pincode.trim() &&
-      !/^[0-9]{6}$/.test(formData.pincode.trim())
+      !/^[0-9]{6}$/.test(
+        formData.pincode.trim(),
+      )
     ) {
       toast.error(
         "Valid 6 digit pincode enter pannu",
       );
+
       return false;
     }
 
     if (
-      Number(formData.openingBalance || 0) < 0
+      Number(
+        formData.openingBalance || 0,
+      ) < 0
     ) {
       toast.error(
         "Opening balance negative-ah irukka koodathu",
       );
+
       return false;
     }
 
@@ -203,22 +280,45 @@ const Suppliers = () => {
     }
 
     const supplierData = {
-      supplierName: formData.supplierName.trim(),
-      companyName: formData.companyName.trim(),
-      phone: formData.phone.trim(),
-      email: formData.email.trim(),
-      gstNumber: formData.gstNumber
-        .trim()
-        .toUpperCase(),
-      address: formData.address.trim(),
-      city: formData.city.trim(),
-      state: formData.state.trim(),
-      pincode: formData.pincode.trim(),
-      openingBalance: Number(
-        formData.openingBalance || 0,
-      ),
-      isActive: formData.isActive,
-      notes: formData.notes.trim(),
+      supplierName:
+        formData.supplierName.trim(),
+
+      companyName:
+        formData.companyName.trim(),
+
+      phone:
+        formData.phone.trim(),
+
+      email:
+        formData.email.trim(),
+
+      gstNumber:
+        formData.gstNumber
+          .trim()
+          .toUpperCase(),
+
+      address:
+        formData.address.trim(),
+
+      city:
+        formData.city.trim(),
+
+      state:
+        formData.state.trim(),
+
+      pincode:
+        formData.pincode.trim(),
+
+      openingBalance:
+        Number(
+          formData.openingBalance || 0,
+        ),
+
+      isActive:
+        formData.isActive,
+
+      notes:
+        formData.notes.trim(),
     };
 
     try {
@@ -234,7 +334,9 @@ const Suppliers = () => {
           "Supplier updated successfully",
         );
       } else {
-        await createSupplier(supplierData);
+        await createSupplier(
+          supplierData,
+        );
 
         toast.success(
           "Supplier created successfully",
@@ -261,24 +363,31 @@ const Suppliers = () => {
   const handleDeleteSupplier = async (
     supplierId,
   ) => {
-    const isConfirmed = window.confirm(
-      "Intha supplier-ah delete panna confirm-ah?",
-    );
+    const isConfirmed =
+      window.confirm(
+        "Intha supplier-ah delete panna confirm-ah?",
+      );
 
     if (!isConfirmed) {
       return;
     }
 
     try {
-      setDeletingSupplierId(supplierId);
+      setDeletingSupplierId(
+        supplierId,
+      );
 
-      await deleteSupplier(supplierId);
+      await deleteSupplier(
+        supplierId,
+      );
 
-      setSuppliers((currentSuppliers) =>
-        currentSuppliers.filter(
-          (supplier) =>
-            supplier._id !== supplierId,
-        ),
+      setSuppliers(
+        (currentSuppliers) =>
+          currentSuppliers.filter(
+            (supplier) =>
+              supplier._id !==
+              supplierId,
+          ),
       );
 
       toast.success(
@@ -299,19 +408,27 @@ const Suppliers = () => {
     }
   };
 
+  const formatCurrency = (value) =>
+    new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 0,
+    }).format(Number(value || 0));
+
   return (
     <section className="suppliers-page">
-      <div className="suppliers-header">
+      <header className="suppliers-header">
         <div>
-          <p className="suppliers-header-label">
-            Supplier Management
-          </p>
+          <span className="suppliers-header-label">
+            Supply Network
+          </span>
 
           <h1>Suppliers</h1>
 
           <p>
-            Supplier details, contact information
-            and opening balance manage pannunga.
+            Manage vendors, contact
+            details, balances and supplier
+            information.
           </p>
         </div>
 
@@ -321,82 +438,128 @@ const Suppliers = () => {
           onClick={handleOpenCreateForm}
         >
           <FiPlus />
-          Add Supplier
-        </button>
-      </div>
 
-      <div className="suppliers-summary">
-        <div className="supplier-summary-card">
-          <span className="supplier-summary-icon">
-            <FiTruck />
+          <span>
+            Add Supplier
           </span>
+        </button>
+      </header>
 
-          <div>
-            <p>Total Suppliers</p>
-            <h2>{suppliers.length}</h2>
+      <section className="suppliers-summary">
+        <article className="supplier-summary-card total">
+          <div className="supplier-summary-top">
+            <span className="supplier-summary-icon">
+              <FiTruck />
+            </span>
+
+            <span className="supplier-summary-label">
+              Vendors
+            </span>
           </div>
-        </div>
 
-        <div className="supplier-summary-card">
           <div>
-            <p>Active Suppliers</p>
+            <p>
+              Total Suppliers
+            </p>
 
             <h2>
-              {
-                suppliers.filter(
-                  (supplier) =>
-                    supplier.isActive,
-                ).length
-              }
+              {suppliers.length}
             </h2>
-          </div>
-        </div>
 
-        <div className="supplier-summary-card">
+            <small>
+              Registered suppliers
+            </small>
+          </div>
+        </article>
+
+        <article className="supplier-summary-card active">
+          <div className="supplier-summary-top">
+            <span className="supplier-summary-icon">
+              <FiTruck />
+            </span>
+
+            <span className="supplier-summary-label">
+              Active
+            </span>
+          </div>
+
           <div>
-            <p>Opening Balance</p>
+            <p>
+              Active Suppliers
+            </p>
 
             <h2>
+              {activeSuppliers}
+            </h2>
+
+            <small>
+              Available for business
+            </small>
+          </div>
+        </article>
+
+        <article className="supplier-summary-card balance">
+          <div className="supplier-summary-top">
+            <span className="supplier-summary-icon">
               ₹
-              {suppliers
-                .reduce(
-                  (total, supplier) =>
-                    total +
-                    Number(
-                      supplier.openingBalance ||
-                        0,
-                    ),
-                  0,
-                )
-                .toLocaleString("en-IN")}
-            </h2>
-          </div>
-        </div>
-      </div>
+            </span>
 
-      <div className="suppliers-content-card">
+            <span className="supplier-summary-label">
+              Balance
+            </span>
+          </div>
+
+          <div>
+            <p>
+              Opening Balance
+            </p>
+
+            <h2>
+              {formatCurrency(
+                openingBalance,
+              )}
+            </h2>
+
+            <small>
+              Total supplier balance
+            </small>
+          </div>
+        </article>
+      </section>
+
+      <section className="suppliers-content-card">
         <div className="suppliers-toolbar">
           <div className="supplier-search-box">
             <FiSearch />
 
             <input
-              type="text"
-              placeholder="Search supplier, phone, email..."
+              type="search"
+              placeholder="Search suppliers..."
               value={searchTerm}
               onChange={(event) =>
                 setSearchTerm(
                   event.target.value,
                 )
               }
+              aria-label="Search suppliers"
             />
           </div>
 
-          <p>
-            {filteredSuppliers.length} supplier
-            {filteredSuppliers.length !== 1
-              ? "s"
-              : ""}
-          </p>
+          <div className="supplier-result-count">
+            <strong>
+              {
+                filteredSuppliers.length
+              }
+            </strong>
+
+            <span>
+              supplier
+              {filteredSuppliers.length !==
+              1
+                ? "s"
+                : ""}
+            </span>
+          </div>
         </div>
 
         <div className="suppliers-table-wrapper">
@@ -420,7 +583,18 @@ const Suppliers = () => {
                     colSpan="7"
                     className="supplier-table-message"
                   >
-                    Suppliers loading...
+                    <div className="supplier-loading-state">
+                      <span className="supplier-loader" />
+
+                      <strong>
+                        Loading suppliers
+                      </strong>
+
+                      <p>
+                        Fetching supplier
+                        information.
+                      </p>
+                    </div>
                   </td>
                 </tr>
               ) : filteredSuppliers.length ===
@@ -430,19 +604,42 @@ const Suppliers = () => {
                     colSpan="7"
                     className="supplier-table-message"
                   >
-                   Not found
+                    <div className="supplier-empty-state">
+                      <span>
+                        <FiTruck />
+                      </span>
+
+                      <strong>
+                        {suppliers.length ===
+                        0
+                          ? "No suppliers yet"
+                          : "No suppliers found"}
+                      </strong>
+
+                      <p>
+                        {suppliers.length ===
+                        0
+                          ? "Add your first supplier to start managing purchases."
+                          : "Try a different search."}
+                      </p>
+                    </div>
                   </td>
                 </tr>
               ) : (
                 filteredSuppliers.map(
                   (supplier) => (
-                    <tr key={supplier._id}>
+                    <tr
+                      key={
+                        supplier._id
+                      }
+                    >
                       <td>
                         <div className="supplier-name-cell">
                           <span className="supplier-avatar">
                             {supplier.supplierName
                               ?.charAt(0)
-                              .toUpperCase()}
+                              .toUpperCase() ||
+                              "S"}
                           </span>
 
                           <div>
@@ -454,7 +651,7 @@ const Suppliers = () => {
 
                             <span>
                               {supplier.companyName ||
-                                "No company name"}
+                                "Independent supplier"}
                             </span>
                           </div>
                         </div>
@@ -462,9 +659,11 @@ const Suppliers = () => {
 
                       <td>
                         <div className="supplier-contact-cell">
-                          <span>
-                            {supplier.phone}
-                          </span>
+                          <strong>
+                            {
+                              supplier.phone
+                            }
+                          </strong>
 
                           <small>
                             {supplier.email ||
@@ -475,31 +674,44 @@ const Suppliers = () => {
 
                       <td>
                         <div className="supplier-location-cell">
-                          <span>
-                            {supplier.city ||
-                              "Not provided"}
-                          </span>
+                          <div>
+                            <FiMapPin />
+
+                            <strong>
+                              {supplier.city ||
+                                "Not provided"}
+                            </strong>
+                          </div>
 
                           <small>
-                            {supplier.state ||
-                              supplier.pincode ||
-                              ""}
+                            {[
+                              supplier.state,
+                              supplier.pincode,
+                            ]
+                              .filter(
+                                Boolean,
+                              )
+                              .join(
+                                " · ",
+                              ) ||
+                              "No location"}
                           </small>
                         </div>
                       </td>
 
                       <td>
-                        {supplier.gstNumber || "—"}
+                        <span className="supplier-gst">
+                          {supplier.gstNumber ||
+                            "—"}
+                        </span>
                       </td>
 
                       <td>
-                        ₹
-                        {Number(
-                          supplier.openingBalance ||
-                            0,
-                        ).toLocaleString(
-                          "en-IN",
-                        )}
+                        <strong className="supplier-balance">
+                          {formatCurrency(
+                            supplier.openingBalance,
+                          )}
+                        </strong>
                       </td>
 
                       <td>
@@ -510,6 +722,8 @@ const Suppliers = () => {
                               : "inactive"
                           }`}
                         >
+                          <span />
+
                           {supplier.isActive
                             ? "Active"
                             : "Inactive"}
@@ -556,7 +770,7 @@ const Suppliers = () => {
             </tbody>
           </table>
         </div>
-      </div>
+      </section>
 
       {isFormOpen && (
         <div
@@ -570,30 +784,42 @@ const Suppliers = () => {
             }
           }}
         >
-          <div className="supplier-modal">
-            <div className="supplier-modal-header">
+          <section
+            className="supplier-modal"
+            role="dialog"
+            aria-modal="true"
+          >
+            <header className="supplier-modal-header">
               <div>
-                <p>
+                <span>
                   {editingSupplierId
-                    ? "Update supplier details"
-                    : "Create new supplier"}
-                </p>
+                    ? "Supplier Account"
+                    : "New Vendor"}
+                </span>
 
                 <h2>
                   {editingSupplierId
                     ? "Edit Supplier"
                     : "Add Supplier"}
                 </h2>
+
+                <p>
+                  {editingSupplierId
+                    ? "Update supplier contact and business information."
+                    : "Add a new supplier to your business network."}
+                </p>
               </div>
 
               <button
                 type="button"
                 className="supplier-modal-close"
                 onClick={resetForm}
+                disabled={isSubmitting}
+                aria-label="Close supplier form"
               >
                 <FiX />
               </button>
-            </div>
+            </header>
 
             <form
               className="supplier-form"
@@ -644,9 +870,11 @@ const Suppliers = () => {
                     name="phone"
                     type="tel"
                     maxLength="10"
-                    value={formData.phone}
+                    value={
+                      formData.phone
+                    }
                     onChange={handleChange}
-                    placeholder="Enter phone number"
+                    placeholder="10 digit number"
                   />
                 </div>
 
@@ -659,9 +887,11 @@ const Suppliers = () => {
                     id="email"
                     name="email"
                     type="email"
-                    value={formData.email}
+                    value={
+                      formData.email
+                    }
                     onChange={handleChange}
-                    placeholder="Enter email address"
+                    placeholder="supplier@company.com"
                   />
                 </div>
 
@@ -710,7 +940,9 @@ const Suppliers = () => {
                     id="address"
                     name="address"
                     rows="3"
-                    value={formData.address}
+                    value={
+                      formData.address
+                    }
                     onChange={handleChange}
                     placeholder="Enter supplier address"
                   />
@@ -725,7 +957,9 @@ const Suppliers = () => {
                     id="city"
                     name="city"
                     type="text"
-                    value={formData.city}
+                    value={
+                      formData.city
+                    }
                     onChange={handleChange}
                     placeholder="Enter city"
                   />
@@ -740,7 +974,9 @@ const Suppliers = () => {
                     id="state"
                     name="state"
                     type="text"
-                    value={formData.state}
+                    value={
+                      formData.state
+                    }
                     onChange={handleChange}
                     placeholder="Enter state"
                   />
@@ -756,14 +992,18 @@ const Suppliers = () => {
                     name="pincode"
                     type="text"
                     maxLength="6"
-                    value={formData.pincode}
+                    value={
+                      formData.pincode
+                    }
                     onChange={handleChange}
-                    placeholder="Enter pincode"
+                    placeholder="6 digit pincode"
                   />
                 </div>
 
                 <div className="supplier-form-group supplier-status-field">
-                  <label>Status</label>
+                  <label>
+                    Status
+                  </label>
 
                   <label className="supplier-checkbox">
                     <input
@@ -775,9 +1015,12 @@ const Suppliers = () => {
                       onChange={handleChange}
                     />
 
+                    <span className="supplier-checkbox-switch">
+                      <span />
+                    </span>
+
                     <span>
-                      Supplier active-ah
-                      irukkar
+                      Active supplier
                     </span>
                   </label>
                 </div>
@@ -791,14 +1034,16 @@ const Suppliers = () => {
                     id="notes"
                     name="notes"
                     rows="3"
-                    value={formData.notes}
+                    value={
+                      formData.notes
+                    }
                     onChange={handleChange}
-                    placeholder="Enter additional notes"
+                    placeholder="Additional supplier notes"
                   />
                 </div>
               </div>
 
-              <div className="supplier-form-actions">
+              <footer className="supplier-form-actions">
                 <button
                   type="button"
                   className="supplier-cancel-btn"
@@ -819,9 +1064,9 @@ const Suppliers = () => {
                       ? "Update Supplier"
                       : "Create Supplier"}
                 </button>
-              </div>
+              </footer>
             </form>
-          </div>
+          </section>
         </div>
       )}
     </section>

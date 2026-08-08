@@ -6,6 +6,7 @@ export const PROVIDER_ROLE_ACCESS = {
     "plans",
     "subscriptions",
     "payments",
+    "support",
     "reports",
     "settings",
   ],
@@ -13,6 +14,7 @@ export const PROVIDER_ROLE_ACCESS = {
   support_executive: [
     "dashboard",
     "companies",
+    "support",
   ],
 
   sales_executive: [
@@ -31,6 +33,7 @@ export const PROVIDER_ROLE_ACCESS = {
   technical_support: [
     "dashboard",
     "companies",
+    "support",
     "settings",
   ],
 };
