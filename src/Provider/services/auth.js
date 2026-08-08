@@ -2,7 +2,7 @@ import providerAxios from "../utils/provideraxios";
 
 export const providerLogin = async (credentials) => {
   const response = await providerAxios.post(
-    "/provider/auth/login",
+    "/auth/login",
     credentials,
   );
 
@@ -11,7 +11,7 @@ export const providerLogin = async (credentials) => {
 
 export const getProviderProfile = async () => {
   const response = await providerAxios.get(
-    "/provider/auth/profile",
+    "/auth/profile",
   );
 
   return response.data;
