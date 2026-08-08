@@ -26,6 +26,7 @@ import {
 } from "react-icons/fi";
 
 import api from "../services/axios";
+
 import BusinessAiChat from "../pages/BusinessAiChat";
 
 const Topbar = ({
@@ -44,7 +45,7 @@ const Topbar = ({
     companyName,
     setCompanyName,
   ] = useState(
-    "Loading..."
+    "Loading...",
   );
 
   const [
@@ -70,7 +71,7 @@ const Topbar = ({
   const user = useMemo(() => {
     const storedUser =
       localStorage.getItem(
-        "billFlowUser"
+        "billFlowUser",
       );
 
     if (!storedUser) {
@@ -79,7 +80,7 @@ const Topbar = ({
 
     try {
       return JSON.parse(
-        storedUser
+        storedUser,
       );
     } catch {
       return null;
@@ -96,7 +97,7 @@ const Topbar = ({
           .replace(
             /\b\w/g,
             (character) =>
-              character.toUpperCase()
+              character.toUpperCase(),
           )
       : "Business Owner";
 
@@ -105,7 +106,7 @@ const Topbar = ({
       .split(" ")
       .filter(Boolean)
       .map(
-        (word) => word[0]
+        (word) => word[0],
       )
       .join("")
       .substring(0, 2)
@@ -114,19 +115,19 @@ const Topbar = ({
   const clearAuthentication =
     useCallback(() => {
       localStorage.removeItem(
-        "billFlowAccessToken"
+        "billFlowAccessToken",
       );
 
       localStorage.removeItem(
-        "billFlowUser"
+        "billFlowUser",
       );
 
       localStorage.removeItem(
-        "billFlowCompany"
+        "billFlowCompany",
       );
 
       sessionStorage.removeItem(
-        "billFlowNotificationPopupShown"
+        "billFlowNotificationPopupShown",
       );
     }, []);
 
@@ -136,7 +137,7 @@ const Topbar = ({
         try {
           const response =
             await api.get(
-              "/company/settings"
+              "/company/settings",
             );
 
           const fetchedCompanyName =
@@ -145,19 +146,19 @@ const Topbar = ({
             "Company";
 
           setCompanyName(
-            fetchedCompanyName
+            fetchedCompanyName,
           );
 
           localStorage.setItem(
             "billFlowCompany",
             JSON.stringify(
-              response.data
-            )
+              response.data,
+            ),
           );
         } catch (error) {
           console.error(
             "Company name fetch error:",
-            error
+            error,
           );
 
           if (
@@ -170,7 +171,7 @@ const Topbar = ({
               "/login",
               {
                 replace: true,
-              }
+              },
             );
 
             return;
@@ -178,26 +179,26 @@ const Topbar = ({
 
           const storedCompany =
             localStorage.getItem(
-              "billFlowCompany"
+              "billFlowCompany",
             );
 
           if (storedCompany) {
             try {
               const parsedCompany =
                 JSON.parse(
-                  storedCompany
+                  storedCompany,
                 );
 
               setCompanyName(
                 parsedCompany
                   ?.companyName ||
-                  "Company"
+                  "Company",
               );
 
               return;
             } catch {
               setCompanyName(
-                "Company"
+                "Company",
               );
 
               return;
@@ -205,7 +206,7 @@ const Topbar = ({
           }
 
           setCompanyName(
-            "Company"
+            "Company",
           );
         }
       };
@@ -222,35 +223,35 @@ const Topbar = ({
         if (
           notificationRef.current &&
           !notificationRef.current.contains(
-            event.target
+            event.target,
           )
         ) {
           setIsNotificationOpen(
-            false
+            false,
           );
         }
 
         if (
           profileRef.current &&
           !profileRef.current.contains(
-            event.target
+            event.target,
           )
         ) {
           setIsProfileOpen(
-            false
+            false,
           );
         }
       };
 
     document.addEventListener(
       "mousedown",
-      handleOutsideClick
+      handleOutsideClick,
     );
 
     return () => {
       document.removeEventListener(
         "mousedown",
-        handleOutsideClick
+        handleOutsideClick,
       );
     };
   }, []);
@@ -258,7 +259,7 @@ const Topbar = ({
   const showNotificationPopup =
     useCallback(
       (
-        notificationItems
+        notificationItems,
       ) => {
         if (
           notificationItems.length ===
@@ -269,7 +270,7 @@ const Topbar = ({
 
         const hasShownNotificationPopup =
           sessionStorage.getItem(
-            "billFlowNotificationPopupShown"
+            "billFlowNotificationPopupShown",
           );
 
         if (
@@ -288,11 +289,11 @@ const Topbar = ({
               className="notification-toast-content"
               onClick={() => {
                 toast.dismiss(
-                  toastItem.id
+                  toastItem.id,
                 );
 
                 navigate(
-                  firstNotification.route
+                  firstNotification.route,
                 );
               }}
             >
@@ -319,22 +320,25 @@ const Topbar = ({
             id:
               "billflow-business-notification",
 
-            duration: 5000,
+            duration:
+              5000,
 
             position:
               "top-right",
 
             className:
               "notification-toast",
-          }
+          },
         );
 
         sessionStorage.setItem(
           "billFlowNotificationPopupShown",
-          "true"
+          "true",
         );
       },
-      [navigate]
+      [
+        navigate,
+      ],
     );
 
   const fetchNotifications =
@@ -344,12 +348,12 @@ const Topbar = ({
       } = {}) => {
         try {
           setIsNotificationsLoading(
-            true
+            true,
           );
 
           const response =
             await api.get(
-              "/dashboard/summary"
+              "/dashboard/summary",
             );
 
           const dashboardData =
@@ -387,16 +391,16 @@ const Topbar = ({
 
                       route:
                         "/inventory",
-                    }
+                    },
                   );
-                }
+                },
               );
           }
 
           if (
             Number(
               dashboardData
-                .todaySales || 0
+                .todaySales || 0,
             ) > 0
           ) {
             notificationItems.push(
@@ -412,30 +416,30 @@ const Topbar = ({
 
                 message:
                   `₹${Number(
-                    dashboardData.todaySales
+                    dashboardData.todaySales,
                   ).toLocaleString(
-                    "en-IN"
+                    "en-IN",
                   )} sales recorded today.`,
 
                 route:
                   "/reports",
-              }
+              },
             );
           }
 
           setNotifications(
-            notificationItems
+            notificationItems,
           );
 
           if (showPopup) {
             showNotificationPopup(
-              notificationItems
+              notificationItems,
             );
           }
         } catch (error) {
           console.error(
             "Notification fetch error:",
-            error
+            error,
           );
 
           if (
@@ -448,16 +452,18 @@ const Topbar = ({
               "/login",
               {
                 replace: true,
-              }
+              },
             );
 
             return;
           }
 
-          setNotifications([]);
+          setNotifications(
+            [],
+          );
         } finally {
           setIsNotificationsLoading(
-            false
+            false,
           );
         }
       },
@@ -465,7 +471,7 @@ const Topbar = ({
         clearAuthentication,
         navigate,
         showNotificationPopup,
-      ]
+      ],
     );
 
   useEffect(() => {
@@ -482,11 +488,11 @@ const Topbar = ({
         !isNotificationOpen;
 
       setIsNotificationOpen(
-        nextState
+        nextState,
       );
 
       setIsProfileOpen(
-        false
+        false,
       );
 
       if (nextState) {
@@ -500,39 +506,39 @@ const Topbar = ({
     () => {
       setIsProfileOpen(
         (
-          currentState
+          currentState,
         ) =>
-          !currentState
+          !currentState,
       );
 
       setIsNotificationOpen(
-        false
+        false,
       );
     };
 
   const handleContactClick =
     () => {
       setIsNotificationOpen(
-        false
+        false,
       );
 
       setIsProfileOpen(
-        false
+        false,
       );
 
       navigate(
-        "/contact"
+        "/contact",
       );
     };
 
   const handleNotificationClick =
     (notification) => {
       setIsNotificationOpen(
-        false
+        false,
       );
 
       navigate(
-        notification.route
+        notification.route,
       );
     };
 
@@ -545,7 +551,7 @@ const Topbar = ({
       "/",
       {
         replace: true,
-      }
+      },
     );
   };
 
@@ -584,6 +590,8 @@ const Topbar = ({
         </div>
 
         <div className="topbar-actions">
+          <BusinessAiChat />
+
           <button
             type="button"
             className="topbar-icon-btn"
@@ -649,15 +657,14 @@ const Topbar = ({
                       </strong>
 
                       <span>
-                        Loading latest
-                        notifications...
+                        Loading latest notifications...
                       </span>
                     </div>
                   ) : notifications.length >
                     0 ? (
                     notifications.map(
                       (
-                        notification
+                        notification,
                       ) => (
                         <button
                           key={
@@ -667,7 +674,7 @@ const Topbar = ({
                           className="notification-item"
                           onClick={() =>
                             handleNotificationClick(
-                              notification
+                              notification,
                             )
                           }
                         >
@@ -696,7 +703,7 @@ const Topbar = ({
                             </small>
                           </span>
                         </button>
-                      )
+                      ),
                     )
                   ) : (
                     <div className="topbar-dropdown-empty">
@@ -707,8 +714,7 @@ const Topbar = ({
                       </strong>
 
                       <span>
-                        Your business
-                        looks good.
+                        Your business looks good.
                       </span>
                     </div>
                   )}
@@ -795,11 +801,11 @@ const Topbar = ({
                     type="button"
                     onClick={() => {
                       setIsProfileOpen(
-                        false
+                        false,
                       );
 
                       navigate(
-                        "/settings"
+                        "/settings",
                       );
                     }}
                   >
@@ -811,11 +817,11 @@ const Topbar = ({
                     type="button"
                     onClick={() => {
                       setIsProfileOpen(
-                        false
+                        false,
                       );
 
                       navigate(
-                        "/settings"
+                        "/settings",
                       );
                     }}
                   >
@@ -840,8 +846,6 @@ const Topbar = ({
           </div>
         </div>
       </header>
-
-      <BusinessAiChat />
     </>
   );
 };

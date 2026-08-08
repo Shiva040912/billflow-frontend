@@ -5,6 +5,10 @@ import {
 } from "react";
 
 import {
+  createPortal,
+} from "react-dom";
+
+import {
   FiMessageCircle,
   FiSend,
   FiTrash2,
@@ -284,7 +288,9 @@ const BusinessAiChat = () => {
         interval,
       );
     };
-  }, [activeStorageKey]);
+  }, [
+    activeStorageKey,
+  ]);
 
   useEffect(() => {
     const handleStorageChange =
@@ -303,7 +309,9 @@ const BusinessAiChat = () => {
         handleStorageChange,
       );
     };
-  }, [activeStorageKey]);
+  }, [
+    activeStorageKey,
+  ]);
 
   useEffect(() => {
     if (!activeStorageKey) {
@@ -359,6 +367,25 @@ const BusinessAiChat = () => {
       );
     };
   }, []);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    const previousOverflow =
+      document.body.style.overflow;
+
+    document.body.style.overflow =
+      "hidden";
+
+    return () => {
+      document.body.style.overflow =
+        previousOverflow;
+    };
+  }, [
+    isOpen,
+  ]);
 
   const handleOpenChat = () => {
     const currentKey =
@@ -490,6 +517,7 @@ const BusinessAiChat = () => {
           .map((message) => ({
             role:
               message.role,
+
             content:
               message.content,
           }));
@@ -515,7 +543,10 @@ const BusinessAiChat = () => {
 
         const aiMessage = {
           id: `assistant-${Date.now()}`,
-          role: "assistant",
+
+          role:
+            "assistant",
+
           content:
             response?.answer ||
             "Answer kidaikala.",
@@ -554,11 +585,15 @@ const BusinessAiChat = () => {
             ...currentMessages,
             {
               id: `error-${Date.now()}`,
+
               role:
                 "assistant",
+
               content:
                 errorText,
-              isError: true,
+
+              isError:
+                true,
             },
           ],
         );
@@ -631,6 +666,220 @@ const BusinessAiChat = () => {
     }
   };
 
+  const popupContent =
+    isOpen ? (
+      <div
+        className="business-ai-overlay"
+        onMouseDown={
+          handleOverlayClick
+        }
+        role="presentation"
+      >
+        <section
+          ref={
+            popupRef
+          }
+          className="business-ai-popup"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="business-ai-title"
+        >
+          <header className="business-ai-header">
+            <div className="business-ai-heading">
+              <div className="business-ai-logo">
+                <FiZap />
+              </div>
+
+              <div>
+                <span className="business-ai-header-label">
+                  Smart Assistant
+                </span>
+
+                <h2 id="business-ai-title">
+                  BillFlow Business AI
+                </h2>
+
+                <p>
+                  {
+                    companyName
+                  }
+                </p>
+              </div>
+            </div>
+
+            <div className="business-ai-header-actions">
+              <button
+                type="button"
+                className="business-ai-clear-btn"
+                onClick={
+                  handleClearHistory
+                }
+                disabled={
+                  isSending
+                }
+                title="Clear chat history"
+                aria-label="Clear chat history"
+              >
+                <FiTrash2 />
+              </button>
+
+              <button
+                type="button"
+                className="business-ai-close-btn"
+                onClick={() =>
+                  setIsOpen(
+                    false,
+                  )
+                }
+                title="Close AI"
+                aria-label="Close AI"
+              >
+                <FiX />
+              </button>
+            </div>
+          </header>
+
+          <div className="business-ai-context-bar">
+            <span className="business-ai-context-dot" />
+
+            <span>
+              Connected to{" "}
+              {
+                companyName
+              }{" "}
+              data
+            </span>
+          </div>
+
+          <div className="business-ai-messages">
+            {messages.map(
+              (
+                message,
+              ) => (
+                <div
+                  key={
+                    message.id
+                  }
+                  className={`business-ai-message-row ${
+                    message.role ===
+                    "user"
+                      ? "user"
+                      : "assistant"
+                  }`}
+                >
+                  {message.role ===
+                    "assistant" && (
+                    <div className="business-ai-message-avatar">
+                      <FiZap />
+                    </div>
+                  )}
+
+                  <div
+                    className={`business-ai-message ${
+                      message.isError
+                        ? "error"
+                        : ""
+                    }`}
+                  >
+                    {
+                      message.content
+                    }
+                  </div>
+                </div>
+              ),
+            )}
+
+            {isSending && (
+              <div className="business-ai-message-row assistant">
+                <div className="business-ai-message-avatar">
+                  <FiZap />
+                </div>
+
+                <div className="business-ai-message typing">
+                  <span />
+                  <span />
+                  <span />
+                </div>
+              </div>
+            )}
+
+            <div
+              ref={
+                messageEndRef
+              }
+            />
+          </div>
+
+          <form
+            className="business-ai-input-area"
+            onSubmit={
+              handleSendQuestion
+            }
+          >
+            <div className="business-ai-input-wrapper">
+              <textarea
+                ref={
+                  inputRef
+                }
+                value={
+                  question
+                }
+                onChange={(
+                  event,
+                ) =>
+                  setQuestion(
+                    event
+                      .target
+                      .value,
+                  )
+                }
+                onKeyDown={
+                  handleInputKeyDown
+                }
+                placeholder="Ask about sales, stock, customers..."
+                rows={1}
+                maxLength={
+                  1000
+                }
+                disabled={
+                  isSending
+                }
+              />
+
+              <span className="business-ai-character-count">
+                {
+                  question.length
+                }
+                /1000
+              </span>
+            </div>
+
+            <button
+              type="submit"
+              className="business-ai-send-btn"
+              disabled={
+                isSending ||
+                !question.trim()
+              }
+              aria-label="Send question"
+            >
+              <FiSend />
+            </button>
+          </form>
+
+          <div className="business-ai-footer-note">
+            <FiZap />
+
+            <span>
+              AI answers are based on
+              your BillFlow business
+              data.
+            </span>
+          </div>
+        </section>
+      </div>
+    ) : null;
+
   return (
     <>
       <button
@@ -653,218 +902,11 @@ const BusinessAiChat = () => {
         </span>
       </button>
 
-      {isOpen && (
-        <div
-          className="business-ai-overlay"
-          onMouseDown={
-            handleOverlayClick
-          }
-          role="presentation"
-        >
-          <section
-            ref={
-              popupRef
-            }
-            className="business-ai-popup"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="business-ai-title"
-          >
-            <header className="business-ai-header">
-              <div className="business-ai-heading">
-                <div className="business-ai-logo">
-                  <FiZap />
-                </div>
-
-                <div>
-                  <span className="business-ai-header-label">
-                    Smart Assistant
-                  </span>
-
-                  <h2 id="business-ai-title">
-                    BillFlow Business AI
-                  </h2>
-
-                  <p>
-                    {
-                      companyName
-                    }
-                  </p>
-                </div>
-              </div>
-
-              <div className="business-ai-header-actions">
-                <button
-                  type="button"
-                  className="business-ai-clear-btn"
-                  onClick={
-                    handleClearHistory
-                  }
-                  disabled={
-                    isSending
-                  }
-                  title="Clear chat history"
-                  aria-label="Clear chat history"
-                >
-                  <FiTrash2 />
-                </button>
-
-                <button
-                  type="button"
-                  className="business-ai-close-btn"
-                  onClick={() =>
-                    setIsOpen(
-                      false,
-                    )
-                  }
-                  title="Close AI"
-                  aria-label="Close AI"
-                >
-                  <FiX />
-                </button>
-              </div>
-            </header>
-
-            <div className="business-ai-context-bar">
-              <span className="business-ai-context-dot" />
-
-              <span>
-                Connected to{" "}
-                {
-                  companyName
-                }{" "}
-                data
-              </span>
-            </div>
-
-            <div className="business-ai-messages">
-              {messages.map(
-                (
-                  message,
-                ) => (
-                  <div
-                    key={
-                      message.id
-                    }
-                    className={`business-ai-message-row ${
-                      message.role ===
-                      "user"
-                        ? "user"
-                        : "assistant"
-                    }`}
-                  >
-                    {message.role ===
-                      "assistant" && (
-                      <div className="business-ai-message-avatar">
-                        <FiZap />
-                      </div>
-                    )}
-
-                    <div
-                      className={`business-ai-message ${
-                        message.isError
-                          ? "error"
-                          : ""
-                      }`}
-                    >
-                      {
-                        message.content
-                      }
-                    </div>
-                  </div>
-                ),
-              )}
-
-              {isSending && (
-                <div className="business-ai-message-row assistant">
-                  <div className="business-ai-message-avatar">
-                    <FiZap />
-                  </div>
-
-                  <div className="business-ai-message typing">
-                    <span />
-                    <span />
-                    <span />
-                  </div>
-                </div>
-              )}
-
-              <div
-                ref={
-                  messageEndRef
-                }
-              />
-            </div>
-
-            <form
-              className="business-ai-input-area"
-              onSubmit={
-                handleSendQuestion
-              }
-            >
-              <div className="business-ai-input-wrapper">
-                <textarea
-                  ref={
-                    inputRef
-                  }
-                  value={
-                    question
-                  }
-                  onChange={(
-                    event,
-                  ) =>
-                    setQuestion(
-                      event
-                        .target
-                        .value,
-                    )
-                  }
-                  onKeyDown={
-                    handleInputKeyDown
-                  }
-                  placeholder="Ask about sales, stock, customers..."
-                  rows={1}
-                  maxLength={
-                    1000
-                  }
-                  disabled={
-                    isSending
-                  }
-                />
-
-                <span className="business-ai-character-count">
-                  {
-                    question.length
-                  }
-                  /1000
-                </span>
-              </div>
-
-              <button
-                type="submit"
-                className="business-ai-send-btn"
-                disabled={
-                  isSending ||
-                  !question.trim()
-                }
-                aria-label="Send question"
-              >
-                <FiSend />
-              </button>
-            </form>
-
-            <div className="business-ai-footer-note">
-              <FiZap />
-
-              <span>
-                AI answers are based on
-                your BillFlow business
-                data.
-              </span>
-            </div>
-          </section>
-        </div>
-      )}
+      {popupContent &&
+        createPortal(
+          popupContent,
+          document.body,
+        )}
     </>
   );
 };
