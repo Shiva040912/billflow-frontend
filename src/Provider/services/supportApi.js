@@ -3,7 +3,7 @@ import providerAxios from "../utils/provideraxios";
 export const getSupports = async () => {
   const response =
     await providerAxios.get(
-      "/provider/support",
+      "/support",
     );
 
   return response.data;
@@ -14,7 +14,7 @@ export const getSupportById = async (
 ) => {
   const response =
     await providerAxios.get(
-      `/provider/support/${supportId}`,
+      `/support/${supportId}`,
     );
 
   return response.data;
@@ -26,7 +26,7 @@ export const updateSupport = async (
 ) => {
   const response =
     await providerAxios.patch(
-      `/provider/support/${supportId}`,
+      `/support/${supportId}`,
       supportData,
     );
 
@@ -38,7 +38,7 @@ export const deleteSupport = async (
 ) => {
   const response =
     await providerAxios.delete(
-      `/provider/support/${supportId}`,
+      `/support/${supportId}`,
     );
 
   return response.data;
