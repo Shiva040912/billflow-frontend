@@ -1,4 +1,4 @@
-import providerAxios from "../utils/providerAxios";
+import providerAxios from "../utils/provideraxios";
 
 export const getProviderCompanies = async (params = {}) => {
   const response = await providerAxios.get("/companies", {
@@ -51,3 +51,5 @@ export const deleteProviderCompany = async (companyId) => {
 
   return response.data;
 };
+
+//CORRECTED CORRECTED
