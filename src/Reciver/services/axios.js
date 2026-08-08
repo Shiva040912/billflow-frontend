@@ -1,19 +1,25 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: import.meta.env.VITE_API_URL,
 });
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem(
-    "billFlowAccessToken",
-  );
+api.interceptors.request.use(
+  (config) => {
+    const token =
+      localStorage.getItem(
+        "billFlowAccessToken",
+      );
 
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+    if (token) {
+      config.headers.Authorization =
+        `Bearer ${token}`;
+    }
 
-  return config;
-});
+    return config;
+  },
+  (error) =>
+    Promise.reject(error),
+);
 
 export default api;
